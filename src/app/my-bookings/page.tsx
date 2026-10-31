@@ -169,10 +169,7 @@ export default function MyBookingsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-amber-500">
-              Schedule & Reservations
-            </span>
-            <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mt-1">
+            <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
               My Studio Bookings
             </h1>
             <p className="text-zinc-600 dark:text-zinc-400 text-sm mt-1">

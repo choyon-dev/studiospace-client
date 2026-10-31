@@ -159,10 +159,7 @@ export default function EditStudioPage() {
         </Link>
 
         <div className="mb-10">
-          <span className="text-xs font-semibold uppercase tracking-widest text-amber-500">
-            Edit Studio
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mt-1">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
             Update Listing: {title}
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400 mt-1 text-sm">

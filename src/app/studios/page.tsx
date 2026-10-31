@@ -74,10 +74,7 @@ function StudiosContent() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-10">
-        <span className="text-xs font-semibold uppercase tracking-widest text-amber-600 dark:text-amber-500">
-          Studio Catalog
-        </span>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mt-2">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
           Explore Production Workspaces
         </h1>
         <p className="text-zinc-600 dark:text-zinc-400 mt-2 text-sm sm:text-base max-w-2xl">

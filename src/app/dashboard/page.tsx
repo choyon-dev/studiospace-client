@@ -14,7 +14,6 @@ import {
   PlusCircle,
   Building2,
   ArrowRight,
-  Sparkles,
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -84,10 +83,6 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 mb-2">
-              <Sparkles className="size-3.5" />
-              <span>Production Control Center</span>
-            </div>
             <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
               Welcome back, {user?.name}
             </h1>

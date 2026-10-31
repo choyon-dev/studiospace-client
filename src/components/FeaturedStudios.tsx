@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Studio } from '@/types';
 import StudioCard from './StudioCard';
 import { fetchFeaturedStudios } from '@/lib/api';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export default function FeaturedStudios() {
   const [studios, setStudios] = useState<Studio[]>([]);
@@ -35,10 +35,6 @@ export default function FeaturedStudios() {
     <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 mb-3">
-            <Sparkles className="size-3.5" />
-            <span>Top Rated by Creators</span>
-          </div>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
             Featured Spaces
           </h2>

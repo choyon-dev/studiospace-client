@@ -17,11 +17,7 @@ export default function NotFound() {
         </div>
       </div>
 
-      <span className="text-xs font-mono font-bold uppercase tracking-widest text-amber-500 bg-amber-500/10 px-3.5 py-1.5 rounded-full border border-amber-500/20 mb-3">
-        Error 404 — Scene Not Found
-      </span>
-
-      <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mt-2">
+      <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
         This Production Set Doesn&apos;t Exist
       </h1>
 

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation, EffectFade } from 'swiper/modules';
-import { ArrowRight, Sparkles, PlusCircle } from 'lucide-react';
+import { ArrowRight, PlusCircle } from 'lucide-react';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -97,11 +97,6 @@ export default function HeroSlider() {
             <div className="absolute inset-0 z-10 flex items-center">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div className="max-w-2xl space-y-6">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-500/15 border border-amber-500/30 text-amber-400 backdrop-blur-md">
-                    <Sparkles className="size-3.5" />
-                    <span>{slide.tag}</span>
-                  </div>
-
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
                     {slide.title}{' '}
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">

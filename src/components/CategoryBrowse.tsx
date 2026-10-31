@@ -48,10 +48,7 @@ export default function CategoryBrowse() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-amber-600 dark:text-amber-500">
-              Curated Production Environments
-            </span>
-            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mt-2">
+            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
               Browse by Studio Category
             </h2>
           </div>
