@@ -66,10 +66,3 @@ npm run dev      # Starts Next.js development server on http://localhost:3000
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## Git Commit History Integrity
-
-- **Client Repository:** 20+ atomic commits tracking full component lifecycle and page development.
-- **Server Repository:** 10+ atomic commits tracking schema architecture, middleware integration, and collision prevention.
