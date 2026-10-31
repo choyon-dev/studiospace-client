@@ -3,6 +3,7 @@ import CategoryBrowse from '@/components/CategoryBrowse';
 import FeaturedStudios from '@/components/FeaturedStudios';
 import HowItWorks from '@/components/HowItWorks';
 import HostGuarantee from '@/components/HostGuarantee';
+import HostMonetizationBanner from '@/components/HostMonetizationBanner';
 
 export default function HomePage() {
   return (
@@ -12,6 +13,7 @@ export default function HomePage() {
       <FeaturedStudios />
       <HowItWorks />
       <HostGuarantee />
+      <HostMonetizationBanner />
     </div>
   );
 }

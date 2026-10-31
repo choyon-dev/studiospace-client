@@ -1,33 +1,52 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Studio } from '@/types';
-import { Star, MapPin, Users, ArrowUpRight } from 'lucide-react';
+import { Star, MapPin, Users, ArrowUpRight, Zap, Heart } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
 export default function StudioCard({ studio }: { studio: Studio }) {
+  const [isFavorited, setIsFavorited] = useState(false);
+
   return (
-    <div className="group relative flex flex-col rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 overflow-hidden shadow-xs hover:shadow-xl hover:border-amber-500/40 hover:-translate-y-1 transition-all duration-200">
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+    <div className="group relative flex flex-col rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 overflow-hidden shadow-xs hover:shadow-xl hover:border-amber-500/80 dark:hover:border-amber-500/80 hover:-translate-y-1 transition-all duration-300">
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 dark:bg-zinc-800">
         <Image
           src={studio.imageUrl}
           alt={studio.title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
+          className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
 
-        <div className="absolute top-3 left-3">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-zinc-950/80 backdrop-blur-md text-amber-400 border border-amber-500/30">
+        <div className="absolute top-3 left-3 flex items-center gap-2">
+          <span className="px-2.5 py-1 rounded-md bg-white/95 dark:bg-zinc-950/90 backdrop-blur-md border border-slate-200 dark:border-zinc-700 text-[10px] font-mono font-bold uppercase text-slate-800 dark:text-zinc-200 shadow-xs">
             {studio.category}
+          </span>
+          <span className="px-2 py-1 rounded-md bg-amber-500 text-zinc-950 text-[10px] font-mono font-bold uppercase flex items-center gap-1 shadow-xs">
+            <Zap className="size-3 fill-zinc-950" />
+            <span>Instant</span>
           </span>
         </div>
 
-        <div className="absolute top-3 right-3">
-          <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-zinc-950/80 backdrop-blur-md text-zinc-100 border border-zinc-700/60 tabular-nums">
+        <button
+          type="button"
+          aria-label="Save studio"
+          onClick={() => setIsFavorited(!isFavorited)}
+          className="absolute top-3 right-3 size-8 rounded-full bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border border-slate-200 dark:border-zinc-700 flex items-center justify-center text-slate-700 dark:text-zinc-300 hover:text-red-500 transition-colors shadow-xs"
+        >
+          <Heart className={`size-4 ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
+        </button>
+
+        <div className="absolute bottom-3 left-3 font-mono text-[10px] text-white px-2 py-0.5 rounded-md bg-slate-900/80 backdrop-blur-sm font-semibold">
+          {studio.maxCapacity * 350} SQ FT
+        </div>
+
+        <div className="absolute bottom-3 right-3">
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-900/80 backdrop-blur-sm text-zinc-100 tabular-nums">
             <Star className="size-3 fill-amber-400 text-amber-400" />
             <span>{studio.rating.toFixed(1)}</span>
             <span className="text-zinc-400">({studio.reviewCount})</span>
@@ -35,39 +54,53 @@ export default function StudioCard({ studio }: { studio: Studio }) {
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 p-5">
-        <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 mb-2">
-          <MapPin className="size-3.5 text-amber-500 shrink-0" />
-          <span className="truncate">{studio.location}</span>
-        </div>
-
-        <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1 mb-2">
-          {studio.title}
-        </h3>
-
-        <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-4 leading-relaxed">
-          {studio.overview}
-        </p>
-
-        <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 py-3 border-t border-zinc-100 dark:border-zinc-800/80 mb-4">
-          <div className="flex items-center gap-1.5">
-            <Users className="size-3.5 text-zinc-400" />
-            <span>Cap: {studio.maxCapacity} creators</span>
+      <div className="flex flex-col flex-1 p-5 justify-between space-y-4">
+        <div>
+          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400 mb-1.5">
+            <MapPin className="size-3.5 text-amber-500 shrink-0" />
+            <span className="truncate">{studio.location}</span>
           </div>
-          <span className="text-[11px] font-medium text-zinc-400">Instant Booking</span>
+
+          <h3 className="text-base font-bold text-slate-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
+            {studio.title}
+          </h3>
+
+          <p className="text-xs text-slate-600 dark:text-zinc-400 line-clamp-2 mt-2 leading-relaxed">
+            {studio.overview}
+          </p>
+
+          {studio.amenities && studio.amenities.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              {studio.amenities.slice(0, 2).map((amenity) => (
+                <span
+                  key={amenity}
+                  className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 truncate max-w-[170px]"
+                >
+                  {amenity}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="mt-auto flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between pt-3 border-t border-slate-200/80 dark:border-zinc-800">
           <div>
-            <span className="text-lg font-bold text-amber-600 dark:text-amber-400 tabular-nums">
-              {formatCurrency(studio.hourlyRate)}
-            </span>
-            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-normal"> / hour</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-bold text-slate-900 dark:text-zinc-100 tabular-nums">
+                {formatCurrency(studio.hourlyRate)}
+              </span>
+              <span className="text-xs text-slate-500 dark:text-zinc-400">/hr</span>
+            </div>
+            {studio.securityDeposit > 0 && (
+              <span className="text-[10px] text-slate-400 dark:text-zinc-500 block">
+                {formatCurrency(studio.securityDeposit)} deposit
+              </span>
+            )}
           </div>
 
           <Link
             href={`/studios/${studio._id}`}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-amber-500 hover:text-zinc-950 active:scale-95 transition-all"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/15 hover:bg-amber-500 text-amber-700 dark:text-amber-400 hover:text-zinc-950 active:scale-95 transition-all"
           >
             <span>View Details</span>
             <ArrowUpRight className="size-3.5" />
