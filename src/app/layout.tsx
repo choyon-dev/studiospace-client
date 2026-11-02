@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, Inter } from 'next/font/google';
+import { Syne, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/AuthContext';
@@ -7,16 +7,18 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Toaster } from 'sonner';
 
-const spaceGrotesk = Space_Grotesk({
-  variable: '--font-space',
+const syne = Syne({
+  variable: '--font-syne',
   subsets: ['latin'],
   display: 'swap',
+  weight: ['500', '600', '700', '800'],
 });
 
-const inter = Inter({
-  variable: '--font-inter',
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: '--font-jakarta',
   subsets: ['latin'],
   display: 'swap',
+  weight: ['400', '500', '600', '700', '800'],
 });
 
 export const metadata: Metadata = {
@@ -49,7 +51,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${spaceGrotesk.variable} ${inter.variable}`}
+      className={`${syne.variable} ${plusJakartaSans.variable}`}
     >
       <body className="min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-zinc-950">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
