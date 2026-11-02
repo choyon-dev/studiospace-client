@@ -41,14 +41,11 @@ export default function Navbar() {
       const currentScrollY = window.scrollY;
       setIsScrolled(currentScrollY > 20);
 
-      // Smart Directional Stickiness
       if (currentScrollY <= 20) {
         setIsVisible(true);
       } else if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        // Scrolling down: auto-minimize
         setIsVisible(false);
       } else if (currentScrollY < lastScrollY.current) {
-        // Scrolling up: reveal instantly
         setIsVisible(true);
       }
       lastScrollY.current = currentScrollY;
@@ -104,10 +101,8 @@ export default function Navbar() {
 
   return (
     <header className="relative w-full z-40">
-      {/* Layout flow spacer so page content starts cleanly below the floating dock */}
       <div className="h-20 sm:h-22 pointer-events-none" />
 
-      {/* Floating Island Header Container */}
       <div
         className={`fixed top-3 sm:top-4 inset-x-0 z-40 px-3 sm:px-6 transition-all duration-300 ease-out pointer-events-none ${
           isVisible || isMobileMenuOpen
@@ -123,7 +118,6 @@ export default function Navbar() {
                 : 'h-16 sm:h-18 px-4 sm:px-6 bg-white/85 dark:bg-zinc-950/80 backdrop-blur-xl border border-zinc-200/70 dark:border-zinc-800/70 shadow-md shadow-zinc-950/5'
             }`}
           >
-            {/* Brand Logo */}
             <Link
               href="/"
               className="flex items-center gap-2.5 sm:gap-3 group transition-transform duration-150 active:scale-95 shrink-0"
@@ -136,7 +130,6 @@ export default function Navbar() {
               </span>
             </Link>
 
-            {/* Center Segmented Capsule Navigation */}
             <nav className="hidden lg:flex items-center p-1 rounded-xl bg-zinc-100/90 dark:bg-zinc-900/90 border border-zinc-200/60 dark:border-zinc-800/60 gap-1">
               {navLinks.map((link) => {
                 const active = isActive(link.href);
@@ -156,9 +149,7 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* Right Utility Cluster */}
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Quick Search Shortcut Trigger */}
               <Link
                 href="/studios"
                 className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-900/50 hover:border-amber-500/50 hover:bg-amber-500/5 text-xs text-zinc-500 dark:text-zinc-400 transition-all cursor-pointer group"
@@ -171,7 +162,6 @@ export default function Navbar() {
                 </kbd>
               </Link>
 
-              {/* Theme Toggle */}
               {mounted && (
                 <button
                   onClick={toggleTheme}
@@ -182,7 +172,6 @@ export default function Navbar() {
                 </button>
               )}
 
-              {/* Authenticated State */}
               {user ? (
                 <div className="flex items-center gap-2">
                   <Link
@@ -271,7 +260,6 @@ export default function Navbar() {
                   </div>
                 </div>
               ) : (
-                /* Unauthenticated State */
                 <div className="flex items-center gap-2">
                   <Link
                     href="/login"
@@ -289,7 +277,6 @@ export default function Navbar() {
                 </div>
               )}
 
-              {/* Mobile Hamburger Toggle */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="lg:hidden p-2 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-900/50 text-zinc-700 dark:text-zinc-300 hover:text-amber-500 transition-colors"
@@ -300,10 +287,8 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Floating Mobile Drawer */}
           {isMobileMenuOpen && (
             <div className="lg:hidden absolute top-full left-0 right-0 mt-2 p-4 rounded-2xl bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
-              {/* Quick Search in Mobile Drawer */}
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -324,7 +309,6 @@ export default function Navbar() {
                 />
               </form>
 
-              {/* Navigation Links */}
               <nav className="flex flex-col space-y-1">
                 {navLinks.map((link) => (
                   <Link
@@ -341,7 +325,6 @@ export default function Navbar() {
                 ))}
               </nav>
 
-              {/* Mobile Auth and Action Cluster */}
               <div className="pt-3 border-t border-zinc-200 dark:border-zinc-800">
                 {user ? (
                   <div className="space-y-2">

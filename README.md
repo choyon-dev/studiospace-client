@@ -14,7 +14,7 @@
 - **Dark/Light Theme Customization (Challenge 3):** Full system dark-first luxury design system powered by Tailwind CSS and `next-themes` with zero layout shift.
 - **Automated PDF Invoice Receipts:** Downloadable official booking invoices generated dynamically using `jsPDF` for confirmed creative reservations.
 - **Image Upload Pipeline:** Native integration with ImgBB API for seamless hosting of studio photos alongside direct URL support.
-- **Responsive Layout & Accessibility:** Strict compliance with `baseline-ui` standards, fluid typography (`Space Grotesk` + `Inter`), and responsive navigation for mobile, tablet, and desktop screens.
+- **Responsive Layout & Accessibility:** Strict compliance with `baseline-ui` standards, fluid typography (`Syne` + `Plus Jakarta Sans`), and responsive navigation for mobile, tablet, and desktop screens.
 
 ---
 
@@ -23,7 +23,7 @@
 | Layer | Technologies |
 |---|---|
 | **Frontend Framework** | Next.js 14 / 16 (App Router), React 19, TypeScript |
-| **Styling & Design System** | Tailwind CSS, Lucide Icons, Space Grotesk & Inter Fonts |
+| **Styling & Design System** | Tailwind CSS, Lucide Icons, Syne & Plus Jakarta Sans Fonts |
 | **Interactive Components** | Swiper.js (Hero Slider), Sonner (Toasts), Next-Themes |
 | **Backend API** | Express.js, Node.js, REST Architecture |
 | **Database & ODM** | MongoDB Atlas, Mongoose 8/9 |
