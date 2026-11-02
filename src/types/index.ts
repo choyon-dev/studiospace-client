@@ -22,6 +22,7 @@ export interface StudioSpecs {
 export interface Studio {
   _id: string;
   title: string;
+  slug?: string;
   category: StudioCategory;
   hourlyRate: number;
   securityDeposit: number;

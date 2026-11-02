@@ -8,6 +8,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { Studio } from '@/types';
 import { fetchMyStudios, deleteStudio, fetchAllStudios } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
+import { getStudioUrl } from '@/lib/slug';
 import { toast } from 'sonner';
 import {
   PlusCircle,
@@ -161,7 +162,7 @@ export default function MyListingsPage() {
                           </div>
                           <div>
                             <Link
-                              href={`/studios/${item._id}`}
+                              href={getStudioUrl(item)}
                               className="font-bold text-zinc-900 dark:text-zinc-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors line-clamp-1"
                             >
                               {item.title}
@@ -196,7 +197,7 @@ export default function MyListingsPage() {
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Link
-                            href={`/studios/${item._id}`}
+                            href={getStudioUrl(item)}
                             aria-label="View public listing"
                             className="p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                           >

@@ -24,10 +24,14 @@ export function extractIdFromSlug(param: string): string | null {
   return match ? match[1].toLowerCase() : null;
 }
 
-export function getStudioUrl(studio: { _id: string; title?: string }): string {
-  if (!studio?._id) return '/studios';
-  const titleSlug = slugify(studio.title || '');
-  return titleSlug ? `/studios/${titleSlug}-${studio._id}` : `/studios/${studio._id}`;
+export function getStudioUrl(studio: { _id?: string; title?: string; slug?: string }): string {
+  if (studio?.slug) return `/studios/${studio.slug}`;
+  if (studio?.title) {
+    const mainTitle = studio.title.split('—')[0].trim();
+    const titleSlug = slugify(mainTitle) || slugify(studio.title);
+    if (titleSlug) return `/studios/${titleSlug}`;
+  }
+  return studio?._id ? `/studios/${studio._id}` : '/studios';
 }
 
 export function getCategoryUrl(categoryName: string): string {

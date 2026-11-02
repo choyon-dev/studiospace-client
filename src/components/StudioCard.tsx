@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Studio } from '@/types';
 import { Star, MapPin, Users, ArrowUpRight, Zap, Heart } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+import { getStudioUrl } from '@/lib/slug';
 
 export default function StudioCard({ studio }: { studio: Studio }) {
   const [isFavorited, setIsFavorited] = useState(false);
@@ -99,7 +100,7 @@ export default function StudioCard({ studio }: { studio: Studio }) {
           </div>
 
           <Link
-            href={`/studios/${studio._id}`}
+            href={getStudioUrl(studio)}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/15 hover:bg-amber-500 text-amber-700 dark:text-amber-400 hover:text-zinc-950 active:scale-95 transition-all"
           >
             <span>View Details</span>

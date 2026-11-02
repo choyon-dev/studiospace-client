@@ -8,31 +8,17 @@ import { Studio } from '@/types';
 import { fetchStudioById, createBooking } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { formatCurrency } from '@/lib/utils';
+import { slugify, getStudioUrl } from '@/lib/slug';
 import { toast } from 'sonner';
 import {
   Star,
   MapPin,
-  Users,
-  Shield,
-  Clock,
   Calendar,
-  CheckCircle2,
+  Check,
   X,
   FileDown,
-  Sparkles,
   ArrowLeft,
-  Ruler,
-  Maximize2,
-  Zap,
-  Volume2,
-  Wind,
-  Truck,
-  SunMedium,
-  Wifi,
-  Car,
   ExternalLink,
-  ShieldCheck,
-  Building,
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 
@@ -40,7 +26,7 @@ export default function StudioDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const id = params?.id as string;
+  const rawId = (params?.id as string) || '';
 
   const [studio, setStudio] = useState<Studio | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,18 +49,24 @@ export default function StudioDetailPage() {
 
   useEffect(() => {
     async function load() {
-      if (!id) return;
+      if (!rawId) return;
       try {
-        const data = await fetchStudioById(id);
-        setStudio(data);
+        const data = await fetchStudioById(rawId);
+        if (data) {
+          setStudio(data);
+          const cleanSlug = data.slug || slugify(data.title.split('—')[0].trim());
+          if (cleanSlug && typeof window !== 'undefined' && rawId !== cleanSlug) {
+            window.history.replaceState(null, '', `/studios/${cleanSlug}`);
+          }
+        }
       } catch (err) {
-        console.error(err);
+        console.error('Failed to load studio:', err);
       } finally {
         setLoading(false);
       }
     }
     load();
-  }, [id]);
+  }, [rawId]);
 
   const calculateHours = () => {
     const [startH, startM] = startTime.split(':').map(Number);
@@ -88,8 +80,8 @@ export default function StudioDetailPage() {
 
   const handleOpenBooking = () => {
     if (!user) {
-      toast.info('Please sign in or register to book this creative studio.');
-      router.push(`/login?redirect=/studios/${id}`);
+      toast.info('Please sign in to reserve this creative workspace.');
+      router.push(`/login?redirect=${encodeURIComponent(getStudioUrl(studio || { _id: rawId }))}`);
       return;
     }
     setIsBookingModalOpen(true);
@@ -118,7 +110,7 @@ export default function StudioDetailPage() {
       setConfirmedBooking(res);
       toast.success('Studio booking confirmed successfully!');
     } catch (err: any) {
-      toast.error(err.message || 'Collision detected. This slot is already reserved.');
+      toast.error(err.message || 'Slot collision detected. This time is already reserved.');
     } finally {
       setBookingSubmitting(false);
     }
@@ -172,15 +164,15 @@ export default function StudioDetailPage() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 animate-pulse space-y-6">
-        <div className="h-8 w-64 bg-zinc-200 dark:bg-zinc-800 rounded-xl" />
+      <div className="max-w-6xl mx-auto px-4 py-16 animate-pulse space-y-6">
+        <div className="h-6 w-48 bg-zinc-200 dark:bg-zinc-800 rounded-lg" />
         <div className="aspect-[21/9] w-full bg-zinc-200 dark:bg-zinc-800 rounded-3xl" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
-            <div className="h-6 w-3/4 bg-zinc-200 dark:bg-zinc-800 rounded" />
-            <div className="h-20 w-full bg-zinc-200 dark:bg-zinc-800 rounded-xl" />
+            <div className="h-8 w-3/4 bg-zinc-200 dark:bg-zinc-800 rounded-lg" />
+            <div className="h-24 w-full bg-zinc-200 dark:bg-zinc-800 rounded-2xl" />
           </div>
-          <div className="h-64 bg-zinc-200 dark:bg-zinc-800 rounded-2xl" />
+          <div className="h-72 bg-zinc-200 dark:bg-zinc-800 rounded-2xl" />
         </div>
       </div>
     );
@@ -188,8 +180,8 @@ export default function StudioDetailPage() {
 
   if (!studio) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center space-y-4">
-        <h2 className="text-2xl font-bold">Studio Not Found</h2>
+      <div className="max-w-4xl mx-auto px-4 py-24 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Studio Not Found</h2>
         <p className="text-sm text-zinc-500">The requested creative workspace does not exist or has been removed.</p>
         <Link
           href="/studios"
@@ -220,32 +212,50 @@ export default function StudioDetailPage() {
     : `https://www.openstreetmap.org/search?query=${encodeURIComponent(studio.location)}`;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <Link
-        href="/studios"
-        className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 mb-6 transition-colors"
-      >
-        <ArrowLeft className="size-4" />
-        <span>Back to All Studios</span>
-      </Link>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div className="flex items-center justify-between text-xs text-zinc-500">
+        <div className="flex items-center gap-2 truncate">
+          <Link href="/studios" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
+            Studios
+          </Link>
+          <span>/</span>
+          {studio.city && (
+            <>
+              <Link href={`/studios?hub=${encodeURIComponent(studio.city)}`} className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
+                {studio.city}
+              </Link>
+              <span>/</span>
+            </>
+          )}
+          <span className="text-zinc-900 dark:text-zinc-100 font-medium truncate">{studio.title}</span>
+        </div>
 
-      <div className="relative aspect-[16/9] md:aspect-[21/9] w-full rounded-3xl overflow-hidden mb-6 shadow-xl">
+        <Link
+          href="/studios"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors shrink-0"
+        >
+          <ArrowLeft className="size-3.5" />
+          <span>Catalog</span>
+        </Link>
+      </div>
+
+      <div className="relative aspect-[16/9] md:aspect-[21/9] w-full rounded-3xl overflow-hidden shadow-lg bg-zinc-900">
         <Image
           src={studio.imageUrl}
           alt={studio.title}
           fill
           priority
-          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 95vw, 1200px"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/25 to-transparent" />
 
         <div className="absolute top-4 left-4 flex items-center gap-2">
-          <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-950/80 backdrop-blur-md text-amber-400">
+          <span className="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-950/85 backdrop-blur-md text-amber-400">
             {studio.category}
           </span>
           {studio.city && (
-            <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-950/80 backdrop-blur-md text-zinc-300">
+            <span className="px-3 py-1 rounded-lg text-xs font-medium bg-zinc-950/85 backdrop-blur-md text-zinc-300">
               {studio.city}{studio.state ? `, ${studio.state}` : ''}
             </span>
           )}
@@ -253,498 +263,399 @@ export default function StudioDetailPage() {
 
         <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs text-zinc-300 mb-2">
-              <MapPin className="size-4 text-amber-500 shrink-0" />
+            <div className="flex items-center gap-1.5 text-xs text-zinc-300 mb-1.5">
+              <MapPin className="size-3.5 text-amber-500 shrink-0" />
               <span>{studio.location}</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-bold text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight">
               {studio.title}
             </h1>
           </div>
 
-          <div className="flex items-center gap-3 bg-zinc-950/80 backdrop-blur-md px-4 py-2 rounded-2xl shrink-0">
-            <Star className="size-5 fill-amber-400 text-amber-400" />
-            <span className="text-lg font-bold text-white tabular-nums">{studio.rating.toFixed(1)}</span>
+          <div className="flex items-center gap-2 bg-zinc-950/85 backdrop-blur-md px-3.5 py-1.5 rounded-xl shrink-0 self-start md:self-auto">
+            <Star className="size-4 fill-amber-400 text-amber-400" />
+            <span className="text-sm font-bold text-white tabular-nums">{studio.rating.toFixed(1)}</span>
             <span className="text-xs text-zinc-400">({studio.reviewCount} reviews)</span>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
-        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
-          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
-            <Maximize2 className="size-3.5 text-amber-500" />
-            <span>Usable Area</span>
-          </div>
-          <p className="mt-1.5 text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200/70 dark:divide-zinc-800/80 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 p-3 sm:p-4 text-center">
+        <div className="p-2 sm:px-3">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Usable Area</div>
+          <div className="mt-1 text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">
             {specs.squareFeet.toLocaleString()} <span className="text-xs font-normal text-zinc-400">sq.ft</span>
-          </p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
-          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
-            <Ruler className="size-3.5 text-amber-500" />
-            <span>Clear Height</span>
           </div>
-          <p className="mt-1.5 text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100">
+        </div>
+        <div className="p-2 sm:px-3">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Clear Height</div>
+          <div className="mt-1 text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 truncate" title={specs.ceilingHeight}>
             {specs.ceilingHeight}
-          </p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
-          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
-            <Zap className="size-3.5 text-amber-500" />
-            <span>Power Camlock</span>
           </div>
-          <p className="mt-1.5 text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate" title={specs.powerService}>
+        </div>
+        <div className="p-2 sm:px-3">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Power Grid</div>
+          <div className="mt-1 text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate" title={specs.powerService}>
             {specs.powerService}
-          </p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
-          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
-            <Volume2 className="size-3.5 text-amber-500" />
-            <span>Sound Rating</span>
           </div>
-          <p className="mt-1.5 text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate" title={specs.soundRating}>
+        </div>
+        <div className="p-2 sm:px-3">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Sound Rating</div>
+          <div className="mt-1 text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate" title={specs.soundRating}>
             {specs.soundRating}
-          </p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
-          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
-            <Users className="size-3.5 text-amber-500" />
-            <span>Max Crew</span>
           </div>
-          <p className="mt-1.5 text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">
+        </div>
+        <div className="p-2 sm:px-3">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Max Crew</div>
+          <div className="mt-1 text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">
             {studio.maxCapacity} <span className="text-xs font-normal text-zinc-400">people</span>
-          </p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
-          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
-            <Truck className="size-3.5 text-amber-500" />
-            <span>Loading Access</span>
           </div>
-          <p className="mt-1.5 text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate" title={specs.freightAccess}>
+        </div>
+        <div className="p-2 sm:px-3">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Loading Access</div>
+          <div className="mt-1 text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate" title={specs.freightAccess}>
             {specs.freightAccess}
-          </p>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2 space-y-10">
-          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm space-y-4">
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-              Workspace Overview
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="lg:col-span-2 space-y-8">
+          <section className="space-y-3">
+            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+              About This Workspace
             </h2>
-            <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line">
               {studio.overview}
             </p>
+          </section>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6">
-              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950">
-                <span className="text-[11px] text-zinc-400 font-semibold uppercase">Max Capacity</span>
-                <div className="flex items-center gap-1.5 mt-1 font-bold text-zinc-900 dark:text-zinc-100 text-sm">
-                  <Users className="size-4 text-amber-500" />
-                  <span>Up to {studio.maxCapacity} crew members</span>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950">
-                <span className="text-[11px] text-zinc-400 font-semibold uppercase">Security Deposit</span>
-                <div className="flex items-center gap-1.5 mt-1 font-bold text-zinc-900 dark:text-zinc-100 text-sm">
-                  <Shield className="size-4 text-amber-500" />
-                  <span>{formatCurrency(studio.securityDeposit)}</span>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950">
-                <span className="text-[11px] text-zinc-400 font-semibold uppercase">Booking Policy</span>
-                <div className="flex items-center gap-1.5 mt-1 font-bold text-zinc-900 dark:text-zinc-100 text-sm">
-                  <Clock className="size-4 text-amber-500" />
-                  <span>Instant Confirmation</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-500 uppercase tracking-wider">
-                  Verified Engineering Data
-                </span>
-                <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">
-                  Technical Specifications Blueprint
-                </h2>
-              </div>
-              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
-                <ShieldCheck className="size-4" />
-                <span>On-Site Verified</span>
-              </div>
+          <section className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+              <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+                Technical Specifications Blueprint
+              </h2>
+              <span className="text-[11px] font-mono text-zinc-400 uppercase">
+                Facility Verified
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-3">
-                <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-500">
-                    <Building className="size-4" />
-                  </div>
-                  <span>Architectural & Spatial</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 text-xs">
+              <div className="space-y-3">
+                <div className="font-semibold text-zinc-900 dark:text-zinc-100 text-xs border-b border-zinc-100 dark:border-zinc-800 pb-1">
+                  Spatial & Architectural
                 </div>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
+                <div className="space-y-2">
+                  <div className="flex justify-between py-1">
                     <span className="text-zinc-500">Floor Surface</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.floorType}</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">{specs.floorType}</span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
-                    <span className="text-zinc-500">Ceiling Height</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.ceilingHeight}</span>
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Ceiling Clearance</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">{specs.ceilingHeight}</span>
                   </div>
                   <div className="flex justify-between py-1">
                     <span className="text-zinc-500">Total Usable Area</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.squareFeet} sq.ft</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-3">
-                <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-500">
-                    <Zap className="size-4" />
-                  </div>
-                  <span>Electrical & Lighting</span>
-                </div>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
-                    <span className="text-zinc-500">Power Service</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.powerService}</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
-                    <span className="text-zinc-500">Lighting Control</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.lightingControl}</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">{specs.squareFeet.toLocaleString()} sq.ft</span>
                   </div>
                   <div className="flex justify-between py-1">
-                    <span className="text-zinc-500">Blackout System</span>
-                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">Equipped</span>
+                    <span className="text-zinc-500">Crew Capacity</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">Up to {studio.maxCapacity} people</span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-3">
-                <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-500">
-                    <Volume2 className="size-4" />
-                  </div>
-                  <span>Acoustics & Climate</span>
+              <div className="space-y-3">
+                <div className="font-semibold text-zinc-900 dark:text-zinc-100 text-xs border-b border-zinc-100 dark:border-zinc-800 pb-1">
+                  Electrical Infrastructure
                 </div>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
-                    <span className="text-zinc-500">Soundproof Isolation</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.soundRating}</span>
+                <div className="space-y-2">
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Power Service</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">{specs.powerService}</span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
-                    <span className="text-zinc-500">HVAC System</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.hvacType}</span>
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Lighting Controls</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">{specs.lightingControl}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Blackout Capabilities</span>
+                    <span className="font-medium text-emerald-600 dark:text-emerald-400 text-right">Available</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Tie-in Drops</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">Installed</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="font-semibold text-zinc-900 dark:text-zinc-100 text-xs border-b border-zinc-100 dark:border-zinc-800 pb-1">
+                  Acoustic & Environmental
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Acoustic Isolation</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">{specs.soundRating}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">HVAC Climate Unit</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">{specs.hvacType}</span>
                   </div>
                   <div className="flex justify-between py-1">
                     <span className="text-zinc-500">Noise Criteria</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">Broadcast Rated</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">Broadcast Rated</span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-3">
-                <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-500">
-                    <Truck className="size-4" />
-                  </div>
-                  <span>Logistics & Access</span>
+              <div className="space-y-3">
+                <div className="font-semibold text-zinc-900 dark:text-zinc-100 text-xs border-b border-zinc-100 dark:border-zinc-800 pb-1">
+                  Logistics & Connectivity
                 </div>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
-                    <span className="text-zinc-500">Freight Loading</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.freightAccess}</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
-                    <span className="text-zinc-500">Parking Capacity</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.parkingSpaces}</span>
+                <div className="space-y-2">
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Loading Access</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">{specs.freightAccess}</span>
                   </div>
                   <div className="flex justify-between py-1">
-                    <span className="text-zinc-500">Fiber Internet</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.internetSpeed}</span>
+                    <span className="text-zinc-500">Parking Capacity</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">{specs.parkingSpaces}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Data Network</span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 text-right">{specs.internetSpeed}</span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
-          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm space-y-5">
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+          <section className="space-y-3">
+            <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
               Included Production Amenities & Gear
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {studio.amenities.map((amenity) => (
                 <div
                   key={amenity}
-                  className="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 text-xs sm:text-sm font-medium text-zinc-800 dark:text-zinc-200"
+                  className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/60 text-xs text-zinc-700 dark:text-zinc-300"
                 >
-                  <CheckCircle2 className="size-4 text-amber-500 shrink-0" />
+                  <Check className="size-3.5 text-amber-500 shrink-0" />
                   <span>{amenity}</span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm space-y-4">
+          <section className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-5 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-500 uppercase tracking-wider">
-                  OpenStreetMap Verified
-                </span>
-                <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">
+                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                   Location & Creative Hub
-                </h2>
+                </h3>
+                <p className="text-xs text-zinc-500 mt-0.5">{studio.location}</p>
               </div>
+
               <a
                 href={osmUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline"
+                className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400 hover:underline"
               >
-                <span>View on OpenStreetMap</span>
-                <ExternalLink className="size-3.5" />
+                <span>OpenStreetMap</span>
+                <ExternalLink className="size-3" />
               </a>
             </div>
 
-            <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-3">
-              <div className="flex items-start gap-3">
-                <MapPin className="size-5 text-amber-500 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                    {studio.location}
-                  </p>
-                  {studio.city && (
-                    <p className="text-xs text-zinc-500 mt-0.5">
-                      Hub: {studio.city}{studio.state ? `, ${studio.state}` : ''}{studio.country ? ` • ${studio.country}` : ''}
-                    </p>
-                  )}
-                </div>
+            {studio.coordinates && (
+              <div className="pt-2 flex items-center gap-3 text-[11px] font-mono text-zinc-500">
+                <span>Lat: {studio.coordinates.lat.toFixed(4)}</span>
+                <span>•</span>
+                <span>Lon: {studio.coordinates.lon.toFixed(4)}</span>
+                <span className="text-zinc-400">OpenStreetMap Verified</span>
               </div>
+            )}
+          </section>
 
-              {studio.coordinates && (
-                <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-zinc-500">
-                  <span className="px-2.5 py-1 rounded-lg bg-zinc-200 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono">
-                    Lat: {studio.coordinates.lat.toFixed(4)}
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-zinc-200 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono">
-                    Lon: {studio.coordinates.lon.toFixed(4)}
-                  </span>
-                  <span className="text-zinc-400">
-                    Verified geospatial coordinates via OpenStreetMap Nominatim
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm flex items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="relative size-14 rounded-2xl overflow-hidden border-2 border-amber-500/40">
+          <section className="flex items-center justify-between p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60">
+            <div className="flex items-center gap-3">
+              <div className="relative size-11 rounded-full overflow-hidden border border-amber-500/40">
                 <Image
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=128&q=80"
                   alt={studio.ownerName}
                   fill
-                  sizes="56px"
+                  sizes="44px"
                   className="object-cover"
                 />
               </div>
               <div>
-                <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-500 uppercase tracking-wider">
-                  Verified Host
-                </span>
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">{studio.ownerName}</h3>
-                <p className="text-xs text-zinc-500">{studio.ownerEmail}</p>
+                <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{studio.ownerName}</div>
+                <div className="text-[11px] text-zinc-500">{studio.ownerEmail} • Verified Host</div>
               </div>
             </div>
 
-            <div className="hidden sm:flex flex-col items-end text-xs text-zinc-400">
-              <span className="font-semibold text-zinc-900 dark:text-zinc-200">100% Response Rate</span>
-              <span>Typically replies within 15 min</span>
-            </div>
-          </div>
+            <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+              100% Response Rate
+            </span>
+          </section>
 
-          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                Recent Creator Feedback
-              </h2>
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-500">
-                <Sparkles className="size-4" />
-                <span>Verified Bookings</span>
-              </div>
-            </div>
+          <section className="space-y-3 pt-2">
+            <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+              Verified Creator Feedback
+            </h3>
 
-            <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-2">
+            <div className="space-y-3">
+              <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/40 space-y-1.5 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Jordan Hayes</span>
-                  <div className="flex text-amber-400">
-                    {'★★★★★'.split('').map((s, i) => (
-                      <span key={i}>{s}</span>
-                    ))}
-                  </div>
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">Jordan Hayes</span>
+                  <div className="flex text-amber-400 text-xs">★★★★★</div>
                 </div>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  The daylight in this space is breathtaking. We wrapped our fashion lookbook shoot two hours ahead of schedule thanks to the pre-rigged Profoto strobes. Pristine condition and wonderful host.
+                <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                  The daylight in this space is breathtaking. We wrapped our fashion lookbook shoot ahead of schedule thanks to the pre-rigged lighting grid. Pristine condition and wonderful host.
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-2">
+              <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/40 space-y-1.5 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Devon Cole</span>
-                  <div className="flex text-amber-400">
-                    {'★★★★★'.split('').map((s, i) => (
-                      <span key={i}>{s}</span>
-                    ))}
-                  </div>
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">Devon Cole</span>
+                  <div className="flex text-amber-400 text-xs">★★★★★</div>
                 </div>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  Acoustic treatment is grade A. Zero bleed from street traffic. Tracking drums was effortless and the monitored playback through the Genelec system was reference caliber.
+                <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                  Acoustic isolation is grade A. Zero bleed from street traffic. Tracking drums was effortless and the monitored playback through the reference system was pristine.
                 </p>
               </div>
             </div>
-          </div>
+          </section>
         </div>
 
         <div className="lg:col-span-1">
-          <div className="sticky top-28 rounded-3xl bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xl space-y-6">
-            <div className="flex items-baseline justify-between pb-5">
+          <div className="sticky top-28 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm space-y-5">
+            <div className="flex items-baseline justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
               <div>
-                <span className="text-3xl font-bold text-amber-600 dark:text-amber-400 tabular-nums">
+                <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">
                   {formatCurrency(studio.hourlyRate)}
                 </span>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400"> / hour</span>
+                <span className="text-xs text-zinc-500"> / hour</span>
               </div>
-              <div className="text-right">
-                <span className="text-xs text-zinc-400">Security Deposit:</span>
-                <p className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                  {formatCurrency(studio.securityDeposit)}
-                </p>
-              </div>
+              {studio.securityDeposit > 0 && (
+                <div className="text-right text-xs text-zinc-500">
+                  <span>Deposit: </span>
+                  <span className="font-medium text-zinc-800 dark:text-zinc-200">{formatCurrency(studio.securityDeposit)}</span>
+                </div>
+              )}
             </div>
 
-            <div className="space-y-3 text-xs text-zinc-600 dark:text-zinc-300">
+            <div className="space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="size-4 text-emerald-500" />
-                <span>Instant confirmation</span>
+                <Check className="size-3.5 text-emerald-500" />
+                <span>Instant reservation confirmation</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="size-4 text-emerald-500" />
+                <Check className="size-3.5 text-emerald-500" />
                 <span>Double-booking collision protection</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="size-4 text-emerald-500" />
+                <Check className="size-3.5 text-emerald-500" />
                 <span>Free cancellation up to 24h prior</span>
               </div>
             </div>
 
             <button
               onClick={handleOpenBooking}
-              className="w-full py-3.5 rounded-xl font-bold text-sm bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-lg shadow-amber-500/20 cursor-pointer"
+              className="w-full py-3 rounded-xl font-bold text-xs bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-98 transition-all shadow-sm cursor-pointer"
             >
-              Book Workspace Now
+              Reserve Workspace Now
             </button>
 
             <p className="text-center text-[11px] text-zinc-400">
-              You won&apos;t be billed until host approves your session time slot
+              Billing processed after host slot verification
             </p>
           </div>
         </div>
       </div>
 
       {isBookingModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-lg rounded-3xl bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/75 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 p-6 sm:p-7 shadow-2xl relative">
             <button
               onClick={() => {
                 setIsBookingModalOpen(false);
                 setConfirmedBooking(null);
               }}
-              className="absolute top-5 right-5 p-2 rounded-xl text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+              className="absolute top-5 right-5 p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
             >
-              <X className="size-5" />
+              <X className="size-4" />
             </button>
 
             {confirmedBooking ? (
-              <div className="text-center space-y-4 py-4">
-                <div className="size-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="size-8" />
+              <div className="text-center space-y-4 py-3">
+                <div className="size-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
+                  <Check className="size-6" />
                 </div>
-                <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                  Reservation Confirmed!
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                  Reservation Confirmed
                 </h3>
-                <p className="text-xs sm:text-sm text-zinc-500 max-w-sm mx-auto">
+                <p className="text-xs text-zinc-500 max-w-sm mx-auto">
                   Your reservation for <strong className="text-zinc-800 dark:text-zinc-200">{studio.title}</strong> on{' '}
                   <strong className="text-amber-600 dark:text-amber-400">{confirmedBooking.date}</strong> from{' '}
                   <strong className="text-amber-600 dark:text-amber-400">{confirmedBooking.startTime} to {confirmedBooking.endTime}</strong> has been secured.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <div className="flex flex-col sm:flex-row gap-2.5 pt-3">
                   <button
                     onClick={downloadPdfInvoice}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
                   >
-                    <FileDown className="size-4 text-amber-500" />
-                    <span>Download PDF Invoice</span>
+                    <FileDown className="size-3.5 text-amber-500" />
+                    <span>Download PDF</span>
                   </button>
 
                   <Link
                     href="/my-bookings"
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-semibold bg-amber-500 text-zinc-950 hover:bg-amber-400 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold bg-amber-500 text-zinc-950 hover:bg-amber-400 transition-colors"
                   >
                     <span>View My Bookings</span>
                   </Link>
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleConfirmBooking} className="space-y-5">
+              <form onSubmit={handleConfirmBooking} className="space-y-4">
                 <div>
-                  <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                  <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
                     Reserve {studio.title}
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">
+                  <p className="text-xs text-zinc-500 mt-0.5">
                     Select your production shoot date and reserved hours.
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Select Shoot Date
                   </label>
                   <div className="relative">
-                    <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-zinc-400" />
                     <input
                       type="date"
                       value={bookingDate}
                       min={minDate}
                       onChange={(e) => setBookingDate(e.target.value)}
                       required
-                      className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                      className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Start Time
                     </label>
                     <select
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
-                      className="w-full px-3 py-2.5 text-sm rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                      className="w-full px-3 py-2 text-xs rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     >
                       {['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'].map(
                         (t) => (
@@ -757,13 +668,13 @@ export default function StudioDetailPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       End Time
                     </label>
                     <select
                       value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
-                      className="w-full px-3 py-2.5 text-sm rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                      className="w-full px-3 py-2 text-xs rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     >
                       {['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'].map(
                         (t) => (
@@ -776,7 +687,7 @@ export default function StudioDetailPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-zinc-100/70 dark:bg-zinc-950 space-y-2 text-xs">
+                <div className="p-3.5 rounded-xl bg-zinc-100/70 dark:bg-zinc-950 space-y-1.5 text-xs">
                   <div className="flex justify-between text-zinc-500">
                     <span>Duration:</span>
                     <span className="font-semibold text-zinc-900 dark:text-zinc-100">{totalHours} Hours</span>
@@ -785,8 +696,8 @@ export default function StudioDetailPage() {
                     <span>Rate:</span>
                     <span>${studio.hourlyRate} / hr</span>
                   </div>
-                  <div className="pt-2 flex justify-between text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                    <span>Total Shoot Cost:</span>
+                  <div className="pt-1.5 flex justify-between text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                    <span>Total Estimate:</span>
                     <span className="text-amber-600 dark:text-amber-400">{formatCurrency(totalCost)}</span>
                   </div>
                 </div>
@@ -794,7 +705,7 @@ export default function StudioDetailPage() {
                 <button
                   type="submit"
                   disabled={bookingSubmitting || totalHours <= 0}
-                  className="w-full py-3.5 rounded-xl text-sm font-semibold bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-md shadow-amber-500/20 disabled:opacity-50 cursor-pointer"
+                  className="w-full py-3 rounded-xl text-xs font-semibold bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-98 transition-all shadow-sm disabled:opacity-50 cursor-pointer"
                 >
                   {bookingSubmitting ? 'Checking Availability...' : 'Confirm Instant Reservation'}
                 </button>

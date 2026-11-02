@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useTheme } from 'next-themes';
 import { Studio, StudioMeta } from '@/types';
 import { fetchAllStudios, fetchStudioMeta } from '@/lib/api';
+import { getStudioUrl } from '@/lib/slug';
 import {
   Aperture,
   Menu,
@@ -187,7 +188,7 @@ export default function Navbar() {
   const handleSelectStudio = (studio: Studio) => {
     setIsSearchOpen(false);
     setIsMobileMenuOpen(false);
-    router.push(`/studios/${studio._id}`);
+    router.push(getStudioUrl(studio));
   };
 
   const navLinks = [
