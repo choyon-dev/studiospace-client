@@ -82,7 +82,7 @@ function StudiosContent() {
         </p>
       </div>
 
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 mb-8 shadow-xs">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm mb-8">
         <div className="relative flex-1">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
           <input
@@ -90,7 +90,7 @@ function StudiosContent() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by studio name, location, or equipment..."
-            className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 transition-colors"
+            className="w-full pl-10 pr-4 py-2 text-sm rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
           />
         </div>
 
@@ -102,7 +102,7 @@ function StudiosContent() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-3 py-2 text-xs font-medium rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:border-amber-500"
+            className="px-3 py-2 text-xs font-medium rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
           >
             <option value="newest">Newest Listed</option>
             <option value="ratingDesc">Highest Rated</option>
@@ -148,7 +148,7 @@ function StudiosContent() {
           {[1, 2, 3, 4, 5, 6].map((idx) => (
             <div
               key={idx}
-              className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-4 space-y-4 animate-pulse"
+              className="rounded-2xl bg-white dark:bg-zinc-900/60 p-4 space-y-4 animate-pulse shadow-sm"
             >
               <div className="aspect-[16/10] w-full rounded-xl bg-zinc-200 dark:bg-zinc-800" />
               <div className="space-y-2">
@@ -156,7 +156,7 @@ function StudiosContent() {
                 <div className="h-5 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
                 <div className="h-4 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
               </div>
-              <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+              <div className="pt-4 flex items-center justify-between">
                 <div className="h-6 w-20 rounded bg-zinc-200 dark:bg-zinc-800" />
                 <div className="h-8 w-24 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
               </div>
@@ -164,7 +164,7 @@ function StudiosContent() {
           ))}
         </div>
       ) : studios.length === 0 ? (
-        <div className="py-20 flex flex-col items-center justify-center text-center p-8 rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/30">
+        <div className="py-20 flex flex-col items-center justify-center text-center p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/30">
           <div className="size-16 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-500 flex items-center justify-center mb-4">
             <Building2 className="size-8" />
           </div>

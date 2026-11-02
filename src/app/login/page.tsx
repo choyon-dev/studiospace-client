@@ -79,7 +79,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 sm:p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl">
+    <div className="w-full max-w-md mx-auto p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-xl">
       <div className="text-center space-y-2 mb-8">
         <div className="inline-flex size-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-500 items-center justify-center mb-1">
           <Aperture className="size-7 stroke-[2.2]" />
@@ -93,7 +93,7 @@ function LoginForm() {
       </div>
 
       {formError && (
-        <div className="mb-6 p-3.5 rounded-xl text-xs font-medium bg-red-500/10 border border-red-500/30 text-red-500">
+        <div className="mb-6 p-3.5 rounded-xl text-xs font-medium bg-red-500/10 text-red-500">
           {formError}
         </div>
       )}
@@ -102,7 +102,7 @@ function LoginForm() {
         type="button"
         onClick={handleGoogleLogin}
         disabled={submitting}
-        className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm font-semibold text-zinc-800 dark:text-zinc-200 transition-colors shadow-xs disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-zinc-100 dark:bg-zinc-800/60 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-sm font-semibold text-zinc-800 dark:text-zinc-200 transition-colors shadow-xs disabled:opacity-50"
       >
         <GoogleIcon />
         <span>Continue with Google</span>
@@ -110,7 +110,7 @@ function LoginForm() {
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-zinc-200 dark:border-zinc-800" />
+          <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-white dark:bg-zinc-900 px-3 text-zinc-400 font-medium">
@@ -132,7 +132,7 @@ function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="creator@studiospace.io"
               required
-              className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
             />
           </div>
         </div>
@@ -162,7 +162,7 @@ function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full pl-10 pr-10 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 transition-colors"
+              className="w-full pl-10 pr-10 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
             />
             <button
               type="button"
@@ -184,7 +184,7 @@ function LoginForm() {
         </button>
       </form>
 
-      <div className="mt-6 p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/5 text-xs text-zinc-600 dark:text-zinc-400 flex items-center justify-between">
+      <div className="mt-6 p-3.5 rounded-xl bg-amber-500/10 text-xs text-zinc-600 dark:text-zinc-400 flex items-center justify-between">
         <div>
           <p className="font-semibold text-zinc-900 dark:text-zinc-200">Examiner Fast Login</p>
           <p className="text-[11px] text-zinc-500">examiner@studiospace.io / Test1234</p>

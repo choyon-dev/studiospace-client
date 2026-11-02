@@ -40,7 +40,7 @@ export default function HeroSlider() {
   };
 
   return (
-    <div className="relative w-full overflow-hidden bg-gradient-to-b from-white via-slate-50/60 to-slate-100/50 dark:from-zinc-950 dark:via-zinc-900/60 dark:to-zinc-950 border-b border-slate-200/80 dark:border-zinc-800">
+    <div className="relative w-full overflow-hidden bg-gradient-to-b from-white via-slate-50/60 to-slate-100/50 dark:from-zinc-950 dark:via-zinc-900/60 dark:to-zinc-950">
       <div className="absolute -top-32 left-1/4 w-[500px] h-[300px] bg-amber-400/10 dark:bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute top-1/3 -right-24 w-[400px] h-[400px] bg-sky-400/10 dark:bg-sky-500/10 rounded-full blur-[160px] pointer-events-none" />
 
@@ -61,7 +61,7 @@ export default function HeroSlider() {
         <div className="w-full max-w-5xl mx-auto">
           <form
             onSubmit={handleSearch}
-            className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-2 shadow-xl shadow-slate-200/50 dark:shadow-black/40 grid grid-cols-1 md:grid-cols-4 gap-2 items-center"
+            className="bg-white dark:bg-zinc-900 rounded-2xl p-2 shadow-xl shadow-slate-200/50 dark:shadow-black/40 grid grid-cols-1 md:grid-cols-4 gap-2 items-center"
           >
             <div className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors rounded-xl cursor-pointer">
               <Layers className="size-4 text-slate-400 dark:text-zinc-500 shrink-0" />
@@ -80,7 +80,7 @@ export default function HeroSlider() {
               </select>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors rounded-xl cursor-pointer md:border-l md:border-slate-200 dark:md:border-zinc-800">
+            <div className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors rounded-xl cursor-pointer">
               <MapPin className="size-4 text-slate-400 dark:text-zinc-500 shrink-0" />
               <select
                 aria-label="Location"
@@ -96,7 +96,7 @@ export default function HeroSlider() {
               </select>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors rounded-xl cursor-pointer md:border-l md:border-slate-200 dark:md:border-zinc-800">
+            <div className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors rounded-xl cursor-pointer">
               <Clock className="size-4 text-slate-400 dark:text-zinc-500 shrink-0" />
               <select
                 aria-label="Shoot Duration"
@@ -128,7 +128,7 @@ export default function HeroSlider() {
                 key={tag.label}
                 type="button"
                 onClick={() => handlePresetClick(tag.category)}
-                className="px-3.5 py-1.5 rounded-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-400/50 text-xs font-medium transition-all shadow-2xs"
+                className="px-3.5 py-1.5 rounded-full bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 text-xs font-medium transition-all shadow-xs"
               >
                 {tag.label}
               </button>

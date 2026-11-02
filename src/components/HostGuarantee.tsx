@@ -32,7 +32,7 @@ const guarantees = [
 
 export default function HostGuarantee() {
   return (
-    <section id="about-us" className="w-full bg-slate-50/70 dark:bg-zinc-950 border-t border-slate-200 dark:border-zinc-800 py-20">
+    <section id="about-us" className="w-full bg-white dark:bg-zinc-950 py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-2">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
@@ -49,9 +49,9 @@ export default function HostGuarantee() {
             return (
               <div
                 key={item.title}
-                className="bg-white dark:bg-zinc-900/80 rounded-2xl p-6 border border-slate-200 dark:border-zinc-800 space-y-4 hover:border-slate-300 dark:hover:border-zinc-700 hover:shadow-lg transition-all duration-300"
+                className="bg-slate-50/70 hover:bg-white dark:bg-zinc-900/60 dark:hover:bg-zinc-900 rounded-2xl p-6 space-y-4 shadow-xs hover:shadow-xl transition-all duration-300"
               >
-                <div className={`size-12 rounded-xl border flex items-center justify-center ${item.color}`}>
+                <div className={`size-12 rounded-xl flex items-center justify-center ${item.color}`}>
                   <Icon className="size-6 stroke-[2]" />
                 </div>
                 <div className="space-y-1.5">

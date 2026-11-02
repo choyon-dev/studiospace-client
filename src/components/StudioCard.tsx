@@ -11,7 +11,7 @@ export default function StudioCard({ studio }: { studio: Studio }) {
   const [isFavorited, setIsFavorited] = useState(false);
 
   return (
-    <div className="group relative flex flex-col rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 overflow-hidden shadow-xs hover:shadow-xl hover:border-amber-500/80 dark:hover:border-amber-500/80 hover:-translate-y-1 transition-all duration-300">
+    <div className="group relative flex flex-col rounded-2xl bg-white dark:bg-zinc-900/90 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 dark:bg-zinc-800">
         <Image
           src={studio.imageUrl}
@@ -23,7 +23,7 @@ export default function StudioCard({ studio }: { studio: Studio }) {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
 
         <div className="absolute top-3 left-3 flex items-center gap-2">
-          <span className="px-2.5 py-1 rounded-md bg-white/95 dark:bg-zinc-950/90 backdrop-blur-md border border-slate-200 dark:border-zinc-700 text-[10px] font-mono font-bold uppercase text-slate-800 dark:text-zinc-200 shadow-xs">
+          <span className="px-2.5 py-1 rounded-md bg-white/95 dark:bg-zinc-950/90 backdrop-blur-md text-[10px] font-mono font-bold uppercase text-slate-800 dark:text-zinc-200 shadow-xs">
             {studio.category}
           </span>
           <span className="px-2 py-1 rounded-md bg-amber-500 text-zinc-950 text-[10px] font-mono font-bold uppercase flex items-center gap-1 shadow-xs">
@@ -36,7 +36,7 @@ export default function StudioCard({ studio }: { studio: Studio }) {
           type="button"
           aria-label="Save studio"
           onClick={() => setIsFavorited(!isFavorited)}
-          className="absolute top-3 right-3 size-8 rounded-full bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border border-slate-200 dark:border-zinc-700 flex items-center justify-center text-slate-700 dark:text-zinc-300 hover:text-red-500 transition-colors shadow-xs"
+          className="absolute top-3 right-3 size-8 rounded-full bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md flex items-center justify-center text-slate-700 dark:text-zinc-300 hover:text-red-500 transition-colors shadow-xs"
         >
           <Heart className={`size-4 ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
         </button>
@@ -83,7 +83,7 @@ export default function StudioCard({ studio }: { studio: Studio }) {
           )}
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-slate-200/80 dark:border-zinc-800">
+        <div className="flex items-center justify-between pt-3 mt-auto">
           <div>
             <div className="flex items-baseline gap-1">
               <span className="text-lg font-bold text-slate-900 dark:text-zinc-100 tabular-nums">

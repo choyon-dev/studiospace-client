@@ -75,7 +75,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400">
+    <footer className="bg-zinc-100/60 dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           <div className="lg:col-span-2 space-y-4">
@@ -97,7 +97,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="X (formerly Twitter)"
-                className="size-9 rounded-xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-amber-500 hover:border-amber-500/50 transition-colors bg-white dark:bg-zinc-900 shadow-xs"
+                className="size-9 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-amber-500 transition-colors bg-white dark:bg-zinc-900 shadow-xs"
               >
                 <XLogo className="size-4" />
               </a>
@@ -106,7 +106,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="GitHub"
-                className="size-9 rounded-xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-amber-500 hover:border-amber-500/50 transition-colors bg-white dark:bg-zinc-900 shadow-xs"
+                className="size-9 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-amber-500 transition-colors bg-white dark:bg-zinc-900 shadow-xs"
               >
                 <GithubLogo className="size-4" />
               </a>
@@ -115,7 +115,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
-                className="size-9 rounded-xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-amber-500 hover:border-amber-500/50 transition-colors bg-white dark:bg-zinc-900 shadow-xs"
+                className="size-9 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-amber-500 transition-colors bg-white dark:bg-zinc-900 shadow-xs"
               >
                 <InstagramLogo className="size-4" />
               </a>
@@ -124,7 +124,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="YouTube"
-                className="size-9 rounded-xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-amber-500 hover:border-amber-500/50 transition-colors bg-white dark:bg-zinc-900 shadow-xs"
+                className="size-9 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-amber-500 transition-colors bg-white dark:bg-zinc-900 shadow-xs"
               >
                 <YoutubeLogo className="size-4" />
               </a>
@@ -181,7 +181,7 @@ export default function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="creator@studiospace.io"
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 transition-colors shadow-xs"
+                  className="w-full px-3.5 py-2.5 text-xs rounded-xl bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors shadow-xs"
                 />
               </div>
               <button
@@ -202,7 +202,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+        <div className="mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <p>© 2026 StudioSpace Inc. All rights reserved. Built for creators worldwide.</p>
           <div className="flex items-center gap-6">
             <Link href="/#about-us" className="hover:text-amber-500 transition-colors">Privacy Policy</Link>

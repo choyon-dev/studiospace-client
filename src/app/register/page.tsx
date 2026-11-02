@@ -88,7 +88,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md mx-auto p-6 sm:p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl">
+      <div className="w-full max-w-md mx-auto p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-xl">
         <div className="text-center space-y-2 mb-8">
           <div className="inline-flex size-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-500 items-center justify-center mb-1">
             <Aperture className="size-7 stroke-[2.2]" />
@@ -105,7 +105,7 @@ export default function RegisterPage() {
           type="button"
           onClick={handleGoogleLogin}
           disabled={submitting}
-          className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm font-semibold text-zinc-800 dark:text-zinc-200 transition-colors shadow-xs disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-zinc-100 dark:bg-zinc-800/60 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-sm font-semibold text-zinc-800 dark:text-zinc-200 transition-colors shadow-xs disabled:opacity-50"
         >
           <GoogleIcon />
           <span>Register with Google</span>
@@ -113,7 +113,7 @@ export default function RegisterPage() {
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-zinc-200 dark:border-zinc-800" />
+            <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-white dark:bg-zinc-900 px-3 text-zinc-400 font-medium">
@@ -135,7 +135,7 @@ export default function RegisterPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Marcus Sterling"
                 required
-                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="marcus@studiospace.io"
                 required
-                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
               />
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function RegisterPage() {
                 value={photoURL}
                 onChange={(e) => setPhotoURL(e.target.value)}
                 placeholder="https://images.unsplash.com/photo-..."
-                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
               />
             </div>
           </div>
@@ -185,7 +185,7 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Create a strong password"
                 required
-                className="w-full pl-10 pr-10 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full pl-10 pr-10 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
               />
               <button
                 type="button"
@@ -196,7 +196,7 @@ export default function RegisterPage() {
               </button>
             </div>
 
-            <div className="mt-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-1.5">
+            <div className="mt-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950/60 shadow-xs space-y-1.5">
               <p className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1">
                 Password Security Rules:
               </p>

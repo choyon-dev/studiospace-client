@@ -200,7 +200,7 @@ export default function StudioDetailPage() {
         <span>Back to All Studios</span>
       </Link>
 
-      <div className="relative aspect-[16/9] md:aspect-[21/9] w-full rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800 mb-10 shadow-lg">
+      <div className="relative aspect-[16/9] md:aspect-[21/9] w-full rounded-3xl overflow-hidden mb-10 shadow-xl">
         <Image
           src={studio.imageUrl}
           alt={studio.title}
@@ -212,7 +212,7 @@ export default function StudioDetailPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
 
         <div className="absolute top-4 left-4">
-          <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-950/80 backdrop-blur-md text-amber-400 border border-amber-500/30">
+          <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-950/80 backdrop-blur-md text-amber-400">
             {studio.category}
           </span>
         </div>
@@ -228,7 +228,7 @@ export default function StudioDetailPage() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-3 bg-zinc-950/80 backdrop-blur-md px-4 py-2 rounded-2xl border border-zinc-700/60 shrink-0">
+          <div className="flex items-center gap-3 bg-zinc-950/80 backdrop-blur-md px-4 py-2 rounded-2xl shrink-0">
             <Star className="size-5 fill-amber-400 text-amber-400" />
             <span className="text-lg font-bold text-white tabular-nums">{studio.rating.toFixed(1)}</span>
             <span className="text-xs text-zinc-400">({studio.reviewCount} reviews)</span>
@@ -238,7 +238,7 @@ export default function StudioDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 space-y-10">
-          <div className="p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-xs space-y-4">
+          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm space-y-4">
             <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
               Workspace Overview
             </h2>
@@ -246,8 +246,8 @@ export default function StudioDetailPage() {
               {studio.overview}
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 border-t border-zinc-100 dark:border-zinc-800">
-              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800/80">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6">
+              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950">
                 <span className="text-[11px] text-zinc-400 font-semibold uppercase">Max Capacity</span>
                 <div className="flex items-center gap-1.5 mt-1 font-bold text-zinc-900 dark:text-zinc-100 text-sm">
                   <Users className="size-4 text-amber-500" />
@@ -255,7 +255,7 @@ export default function StudioDetailPage() {
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800/80">
+              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950">
                 <span className="text-[11px] text-zinc-400 font-semibold uppercase">Security Deposit</span>
                 <div className="flex items-center gap-1.5 mt-1 font-bold text-zinc-900 dark:text-zinc-100 text-sm">
                   <Shield className="size-4 text-amber-500" />
@@ -263,7 +263,7 @@ export default function StudioDetailPage() {
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800/80">
+              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950">
                 <span className="text-[11px] text-zinc-400 font-semibold uppercase">Booking Policy</span>
                 <div className="flex items-center gap-1.5 mt-1 font-bold text-zinc-900 dark:text-zinc-100 text-sm">
                   <Clock className="size-4 text-amber-500" />
@@ -273,7 +273,7 @@ export default function StudioDetailPage() {
             </div>
           </div>
 
-          <div className="p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-xs space-y-5">
+          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm space-y-5">
             <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
               Included Production Amenities & Gear
             </h2>
@@ -281,7 +281,7 @@ export default function StudioDetailPage() {
               {studio.amenities.map((amenity) => (
                 <div
                   key={amenity}
-                  className="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800/80 text-xs sm:text-sm font-medium text-zinc-800 dark:text-zinc-200"
+                  className="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 text-xs sm:text-sm font-medium text-zinc-800 dark:text-zinc-200"
                 >
                   <CheckCircle2 className="size-4 text-amber-500 shrink-0" />
                   <span>{amenity}</span>
@@ -290,7 +290,7 @@ export default function StudioDetailPage() {
             </div>
           </div>
 
-          <div className="p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-xs flex items-center justify-between gap-6">
+          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm flex items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               <div className="relative size-14 rounded-2xl overflow-hidden border-2 border-amber-500/40">
                 <Image
@@ -316,7 +316,7 @@ export default function StudioDetailPage() {
             </div>
           </div>
 
-          <div className="p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-xs space-y-6">
+          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                 Recent Creator Feedback
@@ -328,7 +328,7 @@ export default function StudioDetailPage() {
             </div>
 
             <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
+              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Jordan Hayes</span>
                   <div className="flex text-amber-400">
@@ -342,7 +342,7 @@ export default function StudioDetailPage() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
+              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Devon Cole</span>
                   <div className="flex text-amber-400">
@@ -360,8 +360,8 @@ export default function StudioDetailPage() {
         </div>
 
         <div className="lg:col-span-1">
-          <div className="sticky top-28 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xl space-y-6">
-            <div className="flex items-baseline justify-between border-b border-zinc-100 dark:border-zinc-800 pb-5">
+          <div className="sticky top-28 rounded-3xl bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xl space-y-6">
+            <div className="flex items-baseline justify-between pb-5">
               <div>
                 <span className="text-3xl font-bold text-amber-600 dark:text-amber-400 tabular-nums">
                   {formatCurrency(studio.hourlyRate)}
@@ -407,7 +407,7 @@ export default function StudioDetailPage() {
 
       {isBookingModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-lg rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-2xl relative">
+          <div className="w-full max-w-lg rounded-3xl bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-2xl relative">
             <button
               onClick={() => {
                 setIsBookingModalOpen(false);
@@ -472,7 +472,7 @@ export default function StudioDetailPage() {
                       min={minDate}
                       onChange={(e) => setBookingDate(e.target.value)}
                       required
-                      className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                      className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     />
                   </div>
                 </div>
@@ -485,7 +485,7 @@ export default function StudioDetailPage() {
                     <select
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
-                      className="w-full px-3 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                      className="w-full px-3 py-2.5 text-sm rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     >
                       {['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'].map(
                         (t) => (
@@ -504,7 +504,7 @@ export default function StudioDetailPage() {
                     <select
                       value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
-                      className="w-full px-3 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                      className="w-full px-3 py-2.5 text-sm rounded-xl bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     >
                       {['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'].map(
                         (t) => (
@@ -517,7 +517,7 @@ export default function StudioDetailPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-2 text-xs">
+                <div className="p-4 rounded-2xl bg-zinc-100/70 dark:bg-zinc-950 space-y-2 text-xs">
                   <div className="flex justify-between text-zinc-500">
                     <span>Duration:</span>
                     <span className="font-semibold text-zinc-900 dark:text-zinc-100">{totalHours} Hours</span>
@@ -526,7 +526,7 @@ export default function StudioDetailPage() {
                     <span>Rate:</span>
                     <span>${studio.hourlyRate} / hr</span>
                   </div>
-                  <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex justify-between text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                  <div className="pt-2 flex justify-between text-sm font-bold text-zinc-900 dark:text-zinc-100">
                     <span>Total Shoot Cost:</span>
                     <span className="text-amber-600 dark:text-amber-400">{formatCurrency(totalCost)}</span>
                   </div>

@@ -151,7 +151,7 @@ export default function AddStudioPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="p-6 sm:p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
+          <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-6">
             <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
               <Sparkles className="size-4 text-amber-500" />
               <span>Studio Title & Classification</span>
@@ -168,7 +168,7 @@ export default function AddStudioPage() {
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Apex Daylight Cyclorama Loft"
                   required
-                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                 />
               </div>
 
@@ -179,7 +179,7 @@ export default function AddStudioPage() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as StudioCategory)}
-                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat} value={cat}>
@@ -203,7 +203,7 @@ export default function AddStudioPage() {
                     value={hourlyRate}
                     onChange={(e) => setHourlyRate(Number(e.target.value))}
                     required
-                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                   />
                 </div>
               </div>
@@ -219,7 +219,7 @@ export default function AddStudioPage() {
                     min="0"
                     value={securityDeposit}
                     onChange={(e) => setSecurityDeposit(Number(e.target.value))}
-                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                   />
                 </div>
               </div>
@@ -236,7 +236,7 @@ export default function AddStudioPage() {
                     value={maxCapacity}
                     onChange={(e) => setMaxCapacity(Number(e.target.value))}
                     required
-                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                   />
                 </div>
               </div>
@@ -254,13 +254,13 @@ export default function AddStudioPage() {
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="e.g. 142 Greenpoint Ave, Studio 4B, Brooklyn, NY"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                 />
               </div>
             </div>
           </div>
 
-          <div className="p-6 sm:p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
+          <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-6">
             <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
               <Upload className="size-4 text-amber-500" />
               <span>Studio Visuals</span>
@@ -277,11 +277,11 @@ export default function AddStudioPage() {
                   onChange={(e) => setImageUrl(e.target.value)}
                   placeholder="https://images.unsplash.com/photo-..."
                   required
-                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                 />
               </div>
 
-              <div className="p-4 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-xs text-zinc-500">
                   <p className="font-semibold text-zinc-800 dark:text-zinc-200">
                     Upload via ImgBB Integration
@@ -302,7 +302,7 @@ export default function AddStudioPage() {
               </div>
 
               {imageUrl && (
-                <div className="mt-4 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 max-h-56 relative aspect-video">
+                <div className="mt-4 rounded-2xl overflow-hidden shadow-xs max-h-56 relative aspect-video">
                   <img
                     src={imageUrl}
                     alt="Preview"
@@ -313,7 +313,7 @@ export default function AddStudioPage() {
             </div>
           </div>
 
-          <div className="p-6 sm:p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
+          <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-6">
             <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
               <Check className="size-4 text-amber-500" />
               <span>Amenities & Equipment Packages</span>
@@ -346,7 +346,7 @@ export default function AddStudioPage() {
                 value={customAmenity}
                 onChange={(e) => setCustomAmenity(e.target.value)}
                 placeholder="Add custom gear (e.g. Red Komodo 6K Camera)"
-                className="flex-1 px-4 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500"
+                className="flex-1 px-4 py-2 text-xs rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
               />
               <button
                 type="button"
@@ -358,7 +358,7 @@ export default function AddStudioPage() {
             </div>
           </div>
 
-          <div className="p-6 sm:p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
+          <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-6">
             <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
               <FileText className="size-4 text-amber-500" />
               <span>Studio Description & Host Verification</span>
@@ -374,11 +374,11 @@ export default function AddStudioPage() {
                 onChange={(e) => setOverview(e.target.value)}
                 placeholder="Describe the studio dimensions, natural lighting characteristics, sound isolation STC ratings, and shooting policies..."
                 required
-                className="w-full px-4 py-2.5 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 resize-y"
+                className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all resize-y"
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 shadow-xs">
               <div>
                 <span className="text-[11px] text-zinc-400 font-semibold uppercase">Verified Host Name</span>
                 <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mt-0.5">{user?.name}</p>

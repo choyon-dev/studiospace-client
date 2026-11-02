@@ -218,8 +218,8 @@ export default function Navbar() {
           <div
             className={`flex items-center justify-between rounded-2xl transition-all duration-300 ${
               isScrolled
-                ? 'h-14 sm:h-15 px-3.5 sm:px-5 bg-white/95 dark:bg-zinc-950/92 backdrop-blur-2xl border border-zinc-200/90 dark:border-zinc-800/90 shadow-xl shadow-zinc-950/10 dark:shadow-black/50'
-                : 'h-16 sm:h-18 px-3.5 sm:px-6 bg-white/85 dark:bg-zinc-950/80 backdrop-blur-xl border border-zinc-200/70 dark:border-zinc-800/70 shadow-md shadow-zinc-950/5'
+                ? 'h-14 sm:h-15 px-3.5 sm:px-5 bg-white/95 dark:bg-zinc-950/92 backdrop-blur-2xl shadow-xl shadow-zinc-950/10 dark:shadow-black/50'
+                : 'h-16 sm:h-18 px-3.5 sm:px-6 bg-white/85 dark:bg-zinc-950/80 backdrop-blur-xl shadow-md shadow-zinc-950/5'
             }`}
           >
             <Link
@@ -234,7 +234,7 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <nav className="hidden lg:flex items-center p-1 rounded-xl bg-zinc-100/90 dark:bg-zinc-900/90 border border-zinc-200/60 dark:border-zinc-800/60 gap-1">
+            <nav className="hidden lg:flex items-center p-1 rounded-xl bg-zinc-100/90 dark:bg-zinc-900/90 gap-1 shadow-xs">
               {navLinks.map((link) => {
                 const active = isActive(link.href);
                 return (
@@ -257,12 +257,12 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(true)}
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-900/50 hover:border-amber-500/50 hover:bg-amber-500/5 text-xs text-zinc-500 dark:text-zinc-400 transition-all cursor-pointer group"
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-100/80 dark:bg-zinc-900/60 hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 text-xs text-zinc-500 dark:text-zinc-400 transition-all cursor-pointer group shadow-2xs"
                 title="Search all creative spaces (⌘K)"
               >
                 <Search className="size-3.5 text-zinc-400 group-hover:text-amber-500 transition-colors" />
                 <span className="hidden xl:inline text-xs font-medium">Search stages...</span>
-                <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-200/70 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 group-hover:border-amber-500/40">
+                <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-200/70 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
                   ⌘K
                 </kbd>
               </button>
@@ -271,7 +271,7 @@ export default function Navbar() {
                 type="button"
                 onClick={() => setIsSearchOpen(true)}
                 aria-label="Search creative spaces"
-                className="md:hidden p-2 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 text-zinc-700 dark:text-zinc-300 hover:text-amber-500 hover:border-amber-500/50 transition-colors bg-zinc-50/80 dark:bg-zinc-900/50 shadow-2xs"
+                className="md:hidden p-2 rounded-xl text-zinc-700 dark:text-zinc-300 hover:text-amber-500 hover:bg-amber-500/10 transition-colors bg-zinc-100/80 dark:bg-zinc-900/60 shadow-2xs"
               >
                 <Search className="size-4" />
               </button>
@@ -280,7 +280,7 @@ export default function Navbar() {
                 <button
                   onClick={toggleTheme}
                   aria-label="Toggle color theme"
-                  className="p-2 sm:p-2.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 text-zinc-700 dark:text-zinc-300 hover:text-amber-500 hover:border-amber-500/50 transition-colors bg-zinc-50/80 dark:bg-zinc-900/50 shadow-2xs"
+                  className="p-2 sm:p-2.5 rounded-xl text-zinc-700 dark:text-zinc-300 hover:text-amber-500 hover:bg-amber-500/10 transition-colors bg-zinc-100/80 dark:bg-zinc-900/60 shadow-2xs"
                 >
                   {currentTheme === 'dark' ? <Sun className="size-4" /> : <Moon className="size-4" />}
                 </button>
@@ -299,7 +299,7 @@ export default function Navbar() {
                   <div className="relative" ref={dropdownRef}>
                     <button
                       onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                      className="flex items-center gap-1.5 p-1 sm:p-1.5 sm:pr-3 rounded-full border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-900/60 hover:border-amber-500/50 transition-all duration-150 shadow-2xs"
+                      className="flex items-center gap-1.5 p-1 sm:p-1.5 sm:pr-3 rounded-full bg-zinc-100/80 dark:bg-zinc-900/60 hover:bg-zinc-200/70 dark:hover:bg-zinc-800 transition-all duration-150 shadow-2xs"
                     >
                       <div className="relative size-7 sm:size-8 rounded-full overflow-hidden border border-amber-500/40">
                         <Image
@@ -320,8 +320,8 @@ export default function Navbar() {
                     </button>
 
                     {isProfileDropdownOpen && (
-                      <div className="absolute right-0 mt-2.5 w-56 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                        <div className="px-3 py-2 border-b border-zinc-100 dark:border-zinc-800/80 mb-1">
+                      <div className="absolute right-0 mt-2.5 w-56 rounded-2xl bg-white dark:bg-zinc-900 shadow-2xl p-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                        <div className="px-3 py-2.5 mb-1 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
                           <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
                             {user.name}
                           </p>
@@ -393,7 +393,7 @@ export default function Navbar() {
 
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden p-2 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-900/50 text-zinc-700 dark:text-zinc-300 hover:text-amber-500 transition-colors"
+                className="lg:hidden p-2 rounded-xl bg-zinc-100/80 dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300 hover:text-amber-500 hover:bg-amber-500/10 transition-colors shadow-2xs"
                 aria-label="Toggle navigation drawer"
               >
                 {isMobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -402,7 +402,7 @@ export default function Navbar() {
           </div>
 
           {isMobileMenuOpen && (
-            <div className="lg:hidden absolute top-full left-0 right-0 mt-2 p-4 rounded-2xl bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto">
+            <div className="lg:hidden absolute top-full left-0 right-0 mt-2 p-4 rounded-2xl bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl shadow-2xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto">
               <div
                 onClick={() => {
                   setIsMobileMenuOpen(false);
@@ -411,7 +411,7 @@ export default function Navbar() {
                 className="relative cursor-pointer"
               >
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
-                <div className="w-full pl-9 pr-3 py-2.5 text-xs rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 flex items-center justify-between">
+                <div className="w-full pl-9 pr-3 py-2.5 text-xs rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 flex items-center justify-between shadow-2xs">
                   <span>Search stages, cities, gear...</span>
                   <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
                     Live
@@ -435,7 +435,7 @@ export default function Navbar() {
                 ))}
               </nav>
 
-              <div className="pt-3 border-t border-zinc-200 dark:border-zinc-800">
+              <div className="pt-3">
                 {user ? (
                   <div className="space-y-2">
                     <div className="flex items-center gap-3 px-2 py-1">
@@ -497,7 +497,7 @@ export default function Navbar() {
                   <div className="grid grid-cols-2 gap-2">
                     <Link
                       href="/login"
-                      className="py-2.5 text-center text-xs font-semibold rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200"
+                      className="py-2.5 text-center text-xs font-semibold rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200"
                     >
                       Log In
                     </Link>
@@ -523,9 +523,9 @@ export default function Navbar() {
           <div
             ref={searchModalRef}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl mt-12 sm:mt-20 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150"
+            className="w-full max-w-2xl mt-12 sm:mt-20 rounded-2xl bg-white dark:bg-zinc-900 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150"
           >
-            <div className="relative flex items-center px-4 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+            <div className="relative flex items-center px-4 py-3.5 bg-zinc-50/50 dark:bg-zinc-900/50">
               {isSearching ? (
                 <Loader2 className="size-5 text-amber-500 animate-spin shrink-0 mr-3" />
               ) : (
@@ -588,7 +588,7 @@ export default function Navbar() {
                           : 'hover:bg-zinc-100 dark:hover:bg-zinc-800/50 border border-transparent'
                       }`}
                     >
-                      <div className="relative size-12 rounded-lg overflow-hidden bg-zinc-800 shrink-0 border border-zinc-200/50 dark:border-zinc-700/50">
+                      <div className="relative size-12 rounded-lg overflow-hidden bg-zinc-800 shrink-0 shadow-xs">
                         <Image
                           src={studio.imageUrl}
                           alt={studio.title}
@@ -668,7 +668,7 @@ export default function Navbar() {
               )}
             </div>
 
-            <div className="flex items-center justify-between px-4 py-2.5 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/70 text-[11px] text-zinc-500 dark:text-zinc-400">
+            <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-50/70 dark:bg-zinc-900/70 text-[11px] text-zinc-500 dark:text-zinc-400">
               {searchQuery.trim() ? (
                 <button
                   type="button"

@@ -99,12 +99,12 @@ export default function MyListingsPage() {
             {[1, 2, 3].map((idx) => (
               <div
                 key={idx}
-                className="h-28 rounded-2xl bg-zinc-200 dark:bg-zinc-800/60 animate-pulse border border-zinc-200 dark:border-zinc-800"
+                className="h-28 rounded-2xl bg-zinc-200 dark:bg-zinc-800/60 animate-pulse"
               />
             ))}
           </div>
         ) : studios.length === 0 ? (
-          <div className="py-20 flex flex-col items-center justify-center text-center p-8 rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900/40">
+          <div className="py-20 flex flex-col items-center justify-center text-center p-8 rounded-3xl bg-white dark:bg-zinc-900/40">
             <div className="size-16 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-500 flex items-center justify-center mb-4">
               <Building2 className="size-8" />
             </div>
@@ -123,10 +123,10 @@ export default function MyListingsPage() {
             </Link>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
+          <div className="overflow-hidden rounded-3xl bg-white dark:bg-zinc-900 shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-zinc-50 dark:bg-zinc-950/60 text-xs uppercase tracking-wider text-zinc-500 border-b border-zinc-200 dark:border-zinc-800">
+                <thead className="bg-zinc-50 dark:bg-zinc-950/60 text-xs uppercase tracking-wider text-zinc-500">
                   <tr>
                     <th scope="col" className="px-6 py-4 font-semibold">
                       Studio Details
@@ -145,12 +145,12 @@ export default function MyListingsPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800/80">
+                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
                   {studios.map((item) => (
                     <tr key={item._id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="relative size-14 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 shrink-0 border border-zinc-200 dark:border-zinc-700/60">
+                          <div className="relative size-14 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 shrink-0">
                             <Image
                               src={item.imageUrl}
                               alt={item.title}
@@ -175,7 +175,7 @@ export default function MyListingsPage() {
                       </td>
 
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
                           {item.category}
                         </span>
                       </td>
@@ -230,7 +230,7 @@ export default function MyListingsPage() {
 
         {studioToDelete && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-in fade-in duration-150">
-            <div className="w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-2xl relative space-y-5">
+            <div className="w-full max-w-md rounded-3xl bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-2xl relative space-y-5">
               <button
                 onClick={() => setStudioToDelete(null)}
                 className="absolute top-5 right-5 p-2 rounded-xl text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
@@ -258,7 +258,7 @@ export default function MyListingsPage() {
                   type="button"
                   onClick={() => setStudioToDelete(null)}
                   disabled={deleting}
-                  className="flex-1 py-3 rounded-xl text-xs font-semibold border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="flex-1 py-3 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
                 >
                   Cancel
                 </button>

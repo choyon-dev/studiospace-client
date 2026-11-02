@@ -108,7 +108,7 @@ export default function DashboardPage() {
             return (
               <div
                 key={stat.label}
-                className="p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-3"
+                className="p-6 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
@@ -131,7 +131,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link
             href="/my-listings"
-            className="group p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm hover:border-amber-500/40 hover:-translate-y-1 transition-all"
+            className="group p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="size-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
               <Layers className="size-6" />
@@ -150,7 +150,7 @@ export default function DashboardPage() {
 
           <Link
             href="/my-bookings"
-            className="group p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm hover:border-amber-500/40 hover:-translate-y-1 transition-all"
+            className="group p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="size-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
               <CalendarCheck className="size-6" />
@@ -169,7 +169,7 @@ export default function DashboardPage() {
 
           <Link
             href="/studios"
-            className="group p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm hover:border-amber-500/40 hover:-translate-y-1 transition-all"
+            className="group p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="size-12 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
               <Building2 className="size-6" />

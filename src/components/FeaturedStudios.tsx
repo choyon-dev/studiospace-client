@@ -33,7 +33,7 @@ export default function FeaturedStudios() {
 
   return (
     <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 dark:border-zinc-800 pb-5 mb-10">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 mb-10">
         <div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
             Featured Spaces
@@ -45,7 +45,7 @@ export default function FeaturedStudios() {
 
         <Link
           href="/studios"
-          className="self-start sm:self-auto px-4 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 hover:border-slate-300 dark:hover:border-zinc-600 text-slate-800 dark:text-zinc-200 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-2 bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all shadow-2xs shrink-0"
+          className="self-start sm:self-auto px-4 py-2.5 rounded-xl text-slate-800 dark:text-zinc-200 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-2 bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all shadow-sm hover:shadow shrink-0"
         >
           <span>View All 120+ Studios</span>
           <ArrowRight className="size-4" />
@@ -57,7 +57,7 @@ export default function FeaturedStudios() {
           {[1, 2, 3, 4, 5, 6].map((idx) => (
             <div
               key={idx}
-              className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-4 space-y-4 animate-pulse"
+              className="rounded-2xl bg-white dark:bg-zinc-900/60 p-4 space-y-4 animate-pulse shadow-sm"
             >
               <div className="aspect-[16/10] w-full rounded-xl bg-slate-200 dark:bg-zinc-800" />
               <div className="space-y-2">
@@ -65,7 +65,7 @@ export default function FeaturedStudios() {
                 <div className="h-5 w-3/4 rounded bg-slate-200 dark:bg-zinc-800" />
                 <div className="h-4 w-full rounded bg-slate-200 dark:bg-zinc-800" />
               </div>
-              <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 flex items-center justify-between">
+              <div className="pt-4 flex items-center justify-between">
                 <div className="h-6 w-20 rounded bg-slate-200 dark:bg-zinc-800" />
                 <div className="h-8 w-24 rounded-lg bg-slate-200 dark:bg-zinc-800" />
               </div>

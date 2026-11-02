@@ -6,7 +6,7 @@ import { PlusCircle, ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 
 export default function HostMonetizationBanner() {
   return (
-    <section className="w-full bg-white dark:bg-zinc-950 border-t border-slate-200 dark:border-zinc-800 py-16 sm:py-20">
+    <section className="w-full bg-slate-50/50 dark:bg-zinc-950 py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-amber-600 via-amber-700 to-zinc-900 p-8 sm:p-12 lg:p-16 text-white shadow-2xl">
           <div className="absolute -right-20 -top-20 size-96 rounded-full bg-white/10 blur-3xl pointer-events-none" />

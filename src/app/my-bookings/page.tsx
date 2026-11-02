@@ -137,25 +137,25 @@ export default function MyBookingsPage() {
     switch (status) {
       case 'Confirmed':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500">
             Confirmed
           </span>
         );
       case 'Pending':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500">
             Pending
           </span>
         );
       case 'Completed':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-500 border border-blue-500/20">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-500">
             Completed
           </span>
         );
       case 'Cancelled':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-500/10 text-zinc-400 border border-zinc-500/20">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-500/10 text-zinc-400">
             Cancelled
           </span>
         );
@@ -191,12 +191,12 @@ export default function MyBookingsPage() {
             {[1, 2].map((idx) => (
               <div
                 key={idx}
-                className="h-32 rounded-2xl bg-zinc-200 dark:bg-zinc-800/60 animate-pulse border border-zinc-200 dark:border-zinc-800"
+                className="h-32 rounded-2xl bg-zinc-200 dark:bg-zinc-800/60 animate-pulse shadow-xs"
               />
             ))}
           </div>
         ) : bookings.length === 0 ? (
-          <div className="py-20 flex flex-col items-center justify-center text-center p-8 rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900/40">
+          <div className="py-20 flex flex-col items-center justify-center text-center p-8 rounded-3xl bg-white dark:bg-zinc-900/40 shadow-xs">
             <div className="size-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-4">
               <CalendarCheck className="size-8" />
             </div>
@@ -219,10 +219,10 @@ export default function MyBookingsPage() {
             {bookings.map((booking) => (
               <div
                 key={booking._id}
-                className="flex flex-col md:flex-row items-stretch md:items-center justify-between p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm gap-6 hover:border-amber-500/40 transition-all"
+                className="flex flex-col md:flex-row items-stretch md:items-center justify-between p-6 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-md transition-all gap-6"
               >
                 <div className="flex items-center gap-5">
-                  <div className="relative size-20 sm:size-24 rounded-2xl overflow-hidden bg-zinc-800 shrink-0 border border-zinc-200 dark:border-zinc-700">
+                  <div className="relative size-20 sm:size-24 rounded-2xl overflow-hidden bg-zinc-800 shrink-0 shadow-xs">
                     <Image
                       src={
                         booking.studioImage ||
@@ -265,7 +265,7 @@ export default function MyBookingsPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-col md:items-end justify-between border-t md:border-t-0 pt-4 md:pt-0 border-zinc-100 dark:border-zinc-800 gap-3">
+                <div className="flex flex-col md:items-end justify-between pt-4 md:pt-0 gap-3">
                   <div className="text-left md:text-right">
                     <span className="text-xs text-zinc-400">Total Investment</span>
                     <p className="text-xl font-bold text-amber-500 tabular-nums">
@@ -302,7 +302,7 @@ export default function MyBookingsPage() {
 
         {bookingToCancel && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-in fade-in duration-150">
-            <div className="w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-2xl relative space-y-5">
+            <div className="w-full max-w-md rounded-3xl bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-2xl relative space-y-5">
               <button
                 onClick={() => setBookingToCancel(null)}
                 className="absolute top-5 right-5 p-2 rounded-xl text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
@@ -330,7 +330,7 @@ export default function MyBookingsPage() {
                   type="button"
                   onClick={() => setBookingToCancel(null)}
                   disabled={cancelling}
-                  className="flex-1 py-3 rounded-xl text-xs font-semibold border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="flex-1 py-3 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
                 >
                   Keep Reservation
                 </button>

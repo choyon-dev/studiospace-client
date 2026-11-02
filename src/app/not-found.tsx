@@ -6,10 +6,10 @@ export default function NotFound() {
   return (
     <div className="min-h-[75vh] flex flex-col items-center justify-center px-4 py-16 text-center">
       <div className="relative mb-8">
-        <div className="size-32 rounded-3xl bg-amber-500/10 border-2 border-amber-500/30 flex items-center justify-center text-amber-500 mx-auto shadow-xl shadow-amber-500/10 animate-pulse">
+        <div className="size-32 rounded-3xl bg-amber-500/10 flex items-center justify-center text-amber-500 mx-auto shadow-xl shadow-amber-500/10 animate-pulse">
           <Aperture className="size-16 stroke-[1.8]" />
         </div>
-        <div className="absolute -top-2 -right-2 size-10 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-amber-400">
+        <div className="absolute -top-2 -right-2 size-10 rounded-2xl bg-zinc-900 shadow-md flex items-center justify-center text-amber-400">
           <Film className="size-5" />
         </div>
         <div className="absolute -bottom-2 -left-2 size-9 rounded-2xl bg-amber-500 text-zinc-950 flex items-center justify-center shadow-md">
@@ -35,7 +35,7 @@ export default function NotFound() {
         </Link>
         <Link
           href="/studios"
-          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-xs border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 shadow-xs transition-colors"
         >
           <span>Explore All Studios</span>
         </Link>
