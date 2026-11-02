@@ -54,7 +54,10 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${syne.variable} ${plusJakartaSans.variable}`}
     >
-      <body className="min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-zinc-950">
+      <body
+        suppressHydrationWarning
+        className="min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-zinc-950"
+      >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <AuthProvider>
             <Toaster position="top-right" richColors closeButton />
