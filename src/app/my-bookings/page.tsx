@@ -230,6 +230,7 @@ export default function MyBookingsPage() {
                       }
                       alt={booking.studioTitle}
                       fill
+                      sizes="(max-width: 640px) 80px, 96px"
                       className="object-cover"
                     />
                   </div>

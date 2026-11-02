@@ -51,6 +51,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={`${syne.variable} ${plusJakartaSans.variable}`}
     >
       <body className="min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-zinc-950">

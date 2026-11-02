@@ -155,6 +155,7 @@ export default function MyListingsPage() {
                               src={item.imageUrl}
                               alt={item.title}
                               fill
+                              sizes="56px"
                               className="object-cover"
                             />
                           </div>

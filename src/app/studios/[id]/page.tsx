@@ -206,6 +206,7 @@ export default function StudioDetailPage() {
           alt={studio.title}
           fill
           priority
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
@@ -296,6 +297,7 @@ export default function StudioDetailPage() {
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=128&q=80"
                   alt={studio.ownerName}
                   fill
+                  sizes="56px"
                   className="object-cover"
                 />
               </div>

@@ -246,7 +246,9 @@ export default function HeroSlider() {
                     src={slide.image}
                     alt={slide.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1152px"
                     priority={slide.id === 1}
+                    loading={slide.id === 1 ? 'eager' : 'lazy'}
                     className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-black/30" />
