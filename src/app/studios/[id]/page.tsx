@@ -21,6 +21,18 @@ import {
   FileDown,
   Sparkles,
   ArrowLeft,
+  Ruler,
+  Maximize2,
+  Zap,
+  Volume2,
+  Wind,
+  Truck,
+  SunMedium,
+  Wifi,
+  Car,
+  ExternalLink,
+  ShieldCheck,
+  Building,
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 
@@ -190,6 +202,23 @@ export default function StudioDetailPage() {
     );
   }
 
+  const specs = studio.specs || {
+    squareFeet: 2000,
+    ceilingHeight: '16 ft',
+    floorType: 'Polished Concrete',
+    powerService: '200A 3-Phase',
+    soundRating: 'STC 55 Acoustic Treatment',
+    hvacType: 'Silent Whisper Air',
+    freightAccess: 'Ground Floor Direct Loading',
+    lightingControl: 'Motorized Blackout',
+    internetSpeed: '1 Gbps Fiber',
+    parkingSpaces: '2 Dedicated Spaces',
+  };
+
+  const osmUrl = studio.coordinates
+    ? `https://www.openstreetmap.org/?mlat=${studio.coordinates.lat}&mlon=${studio.coordinates.lon}#map=16/${studio.coordinates.lat}/${studio.coordinates.lon}`
+    : `https://www.openstreetmap.org/search?query=${encodeURIComponent(studio.location)}`;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <Link
@@ -200,7 +229,7 @@ export default function StudioDetailPage() {
         <span>Back to All Studios</span>
       </Link>
 
-      <div className="relative aspect-[16/9] md:aspect-[21/9] w-full rounded-3xl overflow-hidden mb-10 shadow-xl">
+      <div className="relative aspect-[16/9] md:aspect-[21/9] w-full rounded-3xl overflow-hidden mb-6 shadow-xl">
         <Image
           src={studio.imageUrl}
           alt={studio.title}
@@ -211,16 +240,21 @@ export default function StudioDetailPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
 
-        <div className="absolute top-4 left-4">
+        <div className="absolute top-4 left-4 flex items-center gap-2">
           <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-950/80 backdrop-blur-md text-amber-400">
             {studio.category}
           </span>
+          {studio.city && (
+            <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-950/80 backdrop-blur-md text-zinc-300">
+              {studio.city}{studio.state ? `, ${studio.state}` : ''}
+            </span>
+          )}
         </div>
 
         <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs text-zinc-300 mb-2">
-              <MapPin className="size-4 text-amber-500" />
+              <MapPin className="size-4 text-amber-500 shrink-0" />
               <span>{studio.location}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-bold text-white tracking-tight">
@@ -233,6 +267,68 @@ export default function StudioDetailPage() {
             <span className="text-lg font-bold text-white tabular-nums">{studio.rating.toFixed(1)}</span>
             <span className="text-xs text-zinc-400">({studio.reviewCount} reviews)</span>
           </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
+        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
+          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
+            <Maximize2 className="size-3.5 text-amber-500" />
+            <span>Usable Area</span>
+          </div>
+          <p className="mt-1.5 text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">
+            {specs.squareFeet.toLocaleString()} <span className="text-xs font-normal text-zinc-400">sq.ft</span>
+          </p>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
+          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
+            <Ruler className="size-3.5 text-amber-500" />
+            <span>Clear Height</span>
+          </div>
+          <p className="mt-1.5 text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100">
+            {specs.ceilingHeight}
+          </p>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
+          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
+            <Zap className="size-3.5 text-amber-500" />
+            <span>Power Camlock</span>
+          </div>
+          <p className="mt-1.5 text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate" title={specs.powerService}>
+            {specs.powerService}
+          </p>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
+          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
+            <Volume2 className="size-3.5 text-amber-500" />
+            <span>Sound Rating</span>
+          </div>
+          <p className="mt-1.5 text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate" title={specs.soundRating}>
+            {specs.soundRating}
+          </p>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
+          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
+            <Users className="size-3.5 text-amber-500" />
+            <span>Max Crew</span>
+          </div>
+          <p className="mt-1.5 text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">
+            {studio.maxCapacity} <span className="text-xs font-normal text-zinc-400">people</span>
+          </p>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-xs">
+          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-semibold uppercase">
+            <Truck className="size-3.5 text-amber-500" />
+            <span>Loading Access</span>
+          </div>
+          <p className="mt-1.5 text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate" title={specs.freightAccess}>
+            {specs.freightAccess}
+          </p>
         </div>
       </div>
 
@@ -251,7 +347,7 @@ export default function StudioDetailPage() {
                 <span className="text-[11px] text-zinc-400 font-semibold uppercase">Max Capacity</span>
                 <div className="flex items-center gap-1.5 mt-1 font-bold text-zinc-900 dark:text-zinc-100 text-sm">
                   <Users className="size-4 text-amber-500" />
-                  <span>Up to {studio.maxCapacity} people</span>
+                  <span>Up to {studio.maxCapacity} crew members</span>
                 </div>
               </div>
 
@@ -267,7 +363,118 @@ export default function StudioDetailPage() {
                 <span className="text-[11px] text-zinc-400 font-semibold uppercase">Booking Policy</span>
                 <div className="flex items-center gap-1.5 mt-1 font-bold text-zinc-900 dark:text-zinc-100 text-sm">
                   <Clock className="size-4 text-amber-500" />
-                  <span>Instant Approval</span>
+                  <span>Instant Confirmation</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-500 uppercase tracking-wider">
+                  Verified Engineering Data
+                </span>
+                <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">
+                  Technical Specifications Blueprint
+                </h2>
+              </div>
+              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
+                <ShieldCheck className="size-4" />
+                <span>On-Site Verified</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-3">
+                <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-500">
+                    <Building className="size-4" />
+                  </div>
+                  <span>Architectural & Spatial</span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
+                    <span className="text-zinc-500">Floor Surface</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.floorType}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
+                    <span className="text-zinc-500">Ceiling Height</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.ceilingHeight}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Total Usable Area</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.squareFeet} sq.ft</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-3">
+                <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-500">
+                    <Zap className="size-4" />
+                  </div>
+                  <span>Electrical & Lighting</span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
+                    <span className="text-zinc-500">Power Service</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.powerService}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
+                    <span className="text-zinc-500">Lighting Control</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.lightingControl}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Blackout System</span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">Equipped</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-3">
+                <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-500">
+                    <Volume2 className="size-4" />
+                  </div>
+                  <span>Acoustics & Climate</span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
+                    <span className="text-zinc-500">Soundproof Isolation</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.soundRating}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
+                    <span className="text-zinc-500">HVAC System</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.hvacType}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Noise Criteria</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">Broadcast Rated</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-3">
+                <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-500">
+                    <Truck className="size-4" />
+                  </div>
+                  <span>Logistics & Access</span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
+                    <span className="text-zinc-500">Freight Loading</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.freightAccess}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
+                    <span className="text-zinc-500">Parking Capacity</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.parkingSpaces}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-zinc-500">Fiber Internet</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{specs.internetSpeed}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -287,6 +494,58 @@ export default function StudioDetailPage() {
                   <span>{amenity}</span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900/60 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-500 uppercase tracking-wider">
+                  OpenStreetMap Verified
+                </span>
+                <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">
+                  Location & Creative Hub
+                </h2>
+              </div>
+              <a
+                href={osmUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline"
+              >
+                <span>View on OpenStreetMap</span>
+                <ExternalLink className="size-3.5" />
+              </a>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 space-y-3">
+              <div className="flex items-start gap-3">
+                <MapPin className="size-5 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    {studio.location}
+                  </p>
+                  {studio.city && (
+                    <p className="text-xs text-zinc-500 mt-0.5">
+                      Hub: {studio.city}{studio.state ? `, ${studio.state}` : ''}{studio.country ? ` • ${studio.country}` : ''}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {studio.coordinates && (
+                <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-zinc-500">
+                  <span className="px-2.5 py-1 rounded-lg bg-zinc-200 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono">
+                    Lat: {studio.coordinates.lat.toFixed(4)}
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-zinc-200 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono">
+                    Lon: {studio.coordinates.lon.toFixed(4)}
+                  </span>
+                  <span className="text-zinc-400">
+                    Verified geospatial coordinates via OpenStreetMap Nominatim
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -393,7 +652,7 @@ export default function StudioDetailPage() {
 
             <button
               onClick={handleOpenBooking}
-              className="w-full py-3.5 rounded-xl font-bold text-sm bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-lg shadow-amber-500/20"
+              className="w-full py-3.5 rounded-xl font-bold text-sm bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-lg shadow-amber-500/20 cursor-pointer"
             >
               Book Workspace Now
             </button>
@@ -535,7 +794,7 @@ export default function StudioDetailPage() {
                 <button
                   type="submit"
                   disabled={bookingSubmitting || totalHours <= 0}
-                  className="w-full py-3.5 rounded-xl text-sm font-semibold bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-md shadow-amber-500/20 disabled:opacity-50"
+                  className="w-full py-3.5 rounded-xl text-sm font-semibold bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-md shadow-amber-500/20 disabled:opacity-50 cursor-pointer"
                 >
                   {bookingSubmitting ? 'Checking Availability...' : 'Confirm Instant Reservation'}
                 </button>

@@ -5,22 +5,31 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { fetchStudioById, updateStudio } from '@/lib/api';
-import { StudioCategory } from '@/types';
+import OsmLocationPicker from '@/components/OsmLocationPicker';
+import { fetchStudioById, updateStudio, fetchStudioMeta, uploadToImgBB } from '@/lib/api';
+import { StudioCategory, OsmLocationSuggestion, StudioSpecs } from '@/types';
 import { toast } from 'sonner';
 import {
   Upload,
   Sparkles,
   DollarSign,
   Users,
-  MapPin,
   Check,
   PlusCircle,
   FileText,
   ArrowLeft,
+  Sliders,
+  Cpu,
+  ArrowRight,
+  Maximize2,
+  Wind,
+  Truck,
+  Sun,
+  Wifi,
+  Car,
 } from 'lucide-react';
 
-const CATEGORIES: StudioCategory[] = [
+const DEFAULT_CATEGORIES: StudioCategory[] = [
   'Photo Studio',
   'Film Stage',
   'Podcast Lounge',
@@ -53,22 +62,54 @@ export default function EditStudioPage() {
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
+  const [categories, setCategories] = useState<StudioCategory[]>(DEFAULT_CATEGORIES);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<StudioCategory>('Photo Studio');
   const [hourlyRate, setHourlyRate] = useState<number>(85);
   const [securityDeposit, setSecurityDeposit] = useState<number>(150);
   const [maxCapacity, setMaxCapacity] = useState<number>(10);
+
   const [location, setLocation] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [country, setCountry] = useState('United States');
+  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+  const [osmPlaceId, setOsmPlaceId] = useState<string | null>(null);
+
+  const [specs, setSpecs] = useState<StudioSpecs>({
+    squareFeet: 2000,
+    ceilingHeight: '16 ft clear to overhead grid',
+    floorType: 'Seamless Polished Concrete',
+    powerService: '3-Phase 200A Camlock + 100A Shore Power',
+    soundRating: 'STC 60 Certified Soundproof',
+    hvacType: 'Ultra-Silent Whisper Air (NC-20)',
+    freightAccess: 'Drive-in 14ft Roll-up Garage Bay Door',
+    lightingControl: '100% Motorized Blackout Curtains + Daylight Skylights',
+    internetSpeed: '1 Gbps Symmetrical Dedicated Fiber (Wi-Fi 6E)',
+    parkingSpaces: '4 Dedicated Gated Vehicle Spaces + Loading Dock',
+  });
+
   const [imageUrl, setImageUrl] = useState('');
   const [overview, setOverview] = useState('');
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [customAmenity, setCustomAmenity] = useState('');
+
   useEffect(() => {
     async function load() {
       if (!id) return;
       try {
-        const data = await fetchStudioById(id);
+        const [meta, data] = await Promise.all([
+          fetchStudioMeta().catch(() => null),
+          fetchStudioById(id),
+        ]);
+
+        if (meta?.categories && meta.categories.length > 0) {
+          const names = meta.categories.map((c) => c.name);
+          setCategories(Array.from(new Set([...names, ...DEFAULT_CATEGORIES])));
+        }
+
         if (data) {
           setTitle(data.title);
           setCategory(data.category);
@@ -76,6 +117,25 @@ export default function EditStudioPage() {
           setSecurityDeposit(data.securityDeposit);
           setMaxCapacity(data.maxCapacity);
           setLocation(data.location);
+          setCity(data.city || '');
+          setState(data.state || '');
+          setCountry(data.country || 'United States');
+          if (data.coordinates) setCoordinates(data.coordinates);
+          if (data.osmPlaceId) setOsmPlaceId(data.osmPlaceId);
+          if (data.specs) {
+            setSpecs({
+              squareFeet: data.specs.squareFeet || 1500,
+              ceilingHeight: data.specs.ceilingHeight || '16 ft clearance',
+              floorType: data.specs.floorType || 'Seamless Polished Concrete',
+              powerService: data.specs.powerService || '3-Phase 200A Camlock',
+              soundRating: data.specs.soundRating || 'STC 60 Soundproof',
+              hvacType: data.specs.hvacType || 'Ultra-Silent Whisper Air (NC-20)',
+              freightAccess: data.specs.freightAccess || 'Ground-level loading dock',
+              lightingControl: data.specs.lightingControl || '100% Blackout Capable',
+              internetSpeed: data.specs.internetSpeed || '1 Gbps Dedicated Fiber (Wi-Fi 6E)',
+              parkingSpaces: data.specs.parkingSpaces || 'Dedicated on-site parking',
+            });
+          }
           setImageUrl(data.imageUrl);
           setOverview(data.overview);
           setSelectedAmenities(data.amenities || []);
@@ -91,6 +151,40 @@ export default function EditStudioPage() {
     }
     load();
   }, [id, router]);
+
+  const handleLocationSelect = (address: string, details?: OsmLocationSuggestion) => {
+    setLocation(address);
+    if (details) {
+      setCity(details.city);
+      setState(details.state);
+      setCountry(details.country);
+      setCoordinates({ lat: details.lat, lon: details.lon });
+      setOsmPlaceId(details.osmPlaceId);
+    }
+  };
+
+  const handleSpecChange = (key: keyof StudioSpecs, val: string | number) => {
+    setSpecs((prev) => ({
+      ...prev,
+      [key]: val,
+    }));
+  };
+
+  const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const url = await uploadToImgBB(file);
+      setImageUrl(url);
+      toast.success('Studio image updated successfully');
+    } catch (err: any) {
+      toast.error('Image upload failed: ' + (err.message || 'Please use direct URL'));
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   const toggleAmenity = (amenity: string) => {
     if (selectedAmenities.includes(amenity)) {
@@ -110,29 +204,43 @@ export default function EditStudioPage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !location || !imageUrl || !overview) {
+    if (!title.trim() || !location.trim() || !imageUrl.trim() || !overview.trim()) {
       toast.error('Please complete all required fields.');
       return;
     }
 
     setSubmitting(true);
     try {
-      await updateStudio(id, {
-        title,
-        category,
-        hourlyRate: Number(hourlyRate),
-        securityDeposit: Number(securityDeposit),
-        maxCapacity: Number(maxCapacity),
-        location,
-        imageUrl,
-        amenities: selectedAmenities,
-        overview,
-      });
+      const token = localStorage.getItem('token') || '';
+      await updateStudio(
+        id,
+        {
+          title: title.trim(),
+          category,
+          hourlyRate: Number(hourlyRate),
+          securityDeposit: Number(securityDeposit),
+          maxCapacity: Number(maxCapacity),
+          location: location.trim(),
+          city: city || location.split(',')[0].trim(),
+          state,
+          country,
+          coordinates: coordinates || undefined,
+          osmPlaceId: osmPlaceId || undefined,
+          specs: {
+            ...specs,
+            squareFeet: Number(specs.squareFeet),
+          },
+          imageUrl: imageUrl.trim(),
+          amenities: selectedAmenities,
+          overview: overview.trim(),
+        },
+        token
+      );
 
-      toast.success('Studio listing updated successfully!');
+      toast.success('Studio specifications and listing updated successfully');
       router.push('/my-listings');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update studio listing.');
+      toast.error(err.message || 'Failed to update studio listing');
     } finally {
       setSubmitting(false);
     }
@@ -140,9 +248,8 @@ export default function EditStudioPage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 animate-pulse space-y-6">
-        <div className="h-8 w-60 bg-zinc-200 dark:bg-zinc-800 rounded-xl" />
-        <div className="h-96 w-full bg-zinc-200 dark:bg-zinc-800 rounded-3xl" />
+      <div className="max-w-4xl mx-auto px-4 py-20 text-center text-zinc-400">
+        Loading studio technical specifications...
       </div>
     );
   }
@@ -152,18 +259,21 @@ export default function EditStudioPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Link
           href="/my-listings"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-500 hover:text-amber-500 mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 mb-6 transition-colors"
         >
           <ArrowLeft className="size-4" />
           <span>Back to My Listings</span>
         </Link>
 
-        <div className="mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-            Update Listing: {title}
+        <div className="mb-10 text-center sm:text-left">
+          <span className="text-xs font-mono uppercase tracking-wider text-amber-500 font-bold">
+            Facility Specifications
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mt-1">
+            Edit Studio Specifications
           </h1>
-          <p className="text-zinc-600 dark:text-zinc-400 mt-1 text-sm">
-            Modify rates, amenities, facility photos, and booking descriptions.
+          <p className="text-zinc-600 dark:text-zinc-400 mt-1 text-sm sm:text-base">
+            Update engineering specs, verified address, equipment packages, and booking policies.
           </p>
         </div>
 
@@ -197,7 +307,7 @@ export default function EditStudioPage() {
                   onChange={(e) => setCategory(e.target.value as StudioCategory)}
                   className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                 >
-                  {CATEGORIES.map((cat) => (
+                  {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
                     </option>
@@ -226,7 +336,7 @@ export default function EditStudioPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                  Security Deposit ($ USD)
+                  Security Deposit ($ USD) *
                 </label>
                 <div className="relative">
                   <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
@@ -257,19 +367,190 @@ export default function EditStudioPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-4">
+            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <Cpu className="size-4 text-amber-500" />
+              <span>Verified Facility Location (OpenStreetMap Engine)</span>
+            </h2>
 
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Location / Facility Address *
+                Physical Facility Address (Global Geocoded) *
               </label>
-              <div className="relative">
-                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
+              <OsmLocationPicker
+                value={location}
+                onChange={handleLocationSelect}
+                required
+                placeholder="Type street, district, or city..."
+              />
+            </div>
+
+            {coordinates && (
+              <div className="flex flex-wrap items-center gap-3 p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 text-xs text-zinc-500">
+                <span className="font-semibold text-zinc-800 dark:text-zinc-200">Resolved Geocode:</span>
+                <span>City: {city || 'Direct'}</span>
+                <span>•</span>
+                <span>Coords: {coordinates.lat.toFixed(4)}, {coordinates.lon.toFixed(4)}</span>
+                <span>•</span>
+                <span className="text-emerald-500 font-medium">OSM Verified</span>
+              </div>
+            )}
+          </div>
+
+          <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                <Sliders className="size-4 text-amber-500" />
+                <span>Technical Specifications & Engineering Blueprint</span>
+              </h2>
+              <span className="text-xs font-mono text-amber-500 font-semibold uppercase">
+                All Fields Required
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5 flex items-center gap-1.5">
+                  <Maximize2 className="size-3.5 text-amber-500" />
+                  <span>Usable Area (sq.ft) *</span>
+                </label>
+                <input
+                  type="number"
+                  min="50"
+                  value={specs.squareFeet}
+                  onChange={(e) => handleSpecChange('squareFeet', Number(e.target.value))}
+                  required
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  Ceiling Height Clearance *
+                </label>
                 <input
                   type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  value={specs.ceilingHeight}
+                  onChange={(e) => handleSpecChange('ceilingHeight', e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  Floor Construction Type *
+                </label>
+                <input
+                  type="text"
+                  value={specs.floorType}
+                  onChange={(e) => handleSpecChange('floorType', e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  Power Capacity & Service *
+                </label>
+                <input
+                  type="text"
+                  value={specs.powerService}
+                  onChange={(e) => handleSpecChange('powerService', e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  Acoustic / Sound Isolation *
+                </label>
+                <input
+                  type="text"
+                  value={specs.soundRating}
+                  onChange={(e) => handleSpecChange('soundRating', e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5 flex items-center gap-1.5">
+                  <Wind className="size-3.5 text-amber-500" />
+                  <span>HVAC Air Handling *</span>
+                </label>
+                <input
+                  type="text"
+                  value={specs.hvacType}
+                  onChange={(e) => handleSpecChange('hvacType', e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5 flex items-center gap-1.5">
+                  <Truck className="size-3.5 text-amber-500" />
+                  <span>Freight & Load-in Access *</span>
+                </label>
+                <input
+                  type="text"
+                  value={specs.freightAccess}
+                  onChange={(e) => handleSpecChange('freightAccess', e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5 flex items-center gap-1.5">
+                  <Sun className="size-3.5 text-amber-500" />
+                  <span>Lighting & Blackout Capabilities *</span>
+                </label>
+                <input
+                  type="text"
+                  value={specs.lightingControl}
+                  onChange={(e) => handleSpecChange('lightingControl', e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5 flex items-center gap-1.5">
+                  <Wifi className="size-3.5 text-amber-500" />
+                  <span>Internet Network Bandwidth *</span>
+                </label>
+                <input
+                  type="text"
+                  value={specs.internetSpeed}
+                  onChange={(e) => handleSpecChange('internetSpeed', e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5 flex items-center gap-1.5">
+                  <Car className="size-3.5 text-amber-500" />
+                  <span>Parking & Crew Staging *</span>
+                </label>
+                <input
+                  type="text"
+                  value={specs.parkingSpaces}
+                  onChange={(e) => handleSpecChange('parkingSpaces', e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                 />
               </div>
             </div>
@@ -278,31 +559,53 @@ export default function EditStudioPage() {
           <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-6">
             <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
               <Upload className="size-4 text-amber-500" />
-              <span>Studio Visuals</span>
+              <span>Studio Visuals & Media</span>
             </h2>
 
-            <div>
-              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Image URL *
-              </label>
-              <input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
-              />
-            </div>
-
-            {imageUrl && (
-              <div className="rounded-2xl overflow-hidden shadow-xs max-h-56 relative aspect-video">
-                <img
-                  src={imageUrl}
-                  alt="Preview"
-                  className="w-full h-full object-cover"
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  Direct High-Resolution Image URL *
+                </label>
+                <input
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                 />
               </div>
-            )}
+
+              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-xs text-zinc-500">
+                  <p className="font-semibold text-zinc-800 dark:text-zinc-200">
+                    Replace Photo via ImgBB
+                  </p>
+                  <p>Upload a new image file to replace the current display asset.</p>
+                </div>
+                <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-amber-500 hover:text-zinc-950 transition-colors shrink-0">
+                  <Upload className="size-3.5" />
+                  <span>{uploadingImage ? 'Uploading...' : 'Choose New Photo'}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageFileUpload}
+                    disabled={uploadingImage}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              {imageUrl && (
+                <div className="rounded-2xl overflow-hidden shadow-xs max-h-56 relative aspect-video">
+                  <img
+                    src={imageUrl}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-6">
@@ -358,7 +661,7 @@ export default function EditStudioPage() {
 
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Detailed Overview *
+                Detailed Overview Narrative *
               </label>
               <textarea
                 rows={5}
@@ -392,9 +695,10 @@ export default function EditStudioPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-8 py-3.5 rounded-xl font-bold text-sm bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-lg shadow-amber-500/25 disabled:opacity-50"
+              className="px-8 py-3.5 rounded-xl font-bold text-sm bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-lg shadow-amber-500/25 disabled:opacity-50 flex items-center gap-2"
             >
-              {submitting ? 'Saving Changes...' : 'Save Updated Listing'}
+              <span>{submitting ? 'Saving Changes...' : 'Save Updated Specifications'}</span>
+              <ArrowRight className="size-4" />
             </button>
           </div>
         </form>

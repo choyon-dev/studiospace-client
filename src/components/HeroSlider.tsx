@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { StudioMeta } from '@/types';
+import { fetchStudioMeta } from '@/lib/api';
 import {
   Search,
   MapPin,
@@ -17,9 +19,22 @@ const PRESET_TAGS = [
 
 export default function HeroSlider() {
   const router = useRouter();
+  const [meta, setMeta] = useState<StudioMeta | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedLocation, setSelectedLocation] = useState('All');
-  const [selectedSlot, setSelectedSlot] = useState('All');
+  const [selectedHub, setSelectedHub] = useState('All');
+  const [selectedRate, setSelectedRate] = useState('All');
+
+  useEffect(() => {
+    async function loadMeta() {
+      try {
+        const metaData = await fetchStudioMeta();
+        setMeta(metaData);
+      } catch (err) {
+        console.error('Failed to load hero meta:', err);
+      }
+    }
+    loadMeta();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,8 +42,11 @@ export default function HeroSlider() {
     if (selectedCategory && selectedCategory !== 'All') {
       params.append('category', selectedCategory);
     }
-    if (selectedLocation && selectedLocation !== 'All') {
-      params.append('search', selectedLocation);
+    if (selectedHub && selectedHub !== 'All') {
+      params.append('hub', selectedHub);
+    }
+    if (selectedRate && selectedRate !== 'All') {
+      params.append('rate', selectedRate);
     }
     const query = params.toString();
     router.push(query ? `/studios?${query}` : '/studios');
@@ -71,12 +89,14 @@ export default function HeroSlider() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full font-semibold text-sm text-slate-900 dark:text-zinc-100 bg-transparent border-0 focus:outline-none focus:ring-0 p-0 cursor-pointer"
               >
-                <option value="All" className="dark:bg-zinc-900">All Disciplines</option>
-                <option value="Photo Studio" className="dark:bg-zinc-900">Photo Studios</option>
-                <option value="Film Stage" className="dark:bg-zinc-900">Film Stages</option>
-                <option value="Podcast Lounge" className="dark:bg-zinc-900">Podcast Lounges</option>
-                <option value="Music Suite" className="dark:bg-zinc-900">Music Suites</option>
-                <option value="Workshop" className="dark:bg-zinc-900">Artisan Workshops</option>
+                <option value="All" className="dark:bg-zinc-900">
+                  All Disciplines {meta ? `(${meta.totalStudios})` : ''}
+                </option>
+                {meta?.categories.map((cat) => (
+                  <option key={cat.name} value={cat.name} className="dark:bg-zinc-900">
+                    {cat.name} ({cat.count})
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -84,37 +104,38 @@ export default function HeroSlider() {
               <MapPin className="size-4 text-slate-400 dark:text-zinc-500 shrink-0" />
               <select
                 aria-label="Location"
-                value={selectedLocation}
-                onChange={(e) => setSelectedLocation(e.target.value)}
+                value={selectedHub}
+                onChange={(e) => setSelectedHub(e.target.value)}
                 className="w-full font-semibold text-sm text-slate-900 dark:text-zinc-100 bg-transparent border-0 focus:outline-none focus:ring-0 p-0 cursor-pointer"
               >
                 <option value="All" className="dark:bg-zinc-900">All Creative Hubs</option>
-                <option value="Brooklyn" className="dark:bg-zinc-900">Brooklyn / NYC</option>
-                <option value="Los Angeles" className="dark:bg-zinc-900">Los Angeles, CA</option>
-                <option value="Austin" className="dark:bg-zinc-900">Austin, TX</option>
-                <option value="Chicago" className="dark:bg-zinc-900">Chicago, IL</option>
+                {meta?.hubs.map((hub) => (
+                  <option key={hub.city} value={hub.city} className="dark:bg-zinc-900">
+                    {hub.label} ({hub.count})
+                  </option>
+                ))}
               </select>
             </div>
 
             <div className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors rounded-xl cursor-pointer">
               <Clock className="size-4 text-slate-400 dark:text-zinc-500 shrink-0" />
               <select
-                aria-label="Shoot Duration"
-                value={selectedSlot}
-                onChange={(e) => setSelectedSlot(e.target.value)}
+                aria-label="Hourly Rate"
+                value={selectedRate}
+                onChange={(e) => setSelectedRate(e.target.value)}
                 className="w-full font-semibold text-sm text-slate-900 dark:text-zinc-100 bg-transparent border-0 focus:outline-none focus:ring-0 p-0 cursor-pointer"
               >
-                <option value="All" className="dark:bg-zinc-900">Flexible Hourly</option>
-                <option value="half" className="dark:bg-zinc-900">Half-Day (4 Hours)</option>
-                <option value="full" className="dark:bg-zinc-900">Full-Day (8+ Hours)</option>
-                <option value="lockout" className="dark:bg-zinc-900">Multi-Day Lockout</option>
+                <option value="All" className="dark:bg-zinc-900">Flexible Hourly (All Rates)</option>
+                <option value="budget" className="dark:bg-zinc-900">Under $75 / hr (Accessible)</option>
+                <option value="standard" className="dark:bg-zinc-900">$75 - $125 / hr (Standard Pro)</option>
+                <option value="commercial" className="dark:bg-zinc-900">Over $125 / hr (Commercial)</option>
               </select>
             </div>
 
             <div className="p-1">
               <button
                 type="submit"
-                className="w-full h-11 bg-amber-500 hover:bg-amber-400 active:scale-98 text-zinc-950 font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-md shadow-amber-500/25 transition-all"
+                className="w-full h-11 bg-amber-500 hover:bg-amber-400 active:scale-98 text-zinc-950 font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-md shadow-amber-500/25 transition-all cursor-pointer"
               >
                 <Search className="size-4" />
                 <span>Search Spaces</span>
@@ -128,7 +149,7 @@ export default function HeroSlider() {
                 key={tag.label}
                 type="button"
                 onClick={() => handlePresetClick(tag.category)}
-                className="px-3.5 py-1.5 rounded-full bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 text-xs font-medium transition-all shadow-xs"
+                className="px-3.5 py-1.5 rounded-full bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 text-xs font-medium transition-all shadow-xs cursor-pointer"
               >
                 {tag.label}
               </button>

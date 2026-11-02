@@ -6,8 +6,8 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from 'next-themes';
-import { Studio } from '@/types';
-import { fetchAllStudios } from '@/lib/api';
+import { Studio, StudioMeta } from '@/types';
+import { fetchAllStudios, fetchStudioMeta } from '@/lib/api';
 import {
   Aperture,
   Menu,
@@ -39,10 +39,15 @@ export default function Navbar() {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [meta, setMeta] = useState<StudioMeta | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Studio[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  useEffect(() => {
+    fetchStudioMeta().then(setMeta).catch(() => {});
+  }, []);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -632,7 +637,7 @@ export default function Navbar() {
                       Popular Disciplines
                     </span>
                     <div className="flex flex-wrap gap-1.5">
-                      {['Photo Studio', 'Film Stage', 'Podcast Lounge', 'Music Suite', 'Workshop'].map(
+                      {(meta?.categories.map((c) => c.name) || ['Photo Studio', 'Film Stage', 'Podcast Lounge', 'Music Suite', 'Workshop']).slice(0, 6).map(
                         (cat) => (
                           <button
                             key={cat}
@@ -652,7 +657,7 @@ export default function Navbar() {
                       Popular Creative Hubs
                     </span>
                     <div className="flex flex-wrap gap-1.5">
-                      {['Brooklyn', 'Silver Lake', 'Austin', 'Arts District', 'Chicago'].map((loc) => (
+                      {(meta?.hubs.map((h) => h.city) || ['Brooklyn', 'Los Angeles', 'Austin', 'Chicago', 'Queens']).slice(0, 6).map((loc) => (
                         <button
                           key={loc}
                           type="button"

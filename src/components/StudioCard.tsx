@@ -42,7 +42,7 @@ export default function StudioCard({ studio }: { studio: Studio }) {
         </button>
 
         <div className="absolute bottom-3 left-3 font-mono text-[10px] text-white px-2 py-0.5 rounded-md bg-slate-900/80 backdrop-blur-sm font-semibold">
-          {studio.maxCapacity * 350} SQ FT
+          {studio.specs?.squareFeet ? `${studio.specs.squareFeet.toLocaleString()} SQ FT` : `${studio.maxCapacity * 350} SQ FT`}
         </div>
 
         <div className="absolute bottom-3 right-3">
