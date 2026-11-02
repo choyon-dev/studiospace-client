@@ -1,4 +1,4 @@
-import { Studio, Booking, StudioMeta, OsmLocationSuggestion, StudioFilters } from '@/types';
+import { Studio, Booking, StudioMeta, OsmLocationSuggestion, StudioFilters, BookedSlot, Review } from '@/types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -619,4 +619,126 @@ export async function uploadToImgBB(file: File): Promise<string> {
     return json.data.url;
   }
   throw new Error('Invalid response from ImgBB upload service');
+}
+
+export async function fetchStudioBookedSlots(studioId: string, date: string): Promise<BookedSlot[]> {
+  try {
+    const res = await fetch(`${API_BASE}/bookings/studio/${studioId}?date=${encodeURIComponent(date)}`, {
+      cache: 'no-store',
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchIncomingBookings(token?: string): Promise<Booking[]> {
+  try {
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const res = await fetch(`${API_BASE}/bookings/incoming`, {
+      headers,
+      credentials: 'include',
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error('Failed to fetch incoming booking requests');
+    const json = await res.json();
+    return json.data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function approveBooking(id: string, token?: string): Promise<Booking> {
+  const headers: Record<string, string> = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}/bookings/${id}/approve`, {
+    method: 'PATCH',
+    headers,
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    const errJson = await res.json().catch(() => ({}));
+    throw new Error(errJson.message || 'Failed to approve booking request');
+  }
+
+  const json = await res.json();
+  return json.data;
+}
+
+export async function declineBooking(id: string, token?: string): Promise<Booking> {
+  const headers: Record<string, string> = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}/bookings/${id}/decline`, {
+    method: 'PATCH',
+    headers,
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    const errJson = await res.json().catch(() => ({}));
+    throw new Error(errJson.message || 'Failed to decline booking request');
+  }
+
+  const json = await res.json();
+  return json.data;
+}
+
+export async function fetchStudioReviews(studioId: string): Promise<Review[]> {
+  try {
+    const res = await fetch(`${API_BASE}/reviews/studio/${studioId}`, {
+      cache: 'no-store',
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function checkBookingReviewed(bookingId: string, token?: string): Promise<boolean> {
+  try {
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const res = await fetch(`${API_BASE}/reviews/check/${bookingId}`, {
+      headers,
+      credentials: 'include',
+      cache: 'no-store',
+    });
+    if (!res.ok) return false;
+    const json = await res.json();
+    return !!json.reviewed;
+  } catch {
+    return false;
+  }
+}
+
+export async function submitStudioReview(data: Partial<Review>, token?: string): Promise<Review> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}/reviews`, {
+    method: 'POST',
+    headers,
+    credentials: 'include',
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errJson = await res.json().catch(() => ({}));
+    throw new Error(errJson.message || 'Failed to submit review');
+  }
+
+  const json = await res.json();
+  return json.data;
 }

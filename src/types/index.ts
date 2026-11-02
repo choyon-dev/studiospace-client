@@ -38,12 +38,14 @@ export interface Studio {
   osmPlaceId?: string;
   specs?: StudioSpecs;
   imageUrl: string;
+  images?: string[];
   amenities: string[];
   overview: string;
   ownerEmail: string;
   ownerName: string;
   rating: number;
   reviewCount: number;
+  bookingMode?: 'Instant' | 'Request';
   createdAt?: string;
   updatedAt?: string;
 }
@@ -95,7 +97,14 @@ export interface StudioFilters {
   sortBy?: string;
 }
 
-export type BookingStatus = 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled';
+export type BookingStatus = 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled' | 'Declined';
+
+export interface BookedSlot {
+  date: string;
+  startTime: string;
+  endTime: string;
+  status: string;
+}
 
 export interface Booking {
   _id: string;
@@ -110,5 +119,17 @@ export interface Booking {
   totalHours: number;
   totalCost: number;
   status: BookingStatus;
+  createdAt?: string;
+}
+
+export interface Review {
+  _id: string;
+  studioId: string;
+  bookingId: string;
+  bookerEmail: string;
+  bookerName: string;
+  rating: number;
+  comment: string;
+  productionType: string;
   createdAt?: string;
 }

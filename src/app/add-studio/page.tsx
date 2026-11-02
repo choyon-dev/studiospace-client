@@ -26,6 +26,7 @@ import {
   Sun,
   Wifi,
   Car,
+  X,
 } from 'lucide-react';
 
 const DEFAULT_CATEGORIES: StudioCategory[] = [
@@ -63,6 +64,7 @@ export default function AddStudioPage() {
   const [hourlyRate, setHourlyRate] = useState<number>(85);
   const [securityDeposit, setSecurityDeposit] = useState<number>(150);
   const [maxCapacity, setMaxCapacity] = useState<number>(12);
+  const [bookingMode, setBookingMode] = useState<'Instant' | 'Request'>('Instant');
 
   const [location, setLocation] = useState('');
   const [city, setCity] = useState('');
@@ -84,7 +86,11 @@ export default function AddStudioPage() {
     parkingSpaces: '4 Dedicated Gated Vehicle Spaces + Loading Dock',
   });
 
-  const [imageUrl, setImageUrl] = useState('');
+  const [images, setImages] = useState<string[]>([
+    'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80',
+  ]);
+  const [newImageUrl, setNewImageUrl] = useState('');
   const [overview, setOverview] = useState('');
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([
     'Profoto Strobe Lighting Kit',
@@ -129,19 +135,38 @@ export default function AddStudioPage() {
   };
 
   const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     setUploadingImage(true);
     try {
-      const url = await uploadToImgBB(file);
-      setImageUrl(url);
-      toast.success('Studio image hosted and verified successfully');
+      const uploadPromises = Array.from(files).map((f) => uploadToImgBB(f));
+      const urls = await Promise.all(uploadPromises);
+      const validUrls = urls.filter((u) => u && typeof u === 'string');
+      setImages((prev) => [...prev, ...validUrls]);
+      toast.success(`${validUrls.length} image(s) uploaded successfully`);
     } catch (err: any) {
       toast.error('Image upload failed: ' + (err.message || 'Please use direct URL'));
     } finally {
       setUploadingImage(false);
+      e.target.value = '';
     }
+  };
+
+  const handleAddImageUrl = () => {
+    if (!newImageUrl.trim()) return;
+    try {
+      new URL(newImageUrl.trim());
+      setImages((prev) => [...prev, newImageUrl.trim()]);
+      setNewImageUrl('');
+      toast.success('Image added to gallery');
+    } catch {
+      toast.error('Please enter a valid image URL');
+    }
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
 
   const toggleAmenity = (amenity: string) => {
@@ -170,20 +195,24 @@ export default function AddStudioPage() {
       toast.error('Please choose a verified studio facility address via OpenStreetMap');
       return;
     }
-    if (!imageUrl.trim()) {
-      toast.error('Direct high-resolution studio photo URL is required');
+    if (images.length < 2) {
+      toast.error('A minimum of 2 studio images are required to publish');
       return;
     }
     if (!overview.trim() || overview.trim().length < 20) {
       toast.error('Please provide a detailed overview of at least 20 characters');
       return;
     }
-    if (!specs.squareFeet || specs.squareFeet <= 0) {
-      toast.error('Please specify valid usable floor square footage');
+    if (!specs.squareFeet || Number(specs.squareFeet) <= 0) {
+      toast.error('Usable square footage is required');
       return;
     }
     if (!specs.ceilingHeight.trim()) {
       toast.error('Ceiling height clearance is required');
+      return;
+    }
+    if (!specs.floorType.trim()) {
+      toast.error('Floor construction type is required');
       return;
     }
     if (!specs.powerService.trim()) {
@@ -192,6 +221,26 @@ export default function AddStudioPage() {
     }
     if (!specs.soundRating.trim()) {
       toast.error('Sound isolation rating is required');
+      return;
+    }
+    if (!specs.hvacType.trim()) {
+      toast.error('HVAC climate specification is required');
+      return;
+    }
+    if (!specs.freightAccess.trim()) {
+      toast.error('Freight and loading access details are required');
+      return;
+    }
+    if (!specs.lightingControl.trim()) {
+      toast.error('Lighting control and blackout specification is required');
+      return;
+    }
+    if (!specs.internetSpeed.trim()) {
+      toast.error('Internet connectivity specification is required');
+      return;
+    }
+    if (!specs.parkingSpaces.trim()) {
+      toast.error('Parking capacity details are required');
       return;
     }
 
@@ -215,9 +264,11 @@ export default function AddStudioPage() {
             ...specs,
             squareFeet: Number(specs.squareFeet),
           },
-          imageUrl: imageUrl.trim(),
+          images,
+          imageUrl: images[0],
           amenities: selectedAmenities,
           overview: overview.trim(),
+          bookingMode,
         },
         token
       );
@@ -336,6 +387,49 @@ export default function AddStudioPage() {
                     className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                   />
                 </div>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+                Booking Confirmation Governance *
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setBookingMode('Instant')}
+                  className={`p-4 rounded-xl text-left border transition-all cursor-pointer ${
+                    bookingMode === 'Instant'
+                      ? 'border-amber-500 bg-amber-500/10 text-zinc-900 dark:text-zinc-100 ring-1 ring-amber-500/40'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Instant Book</span>
+                    <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">Automated</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                    Reservations are confirmed immediately upon credit pre-authorization.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setBookingMode('Request')}
+                  className={`p-4 rounded-xl text-left border transition-all cursor-pointer ${
+                    bookingMode === 'Request'
+                      ? 'border-amber-500 bg-amber-500/10 text-zinc-900 dark:text-zinc-100 ring-1 ring-amber-500/40'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Request to Book</span>
+                    <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">Host Approval</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                    Host has 24 hours to review production notes, crew size, and insurance before approving.
+                  </p>
+                </button>
               </div>
             </div>
           </div>
@@ -540,39 +634,48 @@ export default function AddStudioPage() {
           </div>
 
           <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-6">
-            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-              <Upload className="size-4 text-amber-500" />
-              <span>Studio Visuals & Media</span>
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                <Upload className="size-4 text-amber-500" />
+                <span>Studio Visuals & Media Gallery</span>
+              </h2>
+              <span className={`text-xs font-mono font-semibold ${images.length >= 2 ? 'text-emerald-500' : 'text-amber-500'}`}>
+                {images.length} / 2 Minimum Required
+              </span>
+            </div>
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                  Direct High-Resolution Image URL *
-                </label>
+              <div className="flex gap-2">
                 <input
                   type="url"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/photo-..."
-                  required
-                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                  placeholder="Paste direct high-resolution photo URL (https://...)"
+                  className="flex-1 px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
                 />
+                <button
+                  type="button"
+                  onClick={handleAddImageUrl}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shrink-0 cursor-pointer"
+                >
+                  Add URL
+                </button>
               </div>
 
               <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-xs text-zinc-500">
                   <p className="font-semibold text-zinc-800 dark:text-zinc-200">
-                    Upload via ImgBB Direct Hosting
+                    Upload Multiple Photos from Device
                   </p>
-                  <p>Select a photo from your device to auto-upload and generate a direct URL.</p>
+                  <p>Aspect ratios are maintained. Minimum 2 images required for listing showcase.</p>
                 </div>
                 <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-amber-500 hover:text-zinc-950 transition-colors shrink-0">
                   <Upload className="size-3.5" />
-                  <span>{uploadingImage ? 'Uploading...' : 'Choose Device File'}</span>
+                  <span>{uploadingImage ? 'Uploading Photos...' : 'Choose Device Photos'}</span>
                   <input
                     type="file"
                     accept="image/*"
+                    multiple
                     onChange={handleImageFileUpload}
                     disabled={uploadingImage}
                     className="hidden"
@@ -580,13 +683,36 @@ export default function AddStudioPage() {
                 </label>
               </div>
 
-              {imageUrl && (
-                <div className="mt-4 rounded-2xl overflow-hidden shadow-xs max-h-56 relative aspect-video">
-                  <img
-                    src={imageUrl}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
+              {images.length > 0 && (
+                <div className="space-y-2 pt-2">
+                  <span className="text-xs text-zinc-400 block">
+                    Gallery Showcase ({images.length} photos) — First photo is primary cover:
+                  </span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {images.map((imgUrl, idx) => (
+                      <div
+                        key={imgUrl + idx}
+                        className="relative aspect-video rounded-xl overflow-hidden shadow-xs border border-zinc-200/60 dark:border-zinc-800 group"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`Studio photo ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-950/80 text-white backdrop-blur-xs">
+                          {idx === 0 ? 'Cover' : `#${idx + 1}`}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx)}
+                          aria-label={`Remove photo ${idx + 1}`}
+                          className="absolute top-1.5 right-1.5 size-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-80 hover:opacity-100 hover:scale-105 transition-all cursor-pointer shadow-xs"
+                        >
+                          <X className="size-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

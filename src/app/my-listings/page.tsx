@@ -5,8 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { Studio } from '@/types';
-import { fetchMyStudios, deleteStudio, fetchAllStudios } from '@/lib/api';
+import { Studio, Booking } from '@/types';
+import {
+  fetchMyStudios,
+  deleteStudio,
+  fetchAllStudios,
+  fetchIncomingBookings,
+  approveBooking,
+  declineBooking,
+} from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
 import { getStudioUrl } from '@/lib/slug';
 import { toast } from 'sonner';
@@ -20,12 +27,21 @@ import {
   X,
   Star,
   MapPin,
+  Clock,
+  Check,
+  CheckCircle2,
+  XCircle,
+  Inbox,
+  Calendar,
 } from 'lucide-react';
 
 export default function MyListingsPage() {
   const { user } = useAuth();
   const [studios, setStudios] = useState<Studio[]>([]);
+  const [incomingRequests, setIncomingRequests] = useState<Booking[]>([]);
+  const [activeTab, setActiveTab] = useState<'listings' | 'requests'>('listings');
   const [loading, setLoading] = useState(true);
+  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
   const [studioToDelete, setStudioToDelete] = useState<Studio | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -33,19 +49,28 @@ export default function MyListingsPage() {
   const loadListings = async () => {
     setLoading(true);
     try {
-      const data = await fetchMyStudios();
-      setStudios(data);
-    } catch (err: any) {
-      try {
+      const [studiosData, requestsData] = await Promise.allSettled([
+        fetchMyStudios(),
+        fetchIncomingBookings(),
+      ]);
+
+      if (studiosData.status === 'fulfilled') {
+        setStudios(studiosData.value);
+      } else {
         const all = await fetchAllStudios();
         const userEmail = user?.email?.toLowerCase();
         const filtered = all.filter(
           (s) => s.ownerEmail?.toLowerCase() === userEmail || s.ownerEmail === 'alex.vance@studiospace.io'
         );
         setStudios(filtered);
-      } catch (e) {
-        setStudios([]);
       }
+
+      if (requestsData.status === 'fulfilled') {
+        setIncomingRequests(requestsData.value);
+      }
+    } catch {
+      setStudios([]);
+      setIncomingRequests([]);
     } finally {
       setLoading(false);
     }
@@ -56,6 +81,36 @@ export default function MyListingsPage() {
       loadListings();
     }
   }, [user]);
+
+  const handleApproveRequest = async (bookingId: string) => {
+    setActionLoadingId(bookingId);
+    try {
+      await approveBooking(bookingId);
+      toast.success('Reservation request approved! Booker notified and calendar slot locked.');
+      setIncomingRequests((prev) =>
+        prev.map((b) => (b._id === bookingId ? { ...b, status: 'Confirmed' } : b))
+      );
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to approve booking request');
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleDeclineRequest = async (bookingId: string) => {
+    setActionLoadingId(bookingId);
+    try {
+      await declineBooking(bookingId);
+      toast.success('Reservation request declined and calendar slot released.');
+      setIncomingRequests((prev) =>
+        prev.map((b) => (b._id === bookingId ? { ...b, status: 'Declined' } : b))
+      );
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to decline booking request');
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
 
   const confirmDelete = async () => {
     if (!studioToDelete) return;
@@ -72,6 +127,8 @@ export default function MyListingsPage() {
       setDeleting(false);
     }
   };
+
+  const pendingRequestsCount = incomingRequests.filter((r) => r.status === 'Pending').length;
 
   return (
     <ProtectedRoute>
@@ -95,6 +152,35 @@ export default function MyListingsPage() {
           </Link>
         </div>
 
+        <div className="flex items-center gap-2 mb-8 border-b border-zinc-200/80 dark:border-zinc-800 pb-3">
+          <button
+            onClick={() => setActiveTab('listings')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'listings'
+                ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+            }`}
+          >
+            My Published Studios ({studios.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('requests')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+              activeTab === 'requests'
+                ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+            }`}
+          >
+            <Inbox className="size-3.5" />
+            <span>Incoming Booking Requests</span>
+            {pendingRequestsCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-zinc-950">
+                {pendingRequestsCount}
+              </span>
+            )}
+          </button>
+        </div>
+
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((idx) => (
@@ -104,6 +190,88 @@ export default function MyListingsPage() {
               />
             ))}
           </div>
+        ) : activeTab === 'requests' ? (
+          incomingRequests.length === 0 ? (
+            <div className="py-20 flex flex-col items-center justify-center text-center p-8 rounded-3xl bg-white dark:bg-zinc-900/40">
+              <div className="size-16 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-500 flex items-center justify-center mb-4">
+                <Inbox className="size-8" />
+              </div>
+              <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
+                No incoming booking requests
+              </h3>
+              <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm">
+                When creators submit reservation requests for your studios with &ldquo;Request to Book&rdquo; mode, they will appear here for your review and approval.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {incomingRequests.map((req) => (
+                <div
+                  key={req._id}
+                  className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200/60 dark:border-zinc-800/60 flex flex-col md:flex-row md:items-center justify-between gap-5"
+                >
+                  <div className="space-y-2 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <h3 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 truncate">
+                        {req.studioTitle}
+                      </h3>
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                          req.status === 'Pending'
+                            ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+                            : req.status === 'Confirmed'
+                            ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                            : req.status === 'Declined'
+                            ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700'
+                            : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                        }`}
+                      >
+                        {req.status === 'Pending' ? 'Awaiting Host Action' : req.status}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-500">
+                      <span>Booker: <strong className="text-zinc-800 dark:text-zinc-200">{req.bookerName}</strong> ({req.bookerEmail})</span>
+                      <span>•</span>
+                      <span>Shoot Date: <strong className="text-zinc-800 dark:text-zinc-200">{req.date}</strong></span>
+                      <span>•</span>
+                      <span>Hours: <strong className="text-zinc-800 dark:text-zinc-200">{req.startTime} - {req.endTime}</strong> ({req.totalHours} hrs)</span>
+                      <span>•</span>
+                      <span>Gross Payout: <strong className="text-amber-600 dark:text-amber-400 font-bold">{formatCurrency(req.totalCost)}</strong></span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    {req.status === 'Pending' ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleDeclineRequest(req._id)}
+                          disabled={actionLoadingId === req._id}
+                          className="px-4 py-2.5 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors disabled:opacity-50 cursor-pointer"
+                        >
+                          Decline Request
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleApproveRequest(req._id)}
+                          disabled={actionLoadingId === req._id}
+                          className="px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-zinc-950 hover:bg-amber-400 transition-colors shadow-sm disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+                        >
+                          <Check className="size-3.5" />
+                          <span>Approve Reservation</span>
+                        </button>
+                      </>
+                    ) : (
+                      <span className="text-xs font-medium text-zinc-400 italic">
+                        {req.status === 'Confirmed' ? 'Schedule Locked & Confirmed' : 'Request Processed'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
         ) : studios.length === 0 ? (
           <div className="py-20 flex flex-col items-center justify-center text-center p-8 rounded-3xl bg-white dark:bg-zinc-900/40">
             <div className="size-16 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-500 flex items-center justify-center mb-4">
