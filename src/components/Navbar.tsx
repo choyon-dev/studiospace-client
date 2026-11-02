@@ -88,14 +88,9 @@ export default function Navbar() {
           <div className="size-10 rounded-xl bg-amber-500 flex items-center justify-center text-zinc-950 shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform duration-200">
             <Aperture className="size-6 stroke-[2.2]" />
           </div>
-          <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 group-hover:text-amber-500 transition-colors">
-              Studio<span className="text-amber-500">Space</span>
-            </span>
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-semibold -mt-1">
-              Creative Hub
-            </span>
-          </div>
+          <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 group-hover:text-amber-500 transition-colors">
+            Studio<span className="text-amber-500">Space</span>
+          </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1 lg:gap-2">
