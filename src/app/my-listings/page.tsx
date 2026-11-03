@@ -27,10 +27,7 @@ import {
   X,
   Star,
   MapPin,
-  Clock,
   Check,
-  CheckCircle2,
-  XCircle,
   Inbox,
   Calendar,
 } from 'lucide-react';

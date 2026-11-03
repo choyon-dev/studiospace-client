@@ -278,7 +278,7 @@ export async function fetchStudioMeta(): Promise<StudioMeta> {
     const json = await res.json();
     if (json.data) return json.data;
     throw new Error('Invalid metadata format');
-  } catch (err) {
+  } catch {
     const categoriesMap = new Map<string, number>();
     const hubsMap = new Map<string, { city: string; state: string; country: string; count: number }>();
     let minRate = Infinity;
@@ -344,7 +344,7 @@ export async function fetchFeaturedStudios(): Promise<Studio[]> {
     const json = await res.json();
     if (json.data && json.data.length > 0) return json.data;
     return FALLBACK_STUDIOS;
-  } catch (err) {
+  } catch {
     return FALLBACK_STUDIOS;
   }
 }
@@ -428,7 +428,7 @@ export async function fetchAllStudios(
       list.sort((a, b) => b.rating - a.rating);
     }
     return list;
-  } catch (err) {
+  } catch {
     return FALLBACK_STUDIOS;
   }
 }
@@ -449,7 +449,7 @@ export async function fetchStudioById(idOrSlug: string): Promise<Studio | null> 
         s.title.toLowerCase().includes(idOrSlug.toLowerCase().replace(/-/g, ' '))
     );
     return match || null;
-  } catch (err) {
+  } catch {
     const match = FALLBACK_STUDIOS.find(
       (s) =>
         s._id === idOrSlug ||
@@ -536,7 +536,7 @@ export async function fetchMyStudios(token?: string): Promise<Studio[]> {
     if (!res.ok) throw new Error('Failed to fetch your studios');
     const json = await res.json();
     return json.data || [];
-  } catch (err) {
+  } catch {
     return [];
   }
 }
@@ -576,7 +576,7 @@ export async function fetchMyBookings(token?: string): Promise<Booking[]> {
     if (!res.ok) throw new Error('Failed to fetch your bookings');
     const json = await res.json();
     return json.data || [];
-  } catch (err) {
+  } catch {
     return [];
   }
 }

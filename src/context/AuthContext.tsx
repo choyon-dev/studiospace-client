@@ -85,24 +85,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const normalizedEmail = email.toLowerCase().trim();
       const accountsRaw = localStorage.getItem('studiospace_registered_users');
       const accounts = accountsRaw ? JSON.parse(accountsRaw) : [];
-      
-      const found = accounts.find((a: any) => a.email.toLowerCase() === normalizedEmail);
-      const isTestExaminer = (normalizedEmail === 'examiner@studiospace.io' && pass === 'Test1234');
-      
-      if (!found && !isTestExaminer && accounts.length > 0) {
-        toast.error('No account found with this email. Please register first.');
-        return false;
-      }
 
-      if (found && found.password !== pass) {
-        toast.error('Incorrect password. Please verify your credentials.');
-        return false;
+      const isTestExaminer = normalizedEmail === 'examiner@studiospace.io' && pass === 'Test1234';
+      const found = accounts.find((a: any) => a.email.toLowerCase() === normalizedEmail);
+
+      if (!isTestExaminer) {
+        if (!found) {
+          toast.error('No account found with this email. Please register first.');
+          return false;
+        }
+
+        const storedPass = found.password;
+        let matches = storedPass === pass;
+        if (!matches && typeof window !== 'undefined') {
+          try {
+            matches = atob(storedPass) === pass;
+          } catch {
+            matches = false;
+          }
+        }
+
+        if (!matches) {
+          toast.error('Incorrect password. Please verify your credentials.');
+          return false;
+        }
       }
 
       const authenticatedUser: User = {
         name: found ? found.name : 'Examiner Evaluator',
         email: normalizedEmail,
-        photoURL: found?.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
+        photoURL:
+          found?.photoURL ||
+          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
       };
 
       setUser(authenticatedUser);
@@ -147,11 +161,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
 
-      const defaultAvatar = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=256&q=80';
+      const defaultAvatar =
+        'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=256&q=80';
+      const encodedPassword = typeof window !== 'undefined' ? btoa(pass) : pass;
       const newAccount = {
         name: name.trim(),
         email: normalizedEmail,
-        password: pass,
+        password: encodedPassword,
         photoURL: photoURL && photoURL.trim().length > 0 ? photoURL.trim() : defaultAvatar,
       };
 
@@ -171,16 +187,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const googleUser: User = {
         name: 'Alex Vance',
         email: 'alex.vance@studiospace.io',
-        photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
+        photoURL:
+          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
       };
 
       setUser(googleUser);
       localStorage.setItem('studiospace_user', JSON.stringify(googleUser));
       await issueJwtToken(googleUser.email, googleUser.name);
 
-      toast.success(`Signed in with Google as ${googleUser.name}`);
+      toast.success(`Demo mode: Signed in as ${googleUser.name}`);
       return true;
-    } catch (error: any) {
+    } catch {
       toast.error('Google sign-in could not be completed');
       return false;
     }
@@ -192,7 +209,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         method: 'POST',
         credentials: 'include',
       });
-    } catch (e) {
+    } catch {
     }
     localStorage.removeItem('studiospace_user');
     setUser(null);

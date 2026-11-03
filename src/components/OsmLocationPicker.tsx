@@ -53,7 +53,7 @@ export default function OsmLocationPicker({
         const results = await searchOsmLocations(inputValue);
         setSuggestions(results);
         setIsOpen(results.length > 0);
-      } catch (err) {
+      } catch {
         setSuggestions([]);
       } finally {
         setLoading(false);

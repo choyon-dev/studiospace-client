@@ -77,7 +77,7 @@ export default function FeaturedStudios() {
           href="/studios"
           className="self-start sm:self-auto px-4 py-2.5 rounded-xl text-slate-800 dark:text-zinc-200 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-2 bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all shadow-sm hover:shadow shrink-0"
         >
-          <span>View All 120+ Studios</span>
+          <span>View All Studios</span>
           <ArrowRight className="size-4" />
         </Link>
       </div>

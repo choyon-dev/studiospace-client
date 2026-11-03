@@ -104,8 +104,14 @@ export default function StudioCard({
         <div className="absolute bottom-3 right-3">
           <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-900/80 backdrop-blur-sm text-zinc-100 tabular-nums">
             <Star className="size-3 fill-amber-400 text-amber-400" />
-            <span>{studio.rating.toFixed(1)}</span>
-            <span className="text-zinc-400">({studio.reviewCount})</span>
+            {studio.reviewCount > 0 ? (
+              <>
+                <span>{studio.rating.toFixed(1)}</span>
+                <span className="text-zinc-400">({studio.reviewCount})</span>
+              </>
+            ) : (
+              <span className="text-zinc-300">New</span>
+            )}
           </div>
         </div>
       </div>

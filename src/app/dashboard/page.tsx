@@ -20,6 +20,7 @@ export default function DashboardPage() {
   const [studiosCount, setStudiosCount] = useState<number>(0);
   const [bookingsCount, setBookingsCount] = useState<number>(0);
   const [wishlistCount, setWishlistCount] = useState<number>(0);
+  const [totalHoursCount, setTotalHoursCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,11 +37,16 @@ export default function DashboardPage() {
         }
         if (bookings.status === 'fulfilled') {
           setBookingsCount(bookings.value.length);
+          const totalHours = bookings.value.reduce(
+            (acc, b) => acc + (Number(b.totalHours) || 0),
+            0
+          );
+          setTotalHoursCount(totalHours);
         }
         if (wishlist.status === 'fulfilled') {
           setWishlistCount(wishlist.value.count || wishlist.value.ids?.length || 0);
         }
-      } catch (e) {
+      } catch {
       } finally {
         setLoading(false);
       }
@@ -54,14 +60,14 @@ export default function DashboardPage() {
   const stats = [
     {
       label: 'Listed Studio Spaces',
-      value: studiosCount || 1,
+      value: studiosCount,
       desc: 'Active commercial spaces',
       icon: Layers,
       color: 'text-amber-500',
     },
     {
       label: 'Upcoming Reservations',
-      value: bookingsCount || 2,
+      value: bookingsCount,
       desc: 'Confirmed creator sessions',
       icon: CalendarCheck,
       color: 'text-emerald-500',
@@ -75,7 +81,7 @@ export default function DashboardPage() {
     },
     {
       label: 'Production Hours',
-      value: '28.5 hrs',
+      value: `${totalHoursCount} hrs`,
       desc: 'Total booked facility time',
       icon: TrendingUp,
       color: 'text-purple-500',

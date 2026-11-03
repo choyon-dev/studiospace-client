@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -18,7 +19,6 @@ import {
   FileText,
   Sliders,
   Cpu,
-  ShieldAlert,
   ArrowRight,
   Maximize2,
   Wind,
@@ -109,7 +109,7 @@ export default function AddStudioPage() {
           const names = meta.categories.map((c) => c.name);
           setCategories(Array.from(new Set([...names, ...DEFAULT_CATEGORIES])));
         }
-      } catch (err) {
+      } catch {
         setCategories(DEFAULT_CATEGORIES);
       }
     }
@@ -694,10 +694,12 @@ export default function AddStudioPage() {
                         key={imgUrl + idx}
                         className="relative aspect-video rounded-xl overflow-hidden shadow-xs border border-zinc-200/60 dark:border-zinc-800 group"
                       >
-                        <img
+                        <Image
                           src={imgUrl}
                           alt={`Studio photo ${idx + 1}`}
-                          className="w-full h-full object-cover"
+                          fill
+                          sizes="(max-width: 640px) 50vw, 25vw"
+                          className="object-cover"
                         />
                         <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-950/80 text-white backdrop-blur-xs">
                           {idx === 0 ? 'Cover' : `#${idx + 1}`}

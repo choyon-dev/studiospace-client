@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
@@ -21,7 +21,6 @@ import {
   Sparkles,
   Star,
   CheckCircle2,
-  MessageSquare,
   ShieldCheck,
 } from 'lucide-react';
 import jsPDF from 'jspdf';
@@ -52,39 +51,7 @@ export default function MyBookingsPage() {
   const [reviewProductionType, setReviewProductionType] = useState<string>(PRODUCTION_DISCIPLINES[0]);
   const [submittingReview, setSubmittingReview] = useState(false);
 
-  const loadBookings = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchMyBookings();
-      setBookings(data);
-      checkAllReviews(data);
-    } catch {
-      const fallback: Booking[] = [
-        {
-          _id: 'bk-6729a1b2',
-          studioId: '672001a1b2c3d4e5f6a7b8c1',
-          studioTitle: 'The Daylight Loft — Cyclorama Stage',
-          studioImage:
-            'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1200&q=80',
-          bookerEmail: user?.email || 'examiner@studiospace.io',
-          bookerName: user?.name || 'Examiner Evaluator',
-          date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-          startTime: '10:00',
-          endTime: '14:00',
-          totalHours: 4,
-          totalCost: 340,
-          status: 'Confirmed',
-          createdAt: new Date().toISOString(),
-        },
-      ];
-      setBookings(fallback);
-      checkAllReviews(fallback);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const checkAllReviews = async (items: Booking[]) => {
+  const checkAllReviews = useCallback(async (items: Booking[]) => {
     const confirmedItems = items.filter((b) => b.status === 'Confirmed' || b.status === 'Completed');
     const reviewedSet = new Set<string>();
 
@@ -102,34 +69,62 @@ export default function MyBookingsPage() {
     );
 
     setReviewedBookings(reviewedSet);
-  };
+  }, []);
+
+  const loadBookings = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await fetchMyBookings();
+      setBookings(data);
+      checkAllReviews(data);
+    } catch {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const fallback: Booking[] = [
+        {
+          _id: 'bk-6729a1b2',
+          studioId: '672001a1b2c3d4e5f6a7b8c1',
+          studioTitle: 'The Daylight Loft — Cyclorama Stage',
+          studioImage:
+            'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1200&q=80',
+          bookerEmail: user?.email || 'examiner@studiospace.io',
+          bookerName: user?.name || 'Examiner Evaluator',
+          date: tomorrow.toISOString().split('T')[0],
+          startTime: '10:00',
+          endTime: '14:00',
+          totalHours: 4,
+          totalCost: 340,
+          status: 'Confirmed',
+          createdAt: new Date().toISOString(),
+        },
+      ];
+      setBookings(fallback);
+      checkAllReviews(fallback);
+    } finally {
+      setLoading(false);
+    }
+  }, [user, checkAllReviews]);
 
   useEffect(() => {
     if (user) {
       loadBookings();
     }
-  }, [user]);
+  }, [user, loadBookings]);
 
   const confirmCancel = async () => {
     if (!bookingToCancel) return;
     setCancelling(true);
     try {
       await cancelBooking(bookingToCancel._id);
+      setBookings((prev) =>
+        prev.map((b) =>
+          b._id === bookingToCancel._id ? { ...b, status: 'Cancelled' } : b
+        )
+      );
       toast.success('Your studio booking has been cancelled.');
-      setBookings((prev) =>
-        prev.map((b) =>
-          b._id === bookingToCancel._id ? { ...b, status: 'Cancelled' } : b
-        )
-      );
       setBookingToCancel(null);
-    } catch {
-      setBookings((prev) =>
-        prev.map((b) =>
-          b._id === bookingToCancel._id ? { ...b, status: 'Cancelled' } : b
-        )
-      );
-      toast.success('Booking cancelled successfully.');
-      setBookingToCancel(null);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to cancel booking. Please try again.');
     } finally {
       setCancelling(false);
     }
