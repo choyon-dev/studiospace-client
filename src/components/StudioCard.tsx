@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Studio } from '@/types';
-import { Star, MapPin, ArrowUpRight, Zap, Heart } from 'lucide-react';
+import { Star, MapPin, Heart, ArrowUpRight } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { getStudioUrl } from '@/lib/slug';
 import { useAuth } from '@/context/AuthContext';
@@ -65,9 +65,24 @@ export default function StudioCard({
     }
   };
 
+  const studioUrl = getStudioUrl(studio);
+  const areaFormatted = studio.specs?.squareFeet
+    ? `${studio.specs.squareFeet.toLocaleString()} sq ft`
+    : `${studio.maxCapacity * 350} sq ft`;
+
+  const locationDisplay = studio.city
+    ? studio.state
+      ? `${studio.city}, ${studio.state}`
+      : studio.city
+    : (studio.location || 'Studio Location').split(',')[0].trim();
+
   return (
-    <div className="group relative flex flex-col rounded-2xl bg-white dark:bg-zinc-900/90 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 dark:bg-zinc-800">
+    <div className="group relative flex flex-col rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/80 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+      {/* Studio Photo Container */}
+      <Link
+        href={studioUrl}
+        className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800 block"
+      >
         <Image
           src={studio.imageUrl}
           alt={studio.title}
@@ -75,97 +90,87 @@ export default function StudioCard({
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/20 via-transparent to-transparent pointer-events-none" />
 
-        <div className="absolute top-3 left-3 flex items-center gap-2">
-          <span className="px-2.5 py-1 rounded-md bg-white/95 dark:bg-zinc-950/90 backdrop-blur-md text-[10px] font-mono font-bold uppercase text-slate-800 dark:text-zinc-200 shadow-xs">
-            {studio.category}
-          </span>
-          <span className="px-2 py-1 rounded-md bg-amber-500 text-zinc-950 text-[10px] font-mono font-bold uppercase flex items-center gap-1 shadow-xs">
-            <Zap className="size-3 fill-zinc-950" />
-            <span>Instant</span>
-          </span>
-        </div>
-
+        {/* Minimal Floating Heart Button */}
         <button
           type="button"
           aria-label={isFavorited ? 'Remove from saved studios' : 'Save studio to wishlist'}
           onClick={handleFavoriteClick}
           disabled={isToggling}
-          className="absolute top-3 right-3 size-8 rounded-full bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md flex items-center justify-center text-slate-700 dark:text-zinc-300 hover:text-red-500 active:scale-90 transition-all shadow-xs z-10 cursor-pointer"
+          className="absolute top-3 right-3 size-9 rounded-full bg-white/85 dark:bg-zinc-950/80 backdrop-blur-md flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:text-red-500 active:scale-90 transition-all shadow-sm z-10 cursor-pointer"
         >
-          <Heart className={`size-4 transition-colors ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
+          <Heart
+            className={`size-4 transition-colors ${
+              isFavorited
+                ? 'fill-red-500 text-red-500'
+                : 'text-zinc-700 dark:text-zinc-200 hover:text-red-500'
+            }`}
+          />
         </button>
+      </Link>
 
-        <div className="absolute bottom-3 left-3 font-mono text-[10px] text-white px-2 py-0.5 rounded-md bg-slate-900/80 backdrop-blur-sm font-semibold">
-          {studio.specs?.squareFeet ? `${studio.specs.squareFeet.toLocaleString()} SQ FT` : `${studio.maxCapacity * 350} SQ FT`}
-        </div>
+      {/* Editorial Content Block */}
+      <div className="flex flex-col flex-1 p-4 sm:p-5 justify-between gap-3">
+        {/* Row 1: Location & Star Rating */}
+        <div className="flex items-center justify-between text-xs gap-2">
+          <div className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400 font-medium truncate">
+            <MapPin className="size-3.5 text-amber-500 shrink-0" />
+            <span className="truncate">{locationDisplay}</span>
+          </div>
 
-        <div className="absolute bottom-3 right-3">
-          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-900/80 backdrop-blur-sm text-zinc-100 tabular-nums">
-            <Star className="size-3 fill-amber-400 text-amber-400" />
+          <div className="inline-flex items-center gap-1 font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums shrink-0">
+            <Star className="size-3.5 fill-amber-400 text-amber-400" />
             {studio.reviewCount > 0 ? (
               <>
                 <span>{studio.rating.toFixed(1)}</span>
-                <span className="text-zinc-400">({studio.reviewCount})</span>
+                <span className="text-zinc-400 font-normal">({studio.reviewCount})</span>
               </>
             ) : (
-              <span className="text-zinc-300">New</span>
+              <span className="text-zinc-400 font-normal">New</span>
             )}
           </div>
         </div>
-      </div>
 
-      <div className="flex flex-col flex-1 p-5 justify-between space-y-4">
-        <div>
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400 mb-1.5">
-            <MapPin className="size-3.5 text-amber-500 shrink-0" />
-            <span className="truncate">{studio.location}</span>
-          </div>
-
-          <h3 className="text-base font-bold text-slate-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
+        {/* Row 2: Studio Title */}
+        <Link
+          href={studioUrl}
+          className="block group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors"
+        >
+          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1">
             {studio.title}
           </h3>
+        </Link>
 
-          <p className="text-xs text-slate-600 dark:text-zinc-400 line-clamp-2 mt-2 leading-relaxed">
-            {studio.overview}
-          </p>
-
-          {studio.amenities && studio.amenities.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-3">
-              {studio.amenities.slice(0, 2).map((amenity) => (
-                <span
-                  key={amenity}
-                  className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 truncate max-w-[170px]"
-                >
-                  {amenity}
-                </span>
-              ))}
-            </div>
-          )}
+        {/* Row 3: Specs Dot Line */}
+        <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 truncate">
+          <span className="font-medium text-zinc-700 dark:text-zinc-300">{studio.category}</span>
+          <span>·</span>
+          <span>{areaFormatted}</span>
+          <span>·</span>
+          <span>{studio.bookingMode === 'Request' ? 'Request to Book' : 'Instant Book'}</span>
         </div>
 
-        <div className="flex items-center justify-between pt-3 mt-auto">
-          <div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-lg font-bold text-slate-900 dark:text-zinc-100 tabular-nums">
-                {formatCurrency(studio.hourlyRate)}
-              </span>
-              <span className="text-xs text-slate-500 dark:text-zinc-400">/hr</span>
-            </div>
+        {/* Row 4: Pricing & Action */}
+        <div className="flex items-baseline justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800/80 mt-auto">
+          <div className="flex items-baseline gap-1">
+            <span className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">
+              {formatCurrency(studio.hourlyRate)}
+            </span>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">/hr</span>
             {studio.securityDeposit > 0 && (
-              <span className="text-[10px] text-slate-400 dark:text-zinc-500 block">
-                {formatCurrency(studio.securityDeposit)} deposit
+              <span className="text-[11px] text-zinc-400 dark:text-zinc-500 ml-1.5 hidden sm:inline">
+                · {formatCurrency(studio.securityDeposit)} deposit
               </span>
             )}
           </div>
 
           <Link
-            href={getStudioUrl(studio)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/15 hover:bg-amber-500 text-amber-700 dark:text-amber-400 hover:text-zinc-950 active:scale-95 transition-all"
+            href={studioUrl}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 group/link"
           >
-            <span>View Details</span>
-            <ArrowUpRight className="size-3.5" />
+            <span>Explore</span>
+            <ArrowUpRight className="size-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
           </Link>
         </div>
       </div>
