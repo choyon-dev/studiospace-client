@@ -742,3 +742,72 @@ export async function submitStudioReview(data: Partial<Review>, token?: string):
   const json = await res.json();
   return json.data;
 }
+
+export async function fetchMyWishlist(token?: string): Promise<{ count: number; ids: string[]; data: Studio[] }> {
+  try {
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const res = await fetch(`${API_BASE}/wishlist/my`, {
+      headers,
+      credentials: 'include',
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      return { count: 0, ids: [], data: [] };
+    }
+
+    const json = await res.json();
+    return {
+      count: json.count || 0,
+      ids: json.ids || [],
+      data: json.data || [],
+    };
+  } catch {
+    return { count: 0, ids: [], data: [] };
+  }
+}
+
+export async function toggleWishlist(
+  studioId: string,
+  token?: string
+): Promise<{ success: boolean; isFavorited: boolean; studioId: string; message: string }> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}/wishlist/toggle`, {
+    method: 'POST',
+    headers,
+    credentials: 'include',
+    body: JSON.stringify({ studioId }),
+  });
+
+  if (!res.ok) {
+    const errJson = await res.json().catch(() => ({}));
+    throw new Error(errJson.message || 'Failed to update saved studio');
+  }
+
+  return await res.json();
+}
+
+export async function checkStudioWishlist(studioId: string, token?: string): Promise<boolean> {
+  try {
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const res = await fetch(`${API_BASE}/wishlist/check/${studioId}`, {
+      headers,
+      credentials: 'include',
+      cache: 'no-store',
+    });
+
+    if (!res.ok) return false;
+    const json = await res.json();
+    return !!json.isFavorited;
+  } catch {
+    return false;
+  }
+}

@@ -1,15 +1,69 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Studio } from '@/types';
-import { Star, MapPin, Users, ArrowUpRight, Zap, Heart } from 'lucide-react';
+import { Star, MapPin, ArrowUpRight, Zap, Heart } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { getStudioUrl } from '@/lib/slug';
+import { useAuth } from '@/context/AuthContext';
+import { toggleWishlist } from '@/lib/api';
+import { toast } from 'sonner';
 
-export default function StudioCard({ studio }: { studio: Studio }) {
-  const [isFavorited, setIsFavorited] = useState(false);
+interface StudioCardProps {
+  studio: Studio;
+  initialFavorited?: boolean;
+  onToggleFavorite?: (studioId: string, isFavorited: boolean) => void;
+}
+
+export default function StudioCard({
+  studio,
+  initialFavorited = false,
+  onToggleFavorite,
+}: StudioCardProps) {
+  const { user } = useAuth();
+  const [isFavorited, setIsFavorited] = useState<boolean>(initialFavorited);
+  const [isToggling, setIsToggling] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsFavorited(initialFavorited);
+  }, [initialFavorited]);
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!user) {
+      toast.error('Please log in to save studios to your wishlist');
+      return;
+    }
+
+    if (isToggling) return;
+
+    const previousState = isFavorited;
+    const nextState = !previousState;
+    setIsFavorited(nextState);
+    setIsToggling(true);
+
+    try {
+      const res = await toggleWishlist(studio._id);
+      setIsFavorited(res.isFavorited);
+      if (res.isFavorited) {
+        toast.success('Studio saved to your wishlist');
+      } else {
+        toast.info('Studio removed from your wishlist');
+      }
+      if (onToggleFavorite) {
+        onToggleFavorite(studio._id, res.isFavorited);
+      }
+    } catch (err: any) {
+      setIsFavorited(previousState);
+      toast.error(err.message || 'Failed to update wishlist');
+    } finally {
+      setIsToggling(false);
+    }
+  };
 
   return (
     <div className="group relative flex flex-col rounded-2xl bg-white dark:bg-zinc-900/90 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
@@ -35,11 +89,12 @@ export default function StudioCard({ studio }: { studio: Studio }) {
 
         <button
           type="button"
-          aria-label="Save studio"
-          onClick={() => setIsFavorited(!isFavorited)}
-          className="absolute top-3 right-3 size-8 rounded-full bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md flex items-center justify-center text-slate-700 dark:text-zinc-300 hover:text-red-500 transition-colors shadow-xs"
+          aria-label={isFavorited ? 'Remove from saved studios' : 'Save studio to wishlist'}
+          onClick={handleFavoriteClick}
+          disabled={isToggling}
+          className="absolute top-3 right-3 size-8 rounded-full bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md flex items-center justify-center text-slate-700 dark:text-zinc-300 hover:text-red-500 active:scale-90 transition-all shadow-xs z-10 cursor-pointer"
         >
-          <Heart className={`size-4 ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
+          <Heart className={`size-4 transition-colors ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
         </button>
 
         <div className="absolute bottom-3 left-3 font-mono text-[10px] text-white px-2 py-0.5 rounded-md bg-slate-900/80 backdrop-blur-sm font-semibold">

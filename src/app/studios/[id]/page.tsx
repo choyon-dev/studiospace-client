@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Studio, Review } from '@/types';
-import { fetchStudioById, createBooking, fetchStudioBookedSlots, fetchStudioReviews } from '@/lib/api';
+import { fetchStudioById, createBooking, fetchStudioBookedSlots, fetchStudioReviews, checkStudioWishlist, toggleWishlist } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { formatCurrency } from '@/lib/utils';
 import { slugify, getStudioUrl } from '@/lib/slug';
@@ -31,6 +31,7 @@ import {
   ChevronRight,
   ArrowRight,
   Loader2,
+  Heart,
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 
@@ -65,12 +66,47 @@ export default function StudioDetailPage() {
   const [paymentStage, setPaymentStage] = useState<0 | 1 | 2 | 3>(0);
   const [authCode, setAuthCode] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
 
   useEffect(() => {
     if (user?.name) {
       setCardholderName(user.name);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (studio?._id && user) {
+      checkStudioWishlist(studio._id).then(setIsFavorited).catch(() => {});
+    }
+  }, [studio?._id, user]);
+
+  const handleFavoriteToggle = async () => {
+    if (!user) {
+      toast.error('Please log in to save studios to your wishlist');
+      return;
+    }
+    if (!studio?._id || isTogglingWishlist) return;
+
+    const prev = isFavorited;
+    setIsFavorited(!prev);
+    setIsTogglingWishlist(true);
+
+    try {
+      const res = await toggleWishlist(studio._id);
+      setIsFavorited(res.isFavorited);
+      if (res.isFavorited) {
+        toast.success('Studio saved to your wishlist');
+      } else {
+        toast.info('Studio removed from your wishlist');
+      }
+    } catch (err: any) {
+      setIsFavorited(prev);
+      toast.error(err.message || 'Failed to update wishlist');
+    } finally {
+      setIsTogglingWishlist(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -482,13 +518,29 @@ export default function StudioDetailPage() {
           <span className="text-zinc-900 dark:text-zinc-100 font-medium truncate">{studio.title}</span>
         </div>
 
-        <Link
-          href="/studios"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors shrink-0"
-        >
-          <ArrowLeft className="size-3.5" />
-          <span>Catalog</span>
-        </Link>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={handleFavoriteToggle}
+            disabled={isTogglingWishlist}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+              isFavorited
+                ? 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400'
+                : 'border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+            }`}
+          >
+            <Heart className={`size-3.5 transition-colors ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
+            <span>{isFavorited ? 'Saved Space' : 'Save Space'}</span>
+          </button>
+
+          <Link
+            href="/studios"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors shrink-0"
+          >
+            <ArrowLeft className="size-3.5" />
+            <span>Catalog</span>
+          </Link>
+        </div>
       </div>
 
       <StudioCarousel images={studioImages} title={studio.title} />

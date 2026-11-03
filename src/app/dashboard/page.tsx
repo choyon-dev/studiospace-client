@@ -4,30 +4,31 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { fetchMyStudios, fetchMyBookings } from '@/lib/api';
-import { formatCurrency } from '@/lib/utils';
+import { fetchMyStudios, fetchMyBookings, fetchMyWishlist } from '@/lib/api';
 import {
   Layers,
   CalendarCheck,
-  DollarSign,
   TrendingUp,
   PlusCircle,
   Building2,
   ArrowRight,
+  Heart,
 } from 'lucide-react';
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const [studiosCount, setStudiosCount] = useState<number>(0);
   const [bookingsCount, setBookingsCount] = useState<number>(0);
+  const [wishlistCount, setWishlistCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadStats() {
       try {
-        const [studios, bookings] = await Promise.allSettled([
+        const [studios, bookings, wishlist] = await Promise.allSettled([
           fetchMyStudios(),
           fetchMyBookings(),
+          fetchMyWishlist(),
         ]);
 
         if (studios.status === 'fulfilled') {
@@ -35,6 +36,9 @@ export default function DashboardPage() {
         }
         if (bookings.status === 'fulfilled') {
           setBookingsCount(bookings.value.length);
+        }
+        if (wishlist.status === 'fulfilled') {
+          setWishlistCount(wishlist.value.count || wishlist.value.ids?.length || 0);
         }
       } catch (e) {
       } finally {
@@ -63,11 +67,11 @@ export default function DashboardPage() {
       color: 'text-emerald-500',
     },
     {
-      label: 'Estimated Earnings',
-      value: formatCurrency((studiosCount || 1) * 340 + 680),
-      desc: 'Net revenue across sessions',
-      icon: DollarSign,
-      color: 'text-blue-500',
+      label: 'Saved to Wishlist',
+      value: wishlistCount,
+      desc: 'Bookmarked creative stages',
+      icon: Heart,
+      color: 'text-red-500',
     },
     {
       label: 'Production Hours',
@@ -128,10 +132,10 @@ export default function DashboardPage() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
             href="/my-listings"
-            className="group p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
+            className="group p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="size-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
               <Layers className="size-6" />
@@ -150,7 +154,7 @@ export default function DashboardPage() {
 
           <Link
             href="/my-bookings"
-            className="group p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
+            className="group p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="size-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
               <CalendarCheck className="size-6" />
@@ -168,14 +172,33 @@ export default function DashboardPage() {
           </Link>
 
           <Link
+            href="/studios?saved=true"
+            className="group p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
+          >
+            <div className="size-12 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+              <Heart className="size-6 fill-red-500" />
+            </div>
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+              Saved Wishlist
+            </h3>
+            <p className="text-xs text-zinc-500 mb-6 leading-relaxed">
+              Instant access to your bookmarked daylight stages, audio rooms, and broadcast suites across hubs.
+            </p>
+            <div className="flex items-center gap-2 text-xs font-semibold text-amber-500 group-hover:translate-x-1 transition-transform">
+              <span>View Saved Spaces</span>
+              <ArrowRight className="size-4" />
+            </div>
+          </Link>
+
+          <Link
             href="/studios"
-            className="group p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
+            className="group p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="size-12 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
               <Building2 className="size-6" />
             </div>
             <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-              Explore Spaces Catalog
+              Explore Marketplace
             </h3>
             <p className="text-xs text-zinc-500 mb-6 leading-relaxed">
               Find creative daylight lofts, audio mixing facilities, and podcast sets with real-time availability.

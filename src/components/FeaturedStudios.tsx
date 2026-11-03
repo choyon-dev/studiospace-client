@@ -4,12 +4,15 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Studio } from '@/types';
 import StudioCard from './StudioCard';
-import { fetchFeaturedStudios } from '@/lib/api';
+import { fetchFeaturedStudios, fetchMyWishlist } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 import { ArrowRight } from 'lucide-react';
 
 export default function FeaturedStudios() {
+  const { user } = useAuth();
   const [studios, setStudios] = useState<Studio[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     let isMounted = true;
@@ -30,6 +33,33 @@ export default function FeaturedStudios() {
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (user) {
+      fetchMyWishlist()
+        .then((res) => {
+          if (isMounted && res.ids) {
+            setWishlistIds(new Set(res.ids));
+          }
+        })
+        .catch(() => {});
+    } else {
+      setWishlistIds(new Set());
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
+  const handleToggleFavorite = (studioId: string, isFavorited: boolean) => {
+    setWishlistIds((prev) => {
+      const next = new Set(prev);
+      if (isFavorited) next.add(studioId);
+      else next.delete(studioId);
+      return next;
+    });
+  };
 
   return (
     <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,7 +105,12 @@ export default function FeaturedStudios() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {studios.map((studio) => (
-            <StudioCard key={studio._id} studio={studio} />
+            <StudioCard
+              key={studio._id}
+              studio={studio}
+              initialFavorited={wishlistIds.has(studio._id)}
+              onToggleFavorite={handleToggleFavorite}
+            />
           ))}
         </div>
       )}

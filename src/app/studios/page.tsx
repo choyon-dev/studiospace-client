@@ -4,7 +4,8 @@ import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Studio, StudioMeta } from '@/types';
 import StudioCard from '@/components/StudioCard';
-import { fetchAllStudios, fetchStudioMeta } from '@/lib/api';
+import { fetchAllStudios, fetchStudioMeta, fetchMyWishlist } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 import {
   Search,
   SlidersHorizontal,
@@ -14,27 +15,32 @@ import {
   Clock,
   Layers,
   X,
+  Heart,
 } from 'lucide-react';
 
 function StudiosContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user } = useAuth();
 
   const initialCategory = searchParams.get('category') || 'All';
   const initialHub = searchParams.get('hub') || 'All';
   const initialRate = searchParams.get('rate') || 'All';
   const initialSearch = searchParams.get('search') || '';
   const initialSort = searchParams.get('sortBy') || 'newest';
+  const initialSaved = searchParams.get('saved') === 'true';
 
   const [meta, setMeta] = useState<StudioMeta | null>(null);
   const [studios, setStudios] = useState<Studio[]>([]);
   const [loading, setLoading] = useState(true);
+  const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
 
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [selectedHub, setSelectedHub] = useState<string>(initialHub);
   const [selectedRate, setSelectedRate] = useState<string>(initialRate);
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
   const [sortBy, setSortBy] = useState<string>(initialSort);
+  const [showSavedOnly, setShowSavedOnly] = useState<boolean>(initialSaved);
 
   useEffect(() => {
     async function loadMeta() {
@@ -47,6 +53,25 @@ function StudiosContent() {
     }
     loadMeta();
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (user) {
+      fetchMyWishlist()
+        .then((res) => {
+          if (isMounted && res.ids) {
+            setWishlistIds(new Set(res.ids));
+          }
+        })
+        .catch(() => {});
+    } else {
+      setWishlistIds(new Set());
+      setShowSavedOnly(false);
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
 
   const rateRange = useMemo(() => {
     if (selectedRate === 'budget') return { minPrice: undefined, maxPrice: 75 };
@@ -120,19 +145,41 @@ function StudiosContent() {
     syncUrl({ search: val });
   };
 
+  const handleToggleSavedOnly = () => {
+    const next = !showSavedOnly;
+    setShowSavedOnly(next);
+    syncUrl({ saved: next ? 'true' : '' });
+  };
+
   const handleResetFilters = () => {
     setSelectedCategory('All');
     setSelectedHub('All');
     setSelectedRate('All');
     setSearchQuery('');
     setSortBy('newest');
+    setShowSavedOnly(false);
     router.replace('/studios');
   };
+
+  const handleToggleFavorite = (studioId: string, isFavorited: boolean) => {
+    setWishlistIds((prev) => {
+      const next = new Set(prev);
+      if (isFavorited) next.add(studioId);
+      else next.delete(studioId);
+      return next;
+    });
+  };
+
+  const displayedStudios = useMemo(() => {
+    if (!showSavedOnly) return studios;
+    return studios.filter((studio) => wishlistIds.has(studio._id));
+  }, [studios, showSavedOnly, wishlistIds]);
 
   const hasActiveFilters =
     selectedCategory !== 'All' ||
     selectedHub !== 'All' ||
     selectedRate !== 'All' ||
+    showSavedOnly ||
     searchQuery.trim().length > 0;
 
   return (
@@ -142,7 +189,7 @@ function StudiosContent() {
           Explore Production Workspaces
         </h1>
         <p className="text-zinc-600 dark:text-zinc-400 mt-2 text-sm sm:text-base max-w-3xl leading-relaxed">
-          Browse verified daylight stages, soundproof suites, and 4K podcast lounges across global creative hubs. Filter by discipline, location, rate tiers, or equipment specs.
+          Browse verified daylight stages, soundproof suites, and 4K podcast lounges across global creative hubs. Filter by discipline, location, rate tiers, or saved spaces.
         </p>
       </div>
 
@@ -276,7 +323,22 @@ function StudiosContent() {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+          <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+            {user && (
+              <button
+                type="button"
+                onClick={handleToggleSavedOnly}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  showSavedOnly
+                    ? 'bg-red-500 text-white shadow-sm shadow-red-500/25'
+                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                }`}
+              >
+                <Heart className={`size-3.5 ${showSavedOnly ? 'fill-white' : 'text-red-500'}`} />
+                <span>Saved Spaces ({wishlistIds.size})</span>
+              </button>
+            )}
+
             <div className="flex items-center gap-1.5 text-xs text-zinc-400">
               <SlidersHorizontal className="size-3.5" />
               <span>Sort:</span>
@@ -301,6 +363,16 @@ function StudiosContent() {
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2 mb-6">
           <span className="text-xs text-zinc-400">Active Filters:</span>
+          {showSavedOnly && (
+            <button
+              onClick={() => handleToggleSavedOnly()}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-red-500/15 text-red-600 dark:text-red-400 hover:bg-red-500/25 transition-colors"
+            >
+              <Heart className="size-3 fill-current" />
+              <span>Saved Spaces Only</span>
+              <X className="size-3" />
+            </button>
+          )}
           {selectedCategory !== 'All' && (
             <button
               onClick={() => handleCategoryChange('All')}
@@ -349,7 +421,7 @@ function StudiosContent() {
 
       <div className="flex items-center justify-between mb-6 text-xs text-zinc-500">
         <p>
-          Showing <span className="font-semibold text-zinc-900 dark:text-zinc-200">{studios.length}</span> workspaces
+          Showing <span className="font-semibold text-zinc-900 dark:text-zinc-200">{displayedStudios.length}</span> workspaces
         </p>
       </div>
 
@@ -373,16 +445,20 @@ function StudiosContent() {
             </div>
           ))}
         </div>
-      ) : studios.length === 0 ? (
+      ) : displayedStudios.length === 0 ? (
         <div className="py-20 flex flex-col items-center justify-center text-center p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/30">
           <div className="size-16 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-500 flex items-center justify-center mb-4">
             <Building2 className="size-8" />
           </div>
           <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-            No production spaces match your criteria
+            {showSavedOnly
+              ? 'You have not saved any spaces yet'
+              : 'No production spaces match your criteria'}
           </h3>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm">
-            Try adjusting your search terms, clearing specific category filters, or browsing all available spaces.
+            {showSavedOnly
+              ? 'Click the heart icon on any studio workspace to bookmark your favorite production locations.'
+              : 'Try adjusting your search terms, clearing specific category filters, or browsing all available spaces.'}
           </p>
           <button
             onClick={handleResetFilters}
@@ -394,8 +470,13 @@ function StudiosContent() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {studios.map((studio) => (
-            <StudioCard key={studio._id} studio={studio} />
+          {displayedStudios.map((studio) => (
+            <StudioCard
+              key={studio._id}
+              studio={studio}
+              initialFavorited={wishlistIds.has(studio._id)}
+              onToggleFavorite={handleToggleFavorite}
+            />
           ))}
         </div>
       )}
