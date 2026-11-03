@@ -2,9 +2,24 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Aperture, Eye, EyeOff, Lock, Mail, User, Image as ImageIcon, ArrowRight, CheckCircle2, XCircle } from 'lucide-react';
+import { uploadToImgBB } from '@/lib/api';
+import {
+  Aperture,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  User,
+  Image as ImageIcon,
+  ArrowRight,
+  CheckCircle2,
+  XCircle,
+  Upload,
+  Loader2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 function GoogleIcon() {
@@ -40,12 +55,39 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const hasUpperCase = /[A-Z]/.test(password);
   const hasLowerCase = /[a-z]/.test(password);
   const hasMinLength = password.length >= 6;
   const isPasswordValid = hasUpperCase && hasLowerCase && hasMinLength;
+
+  const handleAvatarFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please choose a valid image file (JPG, PNG, WebP).');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Avatar file size must be under 10MB.');
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      const hostedUrl = await uploadToImgBB(file);
+      setPhotoURL(hostedUrl);
+      toast.success('Avatar image uploaded successfully!');
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to upload avatar image.');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,18 +200,73 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-              Photo URL <span className="text-zinc-400 font-normal">(Optional)</span>
-            </label>
-            <div className="relative">
-              <ImageIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
-              <input
-                type="url"
-                value={photoURL}
-                onChange={(e) => setPhotoURL(e.target.value)}
-                placeholder="https://images.unsplash.com/photo-..."
-                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
-              />
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                Avatar Photo / Photo URL
+              </label>
+              <span className="text-[11px] text-zinc-400">Optional</span>
+            </div>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed">
+              Upload a profile image or paste a direct image URL. This avatar represents you as a creator across studio bookings, host communications, and verified reviews.
+            </p>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <ImageIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
+                  <input
+                    type="url"
+                    value={photoURL}
+                    onChange={(e) => setPhotoURL(e.target.value)}
+                    placeholder="Paste avatar URL or upload from device..."
+                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                  />
+                </div>
+
+                <label className="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 hover:bg-amber-500 hover:text-zinc-950 text-zinc-800 dark:text-zinc-200 transition-colors shrink-0">
+                  {uploadingAvatar ? (
+                    <Loader2 className="size-4 animate-spin text-amber-500" />
+                  ) : (
+                    <Upload className="size-4" />
+                  )}
+                  <span>{uploadingAvatar ? 'Uploading...' : 'Upload'}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarFileUpload}
+                    disabled={uploadingAvatar}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              {photoURL && (
+                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/60 dark:border-zinc-800">
+                  <div className="relative size-10 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 shrink-0">
+                    <Image
+                      src={photoURL}
+                      alt="Avatar preview"
+                      fill
+                      sizes="40px"
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate">
+                      Avatar configured
+                    </p>
+                    <p className="text-[10px] text-zinc-400 truncate">{photoURL}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPhotoURL('')}
+                    className="text-xs text-red-500 hover:underline px-2 cursor-pointer font-medium"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
