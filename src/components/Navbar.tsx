@@ -368,7 +368,7 @@ export default function Navbar() {
                         </Link>
 
                         <Link
-                          href="/studios?saved=true"
+                          href="/saved-studios"
                           className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-xl text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800/70 hover:text-amber-500 transition-colors"
                         >
                           <Heart className="size-4 text-red-500" />
@@ -500,7 +500,7 @@ export default function Navbar() {
                         My Bookings
                       </Link>
                       <Link
-                        href="/studios?saved=true"
+                        href="/saved-studios"
                         className="col-span-2 px-3 py-2 text-xs font-semibold rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 text-center flex items-center justify-center gap-1.5"
                       >
                         <Heart className="size-3 text-red-500 fill-red-500" />

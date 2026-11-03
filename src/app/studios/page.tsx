@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, Suspense } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Studio, StudioMeta } from '@/types';
 import StudioCard from '@/components/StudioCard';
@@ -28,7 +29,6 @@ function StudiosContent() {
   const initialRate = searchParams.get('rate') || 'All';
   const initialSearch = searchParams.get('search') || '';
   const initialSort = searchParams.get('sortBy') || 'newest';
-  const initialSaved = searchParams.get('saved') === 'true';
 
   const [meta, setMeta] = useState<StudioMeta | null>(null);
   const [studios, setStudios] = useState<Studio[]>([]);
@@ -40,7 +40,6 @@ function StudiosContent() {
   const [selectedRate, setSelectedRate] = useState<string>(initialRate);
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
   const [sortBy, setSortBy] = useState<string>(initialSort);
-  const [showSavedOnly, setShowSavedOnly] = useState<boolean>(initialSaved);
 
   useEffect(() => {
     async function loadMeta() {
@@ -66,7 +65,6 @@ function StudiosContent() {
         .catch(() => {});
     } else {
       setWishlistIds(new Set());
-      setShowSavedOnly(false);
     }
     return () => {
       isMounted = false;
@@ -145,19 +143,12 @@ function StudiosContent() {
     syncUrl({ search: val });
   };
 
-  const handleToggleSavedOnly = () => {
-    const next = !showSavedOnly;
-    setShowSavedOnly(next);
-    syncUrl({ saved: next ? 'true' : '' });
-  };
-
   const handleResetFilters = () => {
     setSelectedCategory('All');
     setSelectedHub('All');
     setSelectedRate('All');
     setSearchQuery('');
     setSortBy('newest');
-    setShowSavedOnly(false);
     router.replace('/studios');
   };
 
@@ -170,16 +161,12 @@ function StudiosContent() {
     });
   };
 
-  const displayedStudios = useMemo(() => {
-    if (!showSavedOnly) return studios;
-    return studios.filter((studio) => wishlistIds.has(studio._id));
-  }, [studios, showSavedOnly, wishlistIds]);
+  const displayedStudios = studios;
 
   const hasActiveFilters =
     selectedCategory !== 'All' ||
     selectedHub !== 'All' ||
     selectedRate !== 'All' ||
-    showSavedOnly ||
     searchQuery.trim().length > 0;
 
   return (
@@ -324,19 +311,14 @@ function StudiosContent() {
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
-            {user && (
-              <button
-                type="button"
-                onClick={handleToggleSavedOnly}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                  showSavedOnly
-                    ? 'bg-red-500 text-white shadow-sm shadow-red-500/25'
-                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
-                }`}
+            {user && wishlistIds.size > 0 && (
+              <Link
+                href="/saved-studios"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
               >
-                <Heart className={`size-3.5 ${showSavedOnly ? 'fill-white' : 'text-red-500'}`} />
-                <span>Saved Spaces ({wishlistIds.size})</span>
-              </button>
+                <Heart className="size-3.5 text-red-500 fill-red-500" />
+                <span>Saved ({wishlistIds.size})</span>
+              </Link>
             )}
 
             <div className="flex items-center gap-1.5 text-xs text-zinc-400">
@@ -363,16 +345,6 @@ function StudiosContent() {
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2 mb-6">
           <span className="text-xs text-zinc-400">Active Filters:</span>
-          {showSavedOnly && (
-            <button
-              onClick={() => handleToggleSavedOnly()}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-red-500/15 text-red-600 dark:text-red-400 hover:bg-red-500/25 transition-colors"
-            >
-              <Heart className="size-3 fill-current" />
-              <span>Saved Spaces Only</span>
-              <X className="size-3" />
-            </button>
-          )}
           {selectedCategory !== 'All' && (
             <button
               onClick={() => handleCategoryChange('All')}
@@ -454,14 +426,10 @@ function StudiosContent() {
             <Building2 className="size-8" />
           </div>
           <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-            {showSavedOnly
-              ? 'You have not saved any spaces yet'
-              : 'No production spaces match your criteria'}
+            No production spaces match your criteria
           </h3>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm">
-            {showSavedOnly
-              ? 'Click the heart icon on any studio workspace to bookmark your favorite production locations.'
-              : 'Try adjusting your search terms, clearing specific category filters, or browsing all available spaces.'}
+            Try adjusting your search terms, clearing specific category filters, or browsing all available spaces.
           </p>
           <button
             onClick={handleResetFilters}

@@ -178,7 +178,7 @@ export default function DashboardPage() {
           </Link>
 
           <Link
-            href="/studios?saved=true"
+            href="/saved-studios"
             className="group p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="size-12 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
