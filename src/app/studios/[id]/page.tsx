@@ -532,14 +532,6 @@ export default function StudioDetailPage() {
             <Heart className={`size-3.5 transition-colors ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
             <span>{isFavorited ? 'Saved Space' : 'Save Space'}</span>
           </button>
-
-          <Link
-            href="/studios"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors shrink-0"
-          >
-            <ArrowLeft className="size-3.5" />
-            <span>Catalog</span>
-          </Link>
         </div>
       </div>
 
