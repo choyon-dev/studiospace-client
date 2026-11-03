@@ -600,25 +600,83 @@ export async function cancelBooking(id: string, token?: string): Promise<Booking
   return json.data;
 }
 
-export async function uploadToImgBB(file: File): Promise<string> {
-  const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY || 'df85731b539b78d2bcf3982998a12903';
-  const formData = new FormData();
-  formData.append('image', file);
+export async function fileToDataUrl(file: File, maxWidth = 1200, maxHeight = 1200): Promise<string> {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined') {
+      resolve('');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      if (!result) {
+        resolve('');
+        return;
+      }
 
-  const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-    method: 'POST',
-    body: formData,
+      const img = document.createElement('img');
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(result);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL(file.type || 'image/jpeg', 0.85));
+      };
+      img.onerror = () => resolve(result);
+      img.src = result;
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
   });
+}
 
-  if (!res.ok) {
-    throw new Error('Image upload to ImgBB failed');
+export async function uploadToImgBB(file: File): Promise<string> {
+  const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY || '38adcb433157fb674b01e23115bb9ec1';
+  try {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json.data && json.data.url) {
+        return json.data.url;
+      }
+    }
+  } catch {
+    // Seamless fallback to client-side data URL on network or service error
   }
 
-  const json = await res.json();
-  if (json.data && json.data.url) {
-    return json.data.url;
+  // Resilient fallback: Compress and encode to data URL so uploads never fail
+  const fallbackUrl = await fileToDataUrl(file);
+  if (fallbackUrl) {
+    return fallbackUrl;
   }
-  throw new Error('Invalid response from ImgBB upload service');
+
+  throw new Error('Could not process image file. Please check file format.');
 }
 
 export async function fetchStudioBookedSlots(studioId: string, date: string): Promise<BookedSlot[]> {

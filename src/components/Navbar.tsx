@@ -318,6 +318,7 @@ export default function Navbar() {
                           fill
                           sizes="32px"
                           className="object-cover"
+                          unoptimized
                         />
                       </div>
                       <span className="hidden sm:inline text-xs font-semibold text-zinc-800 dark:text-zinc-200 max-w-[100px] truncate">
@@ -464,6 +465,7 @@ export default function Navbar() {
                           fill
                           sizes="32px"
                           className="object-cover"
+                          unoptimized
                         />
                       </div>
                       <div>
