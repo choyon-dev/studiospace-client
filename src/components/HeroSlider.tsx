@@ -18,17 +18,14 @@ import {
   MapPin,
   Clock,
   Layers,
-  Sparkles,
-  ArrowUpRight,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
 
 interface HeroSlide {
   id: string;
-  tag: string;
   title: string;
-  specs: string;
+  description: string;
   category: string;
   image: string;
 }
@@ -36,33 +33,29 @@ interface HeroSlide {
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: 'cyc-stages',
-    tag: 'CYC WALLS & PHOTO',
     title: 'Daylight Cyclorama Stages',
-    specs: '18ft ceilings · Motorized RGB light truss · 3-Phase power',
+    description: '18ft ceilings, motorized RGB light truss, and 3-phase power.',
     category: 'Photo Studio',
     image: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1600&q=85',
   },
   {
     id: 'film-stages',
-    tag: 'FILM & BROADCAST',
     title: 'Cinema Soundstages',
-    specs: 'STC 68 soundproofing · Silent dual HVAC · Freight access',
+    description: 'STC 68 acoustic soundproofing, silent dual HVAC, and freight elevator access.',
     category: 'Film Stage',
     image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1600&q=85',
   },
   {
     id: 'podcast-suites',
-    tag: 'PODCAST & MEDIA',
     title: '4K Broadcast Suites',
-    specs: 'Multi-cam live switching · Shure SM7B arrays · Treated booth',
+    description: 'Multi-cam live switching, Shure SM7B microphone arrays, and treated vocal booths.',
     category: 'Podcast Lounge',
     image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1600&q=85',
   },
   {
     id: 'audio-suites',
-    tag: 'AUDIO & RECORDING',
     title: 'Dolby Atmos Music Suites',
-    specs: 'Genelec acoustics · Vintage analog consoles · Live tracking',
+    description: 'Genelec tuned acoustics, vintage analog consoles, and live tracking rooms.',
     category: 'Music Suite',
     image: 'https://images.unsplash.com/photo-1598653222000-6b7b7a552625?auto=format&fit=crop&w=1600&q=85',
   },
@@ -223,7 +216,7 @@ export default function HeroSlider() {
             ))}
           </div>
 
-          {/* Sleek Minimalist Swiper Showcase */}
+          {/* Sleek Minimalist Swiper Showcase (Clickable Slides, Clean Title & Description Only) */}
           <div className="relative w-full max-w-5xl mx-auto mt-6 rounded-2xl md:rounded-3xl overflow-hidden border border-slate-200/80 dark:border-zinc-800/80 shadow-2xl shadow-slate-200/50 dark:shadow-black/50 group select-none">
             {isMounted ? (
               <Swiper
@@ -239,63 +232,48 @@ export default function HeroSlider() {
                 }}
                 onSwiper={setSwiperInstance}
                 onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-                className="w-full h-[260px] sm:h-[320px] md:h-[360px]"
+                className="w-full h-[240px] sm:h-[300px] md:h-[340px]"
               >
                 {HERO_SLIDES.map((slide, index) => (
-                  <SwiperSlide key={slide.id}>
-                    <div className="relative w-full h-[260px] sm:h-[320px] md:h-[360px]">
+                  <SwiperSlide key={slide.id} className="!h-full">
+                    <Link
+                      href={`/studios?category=${encodeURIComponent(slide.category)}`}
+                      className="group/slide block relative w-full h-[240px] sm:h-[300px] md:h-[340px] cursor-pointer"
+                    >
                       <Image
                         src={slide.image}
                         alt={slide.title}
                         fill
                         unoptimized
                         priority={index === 0}
-                        className="object-cover"
+                        className="object-cover transition-transform duration-700 ease-out group-hover/slide:scale-105"
                         sizes="(max-width: 1280px) 100vw, 1280px"
                       />
 
                       {/* Studio scrim gradients for high text contrast */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/15" />
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10 transition-opacity duration-300 group-hover/slide:from-black/90" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/35 to-transparent" />
 
-                      {/* Minimal Slide Content */}
-                      <div className="absolute inset-0 p-5 sm:p-7 md:p-9 flex flex-col justify-end z-10">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400/20 backdrop-blur-md border border-amber-400/30 text-amber-300 text-[10px] sm:text-xs font-semibold tracking-wider uppercase mb-2 w-fit">
-                          <Sparkles className="size-3 text-amber-400" />
-                          <span>{slide.tag}</span>
-                        </div>
-
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight mb-1 sm:mb-1.5">
+                      {/* Clean Title and Short Description Only */}
+                      <div className="absolute inset-0 p-6 sm:p-8 md:p-10 flex flex-col justify-end z-10">
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight mb-1 sm:mb-2 group-hover/slide:text-amber-400 transition-colors">
                           {slide.title}
                         </h2>
 
-                        <p className="text-xs sm:text-sm text-zinc-300 font-medium tracking-wide mb-4 line-clamp-1 max-w-xl">
-                          {slide.specs}
+                        <p className="text-xs sm:text-sm text-zinc-300 font-medium tracking-wide line-clamp-1 max-w-xl">
+                          {slide.description}
                         </p>
-
-                        <div className="flex items-center gap-2.5">
-                          <Link
-                            href={`/studios?category=${encodeURIComponent(slide.category)}`}
-                            className="h-9 sm:h-10 px-4 sm:px-5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-zinc-950 font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition-all cursor-pointer"
-                          >
-                            <span>Explore Studios</span>
-                            <ArrowUpRight className="size-3.5 sm:size-4" />
-                          </Link>
-                          <Link
-                            href="/add-studio"
-                            className="h-9 sm:h-10 px-3.5 sm:px-4 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 text-white font-medium text-xs sm:text-sm backdrop-blur-md border border-white/20 flex items-center gap-1.5 transition-all cursor-pointer"
-                          >
-                            <span>Host Your Space</span>
-                          </Link>
-                        </div>
                       </div>
-                    </div>
+                    </Link>
                   </SwiperSlide>
                 ))}
               </Swiper>
             ) : (
               /* SSR Static Placeholder to prevent CLS */
-              <div className="relative w-full h-[260px] sm:h-[320px] md:h-[360px]">
+              <Link
+                href={`/studios?category=${encodeURIComponent(HERO_SLIDES[0].category)}`}
+                className="group/slide block relative w-full h-[240px] sm:h-[300px] md:h-[340px] cursor-pointer"
+              >
                 <Image
                   src={HERO_SLIDES[0].image}
                   alt={HERO_SLIDES[0].title}
@@ -305,36 +283,17 @@ export default function HeroSlider() {
                   className="object-cover"
                   sizes="(max-width: 1280px) 100vw, 1280px"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/15" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
-                <div className="absolute inset-0 p-5 sm:p-7 md:p-9 flex flex-col justify-end z-10">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400/20 backdrop-blur-md border border-amber-400/30 text-amber-300 text-[10px] sm:text-xs font-semibold tracking-wider uppercase mb-2 w-fit">
-                    <Sparkles className="size-3 text-amber-400" />
-                    <span>{HERO_SLIDES[0].tag}</span>
-                  </div>
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight mb-1 sm:mb-1.5">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/35 to-transparent" />
+                <div className="absolute inset-0 p-6 sm:p-8 md:p-10 flex flex-col justify-end z-10">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight mb-1 sm:mb-2">
                     {HERO_SLIDES[0].title}
                   </h2>
-                  <p className="text-xs sm:text-sm text-zinc-300 font-medium tracking-wide mb-4 line-clamp-1 max-w-xl">
-                    {HERO_SLIDES[0].specs}
+                  <p className="text-xs sm:text-sm text-zinc-300 font-medium tracking-wide line-clamp-1 max-w-xl">
+                    {HERO_SLIDES[0].description}
                   </p>
-                  <div className="flex items-center gap-2.5">
-                    <Link
-                      href={`/studios?category=${encodeURIComponent(HERO_SLIDES[0].category)}`}
-                      className="h-9 sm:h-10 px-4 sm:px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm flex items-center gap-1.5"
-                    >
-                      <span>Explore Studios</span>
-                      <ArrowUpRight className="size-3.5 sm:size-4" />
-                    </Link>
-                    <Link
-                      href="/add-studio"
-                      className="h-9 sm:h-10 px-3.5 sm:px-4 rounded-xl bg-white/10 text-white font-medium text-xs sm:text-sm backdrop-blur-md border border-white/20 flex items-center gap-1.5"
-                    >
-                      <span>Host Your Space</span>
-                    </Link>
-                  </div>
                 </div>
-              </div>
+              </Link>
             )}
 
             {/* Floating Navigation Chevrons */}
@@ -342,7 +301,11 @@ export default function HeroSlider() {
               <>
                 <button
                   type="button"
-                  onClick={() => swiperInstance?.slidePrev()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    swiperInstance?.slidePrev();
+                  }}
                   aria-label="Previous slide"
                   className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 size-8 sm:size-10 rounded-full bg-black/40 hover:bg-black/70 text-white/80 hover:text-white backdrop-blur-md border border-white/15 flex items-center justify-center opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 cursor-pointer shadow-lg"
                 >
@@ -351,7 +314,11 @@ export default function HeroSlider() {
 
                 <button
                   type="button"
-                  onClick={() => swiperInstance?.slideNext()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    swiperInstance?.slideNext();
+                  }}
                   aria-label="Next slide"
                   className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 size-8 sm:size-10 rounded-full bg-black/40 hover:bg-black/70 text-white/80 hover:text-white backdrop-blur-md border border-white/15 flex items-center justify-center opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 cursor-pointer shadow-lg"
                 >
@@ -359,12 +326,22 @@ export default function HeroSlider() {
                 </button>
 
                 {/* Sleek Pagination Indicators */}
-                <div className="absolute right-4 sm:right-6 bottom-4 sm:bottom-6 z-20 flex items-center gap-1.5 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15">
+                <div
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  className="absolute right-4 sm:right-6 bottom-4 sm:bottom-6 z-20 flex items-center gap-1.5 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15"
+                >
                   {HERO_SLIDES.map((_, idx) => (
                     <button
                       key={idx}
                       type="button"
-                      onClick={() => swiperInstance?.slideToLoop(idx)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        swiperInstance?.slideToLoop(idx);
+                      }}
                       aria-label={`Go to slide ${idx + 1}`}
                       className={`h-1.5 transition-all duration-300 rounded-full cursor-pointer ${
                         activeIndex === idx
