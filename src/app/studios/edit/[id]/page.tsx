@@ -38,6 +38,14 @@ const DEFAULT_CATEGORIES: StudioCategory[] = [
   'Workshop',
 ];
 
+function formatCategoryTitle(str: string): string {
+  return str
+    .split(' ')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
 const PRESET_AMENITIES = [
   'Profoto Strobe Lighting Kit',
   '20ft Infinity Cyclorama Wall',
@@ -68,6 +76,8 @@ export default function EditStudioPage() {
   const [categories, setCategories] = useState<StudioCategory[]>(DEFAULT_CATEGORIES);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<StudioCategory>('Photo Studio');
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
+  const [customCategoryInput, setCustomCategoryInput] = useState('');
   const [hourlyRate, setHourlyRate] = useState<number>(85);
   const [securityDeposit, setSecurityDeposit] = useState<number>(150);
   const [maxCapacity, setMaxCapacity] = useState<number>(10);
@@ -108,10 +118,12 @@ export default function EditStudioPage() {
           fetchStudioById(id),
         ]);
 
-        if (meta?.categories && meta.categories.length > 0) {
-          const names = meta.categories.map((c) => c.name);
-          setCategories(Array.from(new Set([...names, ...DEFAULT_CATEGORIES])));
+        const metaNames = meta?.categories?.map((c) => c.name) || [];
+        const mergedCategories = Array.from(new Set([...metaNames, ...DEFAULT_CATEGORIES]));
+        if (data?.category && !mergedCategories.includes(data.category)) {
+          mergedCategories.push(data.category);
         }
+        setCategories(mergedCategories);
 
         if (data) {
           setTitle(data.title);
@@ -228,8 +240,29 @@ export default function EditStudioPage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title.trim() || !location.trim() || !overview.trim()) {
-      toast.error('Please complete all required fields.');
+    if (!title.trim()) {
+      toast.error('Studio title is required');
+      return;
+    }
+    const finalCategory = isCustomCategory
+      ? formatCategoryTitle(customCategoryInput.trim())
+      : category;
+
+    if (isCustomCategory && (!finalCategory || finalCategory.length < 3)) {
+      toast.error('Please enter a valid custom discipline of at least 3 characters');
+      return;
+    }
+    if (!location.trim()) {
+      toast.error('Please choose a verified studio facility address via OpenStreetMap');
+      return;
+    }
+    const finalCity = city.trim() || location.split(',')[0].trim();
+    if (!finalCity) {
+      toast.error('City / Metro Hub is required');
+      return;
+    }
+    if (!overview.trim()) {
+      toast.error('Overview is required');
       return;
     }
     if (images.length < 2) {
@@ -284,14 +317,14 @@ export default function EditStudioPage() {
         id,
         {
           title: title.trim(),
-          category,
+          category: finalCategory,
           hourlyRate: Number(hourlyRate),
           securityDeposit: Number(securityDeposit),
           maxCapacity: Number(maxCapacity),
           location: location.trim(),
-          city: city || location.split(',')[0].trim(),
-          state,
-          country,
+          city: finalCity,
+          state: state.trim(),
+          country: country.trim() || 'United States',
           coordinates: coordinates || undefined,
           osmPlaceId: osmPlaceId || undefined,
           specs: {
@@ -369,20 +402,60 @@ export default function EditStudioPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                  Category *
-                </label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value as StudioCategory)}
-                  className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                    Discipline / Category *
+                  </label>
+                  {isCustomCategory && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomCategory(false);
+                        setCustomCategoryInput('');
+                      }}
+                      className="text-[11px] font-medium text-amber-600 dark:text-amber-400 hover:underline"
+                    >
+                      Use Presets
+                    </button>
+                  )}
+                </div>
+
+                {isCustomCategory ? (
+                  <div className="space-y-1.5">
+                    <input
+                      type="text"
+                      value={customCategoryInput}
+                      onChange={(e) => setCustomCategoryInput(e.target.value)}
+                      placeholder="e.g. Dance Loft, Ceramics Lab, VFX Stage"
+                      required
+                      autoFocus
+                      className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 border border-amber-500/30 transition-all"
+                    />
+                    <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                      Custom discipline will appear dynamically across discovery filters.
+                    </p>
+                  </div>
+                ) : (
+                  <select
+                    value={category}
+                    onChange={(e) => {
+                      if (e.target.value === '__custom__') {
+                        setIsCustomCategory(true);
+                      } else {
+                        setCategory(e.target.value as StudioCategory);
+                      }
+                    }}
+                    className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                    <option disabled>──────────</option>
+                    <option value="__custom__">+ Add Custom Discipline...</option>
+                  </select>
+                )}
               </div>
             </div>
 
@@ -498,6 +571,48 @@ export default function EditStudioPage() {
                 required
                 placeholder="Type street, district, or city..."
               />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  City / Metro Hub *
+                </label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="e.g. Brooklyn, Los Angeles, Berlin"
+                  required
+                  className="w-full px-4 py-2 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  State / Region
+                </label>
+                <input
+                  type="text"
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  placeholder="e.g. NY, CA, England"
+                  className="w-full px-4 py-2 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  placeholder="e.g. United States, United Kingdom"
+                  className="w-full px-4 py-2 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                />
+              </div>
             </div>
 
             {coordinates && (
