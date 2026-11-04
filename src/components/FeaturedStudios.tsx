@@ -110,17 +110,14 @@ export default function FeaturedStudios() {
       )}
 
       {/* Prominent Full Archive CTA Button */}
-      <div className="mt-12 sm:mt-16 flex flex-col items-center justify-center text-center">
+      <div className="mt-12 sm:mt-16 flex items-center justify-center">
         <Link
           href="/studios"
-          className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 font-bold text-sm shadow-md hover:shadow-lg active:scale-98 transition-all cursor-pointer"
+          className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-98 text-zinc-950 font-bold text-sm shadow-md shadow-amber-500/20 hover:shadow-lg hover:shadow-amber-500/30 transition-all cursor-pointer"
         >
           <span>View Full Studio Archive</span>
           <ArrowRight className="size-4" />
         </Link>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2.5 font-mono">
-          Browse verified daylight stages, soundproof suites, and production lofts
-        </p>
       </div>
     </section>
   );

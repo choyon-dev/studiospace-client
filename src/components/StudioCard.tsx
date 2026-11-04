@@ -77,7 +77,7 @@ export default function StudioCard({
     : (studio.location || 'Studio Location').split(',')[0].trim();
 
   return (
-    <div className="group relative flex flex-col rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700 overflow-hidden shadow-xs hover:shadow-md transition-colors duration-200">
+    <div className="group relative flex flex-col rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-amber-500/40 dark:hover:border-amber-500/40 overflow-hidden shadow-xs hover:shadow-md transition-colors duration-200">
       {/* Studio Photo Container */}
       <Link
         href={studioUrl}
@@ -136,9 +136,9 @@ export default function StudioCard({
         {/* Row 2: Studio Title */}
         <Link
           href={studioUrl}
-          className="block group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors"
+          className="block"
         >
-          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1">
+          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
             {studio.title}
           </h3>
         </Link>
