@@ -63,23 +63,14 @@ export default function FeaturedStudios() {
 
   return (
     <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 mb-10">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
-            Featured Spaces
-          </h2>
-          <p className="text-sm text-slate-600 dark:text-zinc-400 mt-1 max-w-xl">
-            Curated, vetted, and production-ready environments with certified electrical & acoustic ratings.
-          </p>
-        </div>
-
-        <Link
-          href="/studios"
-          className="self-start sm:self-auto px-4 py-2.5 rounded-xl text-slate-800 dark:text-zinc-200 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-2 bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all shadow-sm hover:shadow shrink-0"
-        >
-          <span>View All Studios</span>
-          <ArrowRight className="size-4" />
-        </Link>
+      {/* Centered Section Header */}
+      <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-14">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
+          Featured Spaces
+        </h2>
+        <p className="text-sm sm:text-base text-slate-600 dark:text-zinc-400 mt-2.5 max-w-xl mx-auto leading-relaxed">
+          Curated, vetted, and production-ready environments with certified electrical & acoustic ratings.
+        </p>
       </div>
 
       {loading ? (
@@ -117,6 +108,20 @@ export default function FeaturedStudios() {
           ))}
         </div>
       )}
+
+      {/* Prominent Full Archive CTA Button */}
+      <div className="mt-12 sm:mt-16 flex flex-col items-center justify-center text-center">
+        <Link
+          href="/studios"
+          className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 font-bold text-sm shadow-md hover:shadow-lg active:scale-98 transition-all cursor-pointer"
+        >
+          <span>View Full Studio Archive</span>
+          <ArrowRight className="size-4" />
+        </Link>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2.5 font-mono">
+          Browse verified daylight stages, soundproof suites, and production lofts
+        </p>
+      </div>
     </section>
   );
 }

@@ -77,7 +77,7 @@ export default function StudioCard({
     : (studio.location || 'Studio Location').split(',')[0].trim();
 
   return (
-    <div className="group relative flex flex-col rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/80 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+    <div className="group relative flex flex-col rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700 overflow-hidden shadow-xs hover:shadow-md transition-colors duration-200">
       {/* Studio Photo Container */}
       <Link
         href={studioUrl}
@@ -87,8 +87,9 @@ export default function StudioCard({
           src={studio.imageUrl}
           alt={studio.title}
           fill
+          unoptimized
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/20 via-transparent to-transparent pointer-events-none" />
 
@@ -167,10 +168,10 @@ export default function StudioCard({
 
           <Link
             href={studioUrl}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 group/link"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 transition-colors"
           >
             <span>Explore</span>
-            <ArrowUpRight className="size-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+            <ArrowUpRight className="size-3.5" />
           </Link>
         </div>
       </div>
