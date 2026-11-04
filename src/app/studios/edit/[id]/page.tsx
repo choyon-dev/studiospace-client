@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import OsmLocationPicker from '@/components/OsmLocationPicker';
 import { fetchStudioById, updateStudio, fetchStudioMeta, uploadToImgBB } from '@/lib/api';
-import { StudioCategory, OsmLocationSuggestion, StudioSpecs } from '@/types';
+import { StudioCategory, OsmLocationSuggestion, StudioSpecs, DEFAULT_CATEGORIES } from '@/types';
 import { toast } from 'sonner';
 import {
   Upload,
@@ -29,14 +29,6 @@ import {
   Car,
   X,
 } from 'lucide-react';
-
-const DEFAULT_CATEGORIES: StudioCategory[] = [
-  'Photo Studio',
-  'Film Stage',
-  'Podcast Lounge',
-  'Music Suite',
-  'Workshop',
-];
 
 function formatCategoryTitle(str: string): string {
   return str

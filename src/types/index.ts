@@ -1,9 +1,37 @@
+export const DEFAULT_CATEGORIES: string[] = [
+  'Photo Studio',
+  'Film Stage',
+  'Podcast Lounge',
+  'Music Suite',
+  'Workshop',
+  'Dance Loft',
+  'Recording Studio',
+  'Virtual Production & VFX',
+  'Art Gallery & Exhibition',
+  'Daylight Loft',
+  'Rooftop & Outdoor Stage',
+  'Broadcast & Live Stream Pod',
+  'Ceramics & Artisan Studio',
+  'Rehearsal Room',
+  'Green Screen Cyc Stage',
+];
+
 export type StudioCategory =
   | 'Photo Studio'
   | 'Film Stage'
   | 'Podcast Lounge'
   | 'Music Suite'
   | 'Workshop'
+  | 'Dance Loft'
+  | 'Recording Studio'
+  | 'Virtual Production & VFX'
+  | 'Art Gallery & Exhibition'
+  | 'Daylight Loft'
+  | 'Rooftop & Outdoor Stage'
+  | 'Broadcast & Live Stream Pod'
+  | 'Ceramics & Artisan Studio'
+  | 'Rehearsal Room'
+  | 'Green Screen Cyc Stage'
   | string;
 
 export interface StudioSpecs {

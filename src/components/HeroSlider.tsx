@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,7 +11,7 @@ import { Autoplay, EffectFade } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 
-import { StudioMeta } from '@/types';
+import { StudioMeta, DEFAULT_CATEGORIES } from '@/types';
 import { fetchStudioMeta } from '@/lib/api';
 import {
   Search,
@@ -77,6 +77,11 @@ export default function HeroSlider() {
   const [isMounted, setIsMounted] = useState(false);
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const allCategories = useMemo(() => {
+    const metaCats = meta?.categories?.map((c) => c.name) || [];
+    return Array.from(new Set([...DEFAULT_CATEGORIES, ...metaCats]));
+  }, [meta]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -149,11 +154,11 @@ export default function HeroSlider() {
                 className="w-full font-semibold text-sm text-slate-900 dark:text-zinc-100 bg-transparent border-0 focus:outline-none focus:ring-0 p-0 cursor-pointer"
               >
                 <option value="All" className="dark:bg-zinc-900">
-                  All Categories {meta ? `(${meta.totalStudios})` : ''}
+                  All Categories
                 </option>
-                {meta?.categories.map((cat) => (
-                  <option key={cat.name} value={cat.name} className="dark:bg-zinc-900">
-                    {cat.name} ({cat.count})
+                {allCategories.map((cat) => (
+                  <option key={cat} value={cat} className="dark:bg-zinc-900">
+                    {cat}
                   </option>
                 ))}
               </select>
@@ -170,7 +175,7 @@ export default function HeroSlider() {
                 <option value="All" className="dark:bg-zinc-900">All Locations</option>
                 {meta?.hubs.map((hub) => (
                   <option key={hub.city} value={hub.city} className="dark:bg-zinc-900">
-                    {hub.label} ({hub.count})
+                    {hub.label}
                   </option>
                 ))}
               </select>

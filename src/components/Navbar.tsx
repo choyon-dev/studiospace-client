@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from 'next-themes';
-import { Studio, StudioMeta } from '@/types';
+import { Studio, StudioMeta, DEFAULT_CATEGORIES } from '@/types';
 import { fetchAllStudios, fetchStudioMeta } from '@/lib/api';
 import { getStudioUrl } from '@/lib/slug';
 import {
@@ -656,7 +656,7 @@ export default function Navbar() {
                       Popular Categories
                     </span>
                     <div className="flex flex-wrap gap-1.5">
-                      {(meta?.categories.map((c) => c.name) || ['Photo Studio', 'Film Stage', 'Podcast Lounge', 'Music Suite', 'Workshop']).slice(0, 6).map(
+                      {(meta?.categories.map((c) => c.name) || DEFAULT_CATEGORIES).slice(0, 8).map(
                         (cat) => (
                           <button
                             key={cat}

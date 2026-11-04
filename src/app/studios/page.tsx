@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Studio, StudioMeta } from '@/types';
+import { Studio, StudioMeta, DEFAULT_CATEGORIES } from '@/types';
 import StudioCard from '@/components/StudioCard';
 import { fetchAllStudios, fetchStudioMeta, fetchMyWishlist } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
@@ -59,6 +59,23 @@ function StudiosContent() {
   const toggleSection = (section: 'category' | 'location' | 'rate') => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
+
+  const categoriesList = useMemo(() => {
+    const metaCats = meta?.categories || [];
+    const existingNames = new Set(metaCats.map((c) => c.name));
+    const fullList = [...metaCats];
+    DEFAULT_CATEGORIES.forEach((cat) => {
+      if (!existingNames.has(cat)) {
+        fullList.push({
+          name: cat,
+          count: 0,
+          imageUrl: '',
+          slug: cat.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        });
+      }
+    });
+    return fullList;
+  }, [meta]);
 
   useEffect(() => {
     async function loadMeta() {
@@ -263,14 +280,9 @@ function StudiosContent() {
                 />
                 <span className="truncate">All Categories</span>
               </div>
-              {meta && (
-                <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
-                  {meta.totalStudios}
-                </span>
-              )}
             </button>
 
-            {meta?.categories.map((cat) => (
+            {categoriesList.map((cat) => (
               <button
                 key={cat.name}
                 type="button"
@@ -289,9 +301,11 @@ function StudiosContent() {
                   />
                   <span className="truncate">{cat.name}</span>
                 </div>
-                <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
-                  {cat.count}
-                </span>
+                {cat.count > 0 && (
+                  <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+                    {cat.count}
+                  </span>
+                )}
               </button>
             ))}
           </div>
