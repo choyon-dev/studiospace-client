@@ -1,105 +1,146 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Camera, Film, Mic, Music, Palette, ArrowRight, ArrowUpRight } from 'lucide-react';
+import Image from 'next/image';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import type { Swiper as SwiperType } from 'swiper';
+import { Navigation } from 'swiper/modules';
 
-const categories = [
-  {
-    name: 'Photo Studios',
-    slug: 'Photo Studio',
-    count: '34 SPACES',
-    icon: Camera,
-    desc: 'Daylight lofts, seamless cyc walls, grip packages included.',
-  },
-  {
-    name: 'Film Stages',
-    slug: 'Film Stage',
-    count: '18 STAGES',
-    icon: Film,
-    desc: 'Black boxes, Camlock 400A power, soundproof acoustic ratings.',
-  },
-  {
-    name: 'Podcast Lounges',
-    slug: 'Podcast Lounge',
-    count: '26 SUITES',
-    icon: Mic,
-    desc: '4K multi-cam switchers, broadcast mics, acoustic diffusers.',
-  },
-  {
-    name: 'Music Suites',
-    slug: 'Music Suite',
-    count: '14 SUITES',
-    icon: Music,
-    desc: 'Dolby Atmos monitoring, vocal isolation booths, outboard gear.',
-  },
-  {
-    name: 'Artisan Workshops',
-    slug: 'Workshop',
-    count: '12 SPACES',
-    icon: Palette,
-    desc: 'Ceramics kilns, woodworking benches, industrial ventilation.',
-  },
-];
+import 'swiper/css';
+import 'swiper/css/navigation';
+
+import { StudioCategoryMeta } from '@/types';
+import { fetchCategories } from '@/lib/api';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function CategoryBrowse() {
+  const [categories, setCategories] = useState<StudioCategoryMeta[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
+  const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+    let isCancelled = false;
+
+    async function loadCategories() {
+      try {
+        const data = await fetchCategories();
+        if (!isCancelled && Array.isArray(data) && data.length > 0) {
+          setCategories(data);
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic categories:', err);
+      } finally {
+        if (!isCancelled) setLoading(false);
+      }
+    }
+
+    loadCategories();
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
   return (
-    <section className="w-full bg-slate-50/50 dark:bg-zinc-950 py-16 sm:py-20">
+    <section className="w-full bg-slate-50/50 dark:bg-zinc-950 py-16 sm:py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 mb-10">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
-              Browse by Studio Category
-            </h2>
-            <p className="text-sm text-slate-600 dark:text-zinc-400 mt-1">
-              Select an architectural discipline to inspect calibrated sound ratings, lighting packages, and space dimensions.
-            </p>
-          </div>
-          <Link
-            href="/studios"
-            className="text-xs font-mono font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400 hover:text-amber-600 flex items-center gap-1.5 group transition-colors shrink-0"
-          >
-            <span>View All Categories</span>
-            <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
+        {/* Centered Section Header */}
+        <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
+            Browse by Studio Category
+          </h2>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-zinc-400 mt-2.5 max-w-xl mx-auto leading-relaxed">
+            Select an architectural discipline to inspect calibrated sound ratings, lighting packages, and space dimensions.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {categories.map((cat) => {
-            const Icon = cat.icon;
-            return (
-              <Link
-                key={cat.slug}
-                href={`/studios?category=${encodeURIComponent(cat.slug)}`}
-                className="group relative bg-white dark:bg-zinc-900/60 dark:hover:bg-zinc-900 rounded-2xl p-5 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-60 cursor-pointer"
+        {/* Carousel Container */}
+        <div className="relative w-full">
+          {loading || !isMounted ? (
+            /* Skeleton Loading State */
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="aspect-[3/4] rounded-2xl bg-slate-200/80 dark:bg-zinc-900/80 animate-pulse"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="relative group">
+              <Swiper
+                modules={[Navigation]}
+                slidesPerView={1.3}
+                spaceBetween={14}
+                breakpoints={{
+                  480: { slidesPerView: 1.8, spaceBetween: 14 },
+                  640: { slidesPerView: 2.5, spaceBetween: 16 },
+                  768: { slidesPerView: 3.2, spaceBetween: 18 },
+                  1024: { slidesPerView: 4.2, spaceBetween: 20 },
+                  1280: { slidesPerView: 5, spaceBetween: 20 },
+                }}
+                onSwiper={setSwiperInstance}
+                className="w-full !py-2"
               >
-                <div className="flex items-start justify-between">
-                  <div className="size-11 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-zinc-950 transition-colors">
-                    <Icon className="size-5 stroke-[2]" />
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-zinc-400 px-2 py-1 rounded-md bg-slate-100 dark:bg-zinc-800">
-                    {cat.count}
-                  </span>
-                </div>
+                {categories.map((cat) => (
+                  <SwiperSlide key={cat.slug || cat.name} className="!h-auto">
+                    <Link
+                      href={`/studios?category=${encodeURIComponent(cat.name)}`}
+                      className="group/card block relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-900 cursor-pointer shadow-md hover:shadow-2xl transition-all duration-500"
+                    >
+                      {cat.imageUrl ? (
+                        <Image
+                          src={cat.imageUrl}
+                          alt={cat.name}
+                          fill
+                          unoptimized
+                          className="object-cover transition-transform duration-700 ease-out group-hover/card:scale-105"
+                          sizes="(max-width: 640px) 75vw, (max-width: 1024px) 35vw, 20vw"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900" />
+                      )}
 
-                <div className="space-y-1.5">
-                  <h3 className="text-base font-bold text-slate-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                    {cat.name}
-                  </h3>
-                  <p className="text-xs text-slate-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
-                    {cat.desc}
-                  </p>
-                </div>
+                      {/* Scrim Vignette for High Text Legibility */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent transition-opacity duration-300 group-hover/card:from-black/95" />
 
-                <div className="flex items-center text-slate-500 dark:text-zinc-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors pt-2">
-                  <span className="text-[11px] font-mono font-semibold uppercase tracking-wider">
-                    Explore Roster
-                  </span>
-                  <ArrowUpRight className="size-4 ml-auto group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </div>
-              </Link>
-            );
-          })}
+                      {/* Clean Title Only */}
+                      <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-end z-10">
+                        <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug group-hover/card:text-amber-400 transition-colors">
+                          {cat.name}
+                        </h3>
+                      </div>
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+
+              {/* Navigation Chevrons */}
+              {categories.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => swiperInstance?.slidePrev()}
+                    aria-label="Previous category"
+                    className="absolute -left-3 sm:-left-4 top-1/2 -translate-y-1/2 z-20 size-9 sm:size-10 rounded-full bg-white/90 dark:bg-zinc-900/90 hover:bg-white dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-100 shadow-lg border border-slate-200/80 dark:border-zinc-800 flex items-center justify-center opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 cursor-pointer"
+                  >
+                    <ChevronLeft className="size-4 sm:size-5" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => swiperInstance?.slideNext()}
+                    aria-label="Next category"
+                    className="absolute -right-3 sm:-right-4 top-1/2 -translate-y-1/2 z-20 size-9 sm:size-10 rounded-full bg-white/90 dark:bg-zinc-900/90 hover:bg-white dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-100 shadow-lg border border-slate-200/80 dark:border-zinc-800 flex items-center justify-center opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 cursor-pointer"
+                  >
+                    <ChevronRight className="size-4 sm:size-5" />
+                  </button>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </section>

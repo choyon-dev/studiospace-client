@@ -54,6 +54,7 @@ export interface StudioCategoryMeta {
   name: string;
   count: number;
   slug: string;
+  imageUrl?: string;
 }
 
 export interface StudioHubMeta {

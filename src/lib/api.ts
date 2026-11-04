@@ -1,4 +1,4 @@
-import { Studio, Booking, StudioMeta, OsmLocationSuggestion, StudioFilters, BookedSlot, Review } from '@/types';
+import { Studio, Booking, StudioMeta, StudioCategoryMeta, OsmLocationSuggestion, StudioFilters, BookedSlot, Review } from '@/types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -299,11 +299,15 @@ export async function fetchStudioMeta(): Promise<StudioMeta> {
       if (s.hourlyRate > maxRate) maxRate = s.hourlyRate;
     });
 
-    const categories = Array.from(categoriesMap.entries()).map(([name, count]) => ({
-      name,
-      count,
-      slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-    }));
+    const categories = Array.from(categoriesMap.entries()).map(([name, count]) => {
+      const sample = FALLBACK_STUDIOS.find((s) => s.category === name);
+      return {
+        name,
+        count,
+        imageUrl: sample?.imageUrl || '',
+        slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      };
+    });
 
     const hubs = Array.from(hubsMap.values()).map((h) => ({
       ...h,
@@ -320,6 +324,21 @@ export async function fetchStudioMeta(): Promise<StudioMeta> {
       amenities: ['Cyclorama Wall', 'Profoto Strobes', 'Dolby Atmos', 'STC 65 Soundproof', 'Freight Elevator', '4K Multicam'],
       totalStudios: FALLBACK_STUDIOS.length,
     };
+  }
+}
+
+export async function fetchCategories(): Promise<StudioCategoryMeta[]> {
+  try {
+    const res = await fetch(`${API_BASE}/studios/categories`, {
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error('Failed to fetch categories');
+    const json = await res.json();
+    if (json.data && Array.isArray(json.data)) return json.data;
+    throw new Error('Invalid categories response');
+  } catch {
+    const meta = await fetchStudioMeta();
+    return meta.categories;
   }
 }
 
