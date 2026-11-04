@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 
-const PRODUCTION_DISCIPLINES = [
+const PRODUCTION_TYPES = [
   'Commercial & Brand Campaign',
   'Fashion & Editorial Lookbook',
   'Music Video & Performance',
@@ -48,7 +48,7 @@ export default function MyBookingsPage() {
   const [reviewRating, setReviewRating] = useState<number>(5);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [reviewComment, setReviewComment] = useState<string>('');
-  const [reviewProductionType, setReviewProductionType] = useState<string>(PRODUCTION_DISCIPLINES[0]);
+  const [reviewProductionType, setReviewProductionType] = useState<string>(PRODUCTION_TYPES[0]);
   const [submittingReview, setSubmittingReview] = useState(false);
 
   const checkAllReviews = useCallback(async (items: Booking[]) => {
@@ -135,7 +135,7 @@ export default function MyBookingsPage() {
     setReviewRating(5);
     setHoverRating(0);
     setReviewComment('');
-    setReviewProductionType(PRODUCTION_DISCIPLINES[0]);
+    setReviewProductionType(PRODUCTION_TYPES[0]);
   };
 
   const handleSubmitReview = async (e: React.FormEvent) => {
@@ -467,16 +467,16 @@ export default function MyBookingsPage() {
 
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">
-                    Production Discipline
+                    Production Type
                   </label>
                   <select
                     value={reviewProductionType}
                     onChange={(e) => setReviewProductionType(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl text-xs font-medium bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   >
-                    {PRODUCTION_DISCIPLINES.map((discipline) => (
-                      <option key={discipline} value={discipline}>
-                        {discipline}
+                    {PRODUCTION_TYPES.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
                       </option>
                     ))}
                   </select>

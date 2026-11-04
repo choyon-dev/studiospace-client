@@ -143,13 +143,13 @@ export default function HeroSlider() {
             <div className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors rounded-xl cursor-pointer">
               <Layers className="size-4 text-slate-400 dark:text-zinc-500 shrink-0" />
               <select
-                aria-label="Discipline"
+                aria-label="Category"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full font-semibold text-sm text-slate-900 dark:text-zinc-100 bg-transparent border-0 focus:outline-none focus:ring-0 p-0 cursor-pointer"
               >
                 <option value="All" className="dark:bg-zinc-900">
-                  All Disciplines {meta ? `(${meta.totalStudios})` : ''}
+                  All Categories {meta ? `(${meta.totalStudios})` : ''}
                 </option>
                 {meta?.categories.map((cat) => (
                   <option key={cat.name} value={cat.name} className="dark:bg-zinc-900">
@@ -167,7 +167,7 @@ export default function HeroSlider() {
                 onChange={(e) => setSelectedHub(e.target.value)}
                 className="w-full font-semibold text-sm text-slate-900 dark:text-zinc-100 bg-transparent border-0 focus:outline-none focus:ring-0 p-0 cursor-pointer"
               >
-                <option value="All" className="dark:bg-zinc-900">All Creative Hubs</option>
+                <option value="All" className="dark:bg-zinc-900">All Locations</option>
                 {meta?.hubs.map((hub) => (
                   <option key={hub.city} value={hub.city} className="dark:bg-zinc-900">
                     {hub.label} ({hub.count})
@@ -179,15 +179,15 @@ export default function HeroSlider() {
             <div className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors rounded-xl cursor-pointer">
               <Clock className="size-4 text-slate-400 dark:text-zinc-500 shrink-0" />
               <select
-                aria-label="Hourly Rate"
+                aria-label="Hourly Price"
                 value={selectedRate}
                 onChange={(e) => setSelectedRate(e.target.value)}
                 className="w-full font-semibold text-sm text-slate-900 dark:text-zinc-100 bg-transparent border-0 focus:outline-none focus:ring-0 p-0 cursor-pointer"
               >
-                <option value="All" className="dark:bg-zinc-900">Flexible Hourly (All Rates)</option>
-                <option value="budget" className="dark:bg-zinc-900">Under $75 / hr (Accessible)</option>
-                <option value="standard" className="dark:bg-zinc-900">$75 - $125 / hr (Standard Pro)</option>
-                <option value="commercial" className="dark:bg-zinc-900">Over $125 / hr (Commercial)</option>
+                <option value="All" className="dark:bg-zinc-900">Hourly Price (All)</option>
+                <option value="budget" className="dark:bg-zinc-900">Under $75 / hr</option>
+                <option value="standard" className="dark:bg-zinc-900">$75 - $125 / hr</option>
+                <option value="commercial" className="dark:bg-zinc-900">Over $125 / hr</option>
               </select>
             </div>
 

@@ -52,7 +52,7 @@ export default function CategoryBrowse() {
             Browse by Studio Category
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-zinc-400 mt-2.5 max-w-xl mx-auto leading-relaxed">
-            Select an architectural discipline to inspect calibrated sound ratings, lighting packages, and space dimensions.
+            Explore verified studios by category to find the perfect space for your production.
           </p>
         </div>
 

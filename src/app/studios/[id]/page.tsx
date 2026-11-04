@@ -391,16 +391,16 @@ export default function StudioDetailPage() {
     doc.setFontSize(10);
     doc.setTextColor(70, 70, 70);
     doc.text(`Booking Reference ID: ${confirmedBooking._id || 'CONF-8921'}`, 20, 68);
-    doc.text(`Studio Facility: ${studio.title}`, 20, 76);
-    doc.text(`Discipline: ${studio.category}`, 20, 84);
-    doc.text(`Facility Location: ${studio.location}`, 20, 92);
+    doc.text(`Studio: ${studio.title}`, 20, 76);
+    doc.text(`Category: ${studio.category}`, 20, 84);
+    doc.text(`Location: ${studio.location}`, 20, 92);
     doc.text(`Host Contact: ${studio.ownerName} (${studio.ownerEmail})`, 20, 100);
     doc.text(`Booking Status: ${confirmedBooking.status || 'Confirmed'}`, 20, 108);
 
     doc.text(`Booked By: ${user?.name || cardholderName} (${user?.email})`, 20, 118);
     doc.text(`Shoot Date: ${confirmedBooking.date}`, 20, 126);
     doc.text(`Reserved Hours: ${confirmedBooking.startTime} - ${confirmedBooking.endTime} (${confirmedBooking.totalHours} hrs)`, 20, 134);
-    doc.text(`Facility Rate: $${studio.hourlyRate}.00 / hr`, 20, 142);
+    doc.text(`Hourly Rate: $${studio.hourlyRate}.00 / hr`, 20, 142);
 
     doc.setDrawColor(220, 220, 220);
     doc.setLineWidth(0.5);
@@ -672,10 +672,10 @@ export default function StudioDetailPage() {
         <section className="space-y-6">
           <div>
             <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Engineering & Facility Specifications
+              Studio Specifications
             </h2>
             <p className="text-xs text-zinc-500 mt-1">
-              Calibrated technical tolerances and infrastructure verified on-site
+              Verified space specifications and amenities on-site
             </p>
           </div>
 
@@ -778,9 +778,9 @@ export default function StudioDetailPage() {
                   <span className="font-medium text-zinc-900 dark:text-zinc-100 sm:text-right">{specs.internetSpeed}</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 py-1">
-                  <span className="text-zinc-500 shrink-0">Creative Hub</span>
+                  <span className="text-zinc-500 shrink-0">City / Location</span>
                   <span className="font-medium text-zinc-900 dark:text-zinc-100 sm:text-right">
-                    {studio.city || studio.location.split(',')[0]} Metro Zone
+                    {studio.city || studio.location.split(',')[0]}
                   </span>
                 </div>
               </div>

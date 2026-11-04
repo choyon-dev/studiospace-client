@@ -21,10 +21,10 @@ import {
 } from 'lucide-react';
 
 const RATE_OPTIONS = [
-  { value: 'All', label: 'All Rates', sub: 'Flexible' },
-  { value: 'budget', label: 'Under $75 / hr', sub: 'Accessible' },
-  { value: 'standard', label: '$75 - $125 / hr', sub: 'Standard Pro' },
-  { value: 'commercial', label: 'Over $125 / hr', sub: 'Commercial' },
+  { value: 'All', label: 'All Rates', sub: 'Any Price' },
+  { value: 'budget', label: 'Under $75 / hr', sub: 'Budget Friendly' },
+  { value: 'standard', label: '$75 - $125 / hr', sub: 'Mid-Tier' },
+  { value: 'commercial', label: 'Over $125 / hr', sub: 'Premium' },
 ];
 
 function StudiosContent() {
@@ -51,12 +51,12 @@ function StudiosContent() {
   const [sortBy, setSortBy] = useState<string>(initialSort);
 
   const [openSections, setOpenSections] = useState({
-    discipline: true,
+    category: true,
     location: true,
     rate: true,
   });
 
-  const toggleSection = (section: 'discipline' | 'location' | 'rate') => {
+  const toggleSection = (section: 'category' | 'location' | 'rate') => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
@@ -221,17 +221,17 @@ function StudiosContent() {
         </div>
       </div>
 
-      {/* Studio Discipline (Collapsible & Scrollable Radio List) */}
+      {/* Category (Collapsible & Scrollable Radio List) */}
       <div className="border-t border-zinc-100 dark:border-zinc-800/80 pt-4">
         <button
           type="button"
-          onClick={() => toggleSection('discipline')}
+          onClick={() => toggleSection('category')}
           className="w-full flex items-center justify-between text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2.5 cursor-pointer group"
         >
           <div className="flex items-center gap-1.5">
             <Layers className="size-3.5 text-amber-500" />
             <span className="group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">
-              Studio Discipline
+              Category
             </span>
             {selectedCategory !== 'All' && (
               <span className="size-1.5 rounded-full bg-amber-500" />
@@ -239,12 +239,12 @@ function StudiosContent() {
           </div>
           <ChevronDown
             className={`size-3.5 text-zinc-400 transition-transform duration-200 ${
-              openSections.discipline ? 'rotate-180' : ''
+              openSections.category ? 'rotate-180' : ''
             }`}
           />
         </button>
 
-        {openSections.discipline && (
+        {openSections.category && (
           <div className="space-y-1 max-h-52 overflow-y-auto pr-1 scrollbar-thin">
             <button
               type="button"
@@ -261,7 +261,7 @@ function StudiosContent() {
                     selectedCategory === 'All' ? 'bg-amber-500' : 'bg-zinc-300 dark:bg-zinc-700'
                   }`}
                 />
-                <span className="truncate">All Disciplines</span>
+                <span className="truncate">All Categories</span>
               </div>
               {meta && (
                 <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
@@ -596,7 +596,7 @@ function StudiosContent() {
                   onClick={() => handleCategoryChange('All')}
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-500/10 text-amber-700 dark:text-amber-400 hover:bg-amber-500/20 transition-colors cursor-pointer"
                 >
-                  <span>Discipline: {selectedCategory}</span>
+                  <span>Category: {selectedCategory}</span>
                   <X className="size-3" />
                 </button>
               )}

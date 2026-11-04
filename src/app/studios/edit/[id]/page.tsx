@@ -249,16 +249,16 @@ export default function EditStudioPage() {
       : category;
 
     if (isCustomCategory && (!finalCategory || finalCategory.length < 3)) {
-      toast.error('Please enter a valid custom discipline of at least 3 characters');
+      toast.error('Please enter a valid category name of at least 3 characters');
       return;
     }
     if (!location.trim()) {
-      toast.error('Please choose a verified studio facility address via OpenStreetMap');
+      toast.error('Please choose a verified studio address via OpenStreetMap');
       return;
     }
     const finalCity = city.trim() || location.split(',')[0].trim();
     if (!finalCity) {
-      toast.error('City / Metro Hub is required');
+      toast.error('City is required');
       return;
     }
     if (!overview.trim()) {
@@ -340,7 +340,7 @@ export default function EditStudioPage() {
         token
       );
 
-      toast.success('Studio specifications and listing updated successfully');
+      toast.success('Studio updated successfully');
       router.push('/my-listings');
     } catch (err: any) {
       toast.error(err.message || 'Failed to update studio listing');
@@ -352,7 +352,7 @@ export default function EditStudioPage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center text-zinc-400">
-        Loading studio technical specifications...
+        Loading studio details...
       </div>
     );
   }
@@ -370,13 +370,13 @@ export default function EditStudioPage() {
 
         <div className="mb-10 text-center sm:text-left">
           <span className="text-xs font-mono uppercase tracking-wider text-amber-500 font-bold">
-            Facility Specifications
+            Studio Details
           </span>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mt-1">
-            Edit Studio Specifications
+            Edit Studio Listing
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400 mt-1 text-sm sm:text-base">
-            Update engineering specs, verified address, equipment packages, and booking policies.
+            Update space specs, address, equipment, and pricing.
           </p>
         </div>
 
@@ -384,7 +384,7 @@ export default function EditStudioPage() {
           <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-6">
             <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
               <Sparkles className="size-4 text-amber-500" />
-              <span>Studio Title & Classification</span>
+              <span>Basic Information & Pricing</span>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -404,7 +404,7 @@ export default function EditStudioPage() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                    Discipline / Category *
+                    Category *
                   </label>
                   {isCustomCategory && (
                     <button
@@ -432,7 +432,7 @@ export default function EditStudioPage() {
                       className="w-full px-4 py-2.5 text-sm rounded-xl bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 border border-amber-500/30 transition-all"
                     />
                     <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
-                      Custom discipline will appear dynamically across discovery filters.
+                      Custom category will appear dynamically across discovery filters.
                     </p>
                   </div>
                 ) : (
@@ -453,7 +453,7 @@ export default function EditStudioPage() {
                       </option>
                     ))}
                     <option disabled>──────────</option>
-                    <option value="__custom__">+ Add Custom Discipline...</option>
+                    <option value="__custom__">+ Add Custom Category...</option>
                   </select>
                 )}
               </div>
@@ -513,7 +513,7 @@ export default function EditStudioPage() {
 
             <div className="pt-2">
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
-                Booking Confirmation Governance *
+                Booking Policy *
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
@@ -558,12 +558,12 @@ export default function EditStudioPage() {
           <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 shadow-sm space-y-4">
             <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
               <Cpu className="size-4 text-amber-500" />
-              <span>Verified Facility Location (OpenStreetMap Engine)</span>
+              <span>Studio Location & Address</span>
             </h2>
 
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Physical Facility Address (Global Geocoded) *
+                Street Address *
               </label>
               <OsmLocationPicker
                 value={location}
@@ -576,7 +576,7 @@ export default function EditStudioPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                  City / Metro Hub *
+                  City *
                 </label>
                 <input
                   type="text"
@@ -617,12 +617,12 @@ export default function EditStudioPage() {
 
             {coordinates && (
               <div className="flex flex-wrap items-center gap-3 p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 text-xs text-zinc-500">
-                <span className="font-semibold text-zinc-800 dark:text-zinc-200">Resolved Geocode:</span>
+                <span className="font-semibold text-zinc-800 dark:text-zinc-200">Location Coordinates:</span>
                 <span>City: {city || 'Direct'}</span>
                 <span>•</span>
                 <span>Coords: {coordinates.lat.toFixed(4)}, {coordinates.lon.toFixed(4)}</span>
                 <span>•</span>
-                <span className="text-emerald-500 font-medium">OSM Verified</span>
+                <span className="text-emerald-500 font-medium">Verified</span>
               </div>
             )}
           </div>
@@ -631,7 +631,7 @@ export default function EditStudioPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
                 <Sliders className="size-4 text-amber-500" />
-                <span>Technical Specifications & Engineering Blueprint</span>
+                <span>Studio Specifications</span>
               </h2>
               <span className="text-xs font-mono text-amber-500 font-semibold uppercase">
                 All Fields Required

@@ -653,7 +653,7 @@ export default function Navbar() {
                 <div className="p-4 space-y-4">
                   <div>
                     <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 dark:text-zinc-500 block mb-2 font-semibold">
-                      Popular Disciplines
+                      Popular Categories
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {(meta?.categories.map((c) => c.name) || ['Photo Studio', 'Film Stage', 'Podcast Lounge', 'Music Suite', 'Workshop']).slice(0, 6).map(
@@ -673,7 +673,7 @@ export default function Navbar() {
 
                   <div>
                     <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 dark:text-zinc-500 block mb-2 font-semibold">
-                      Popular Creative Hubs
+                      Popular Locations
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {(meta?.hubs.map((h) => h.city) || ['Brooklyn', 'Los Angeles', 'Austin', 'Chicago', 'Queens']).slice(0, 6).map((loc) => (

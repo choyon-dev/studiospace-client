@@ -7,7 +7,7 @@ const steps = [
   {
     number: '01',
     title: 'Discover Spaces',
-    desc: 'Filter by creative discipline, camera package compatibility, power requirements, and certified acoustic STC ratings.',
+    desc: 'Filter by category, equipment, location, and hourly price.',
     icon: SlidersHorizontal,
   },
   {
