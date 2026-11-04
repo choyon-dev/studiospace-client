@@ -50,6 +50,16 @@ function StudiosContent() {
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
   const [sortBy, setSortBy] = useState<string>(initialSort);
 
+  const [openSections, setOpenSections] = useState({
+    discipline: true,
+    location: true,
+    rate: true,
+  });
+
+  const toggleSection = (section: 'discipline' | 'location' | 'rate') => {
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+
   useEffect(() => {
     async function loadMeta() {
       try {
@@ -184,7 +194,7 @@ function StudiosContent() {
 
   // Common filter panel controls (rendered in desktop sidebar & mobile drawer)
   const renderFilterControls = () => (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Search Input */}
       <div>
         <label className="block text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
@@ -211,43 +221,36 @@ function StudiosContent() {
         </div>
       </div>
 
-      {/* Studio Discipline (Clean Vertical Stack with Counts) */}
-      <div>
-        <label className="block text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2.5">
-          Studio Discipline
-        </label>
-        <div className="space-y-1">
-          <button
-            type="button"
-            onClick={() => handleCategoryChange('All')}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              selectedCategory === 'All'
-                ? 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-bold'
-                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-900 dark:hover:text-zinc-200'
-            }`}
-          >
-            <div className="flex items-center gap-2 truncate">
-              <span
-                className={`size-2 rounded-full shrink-0 ${
-                  selectedCategory === 'All' ? 'bg-amber-500' : 'bg-zinc-300 dark:bg-zinc-700'
-                }`}
-              />
-              <span className="truncate">All Disciplines</span>
-            </div>
-            {meta && (
-              <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
-                {meta.totalStudios}
-              </span>
+      {/* Studio Discipline (Collapsible & Scrollable Radio List) */}
+      <div className="border-t border-zinc-100 dark:border-zinc-800/80 pt-4">
+        <button
+          type="button"
+          onClick={() => toggleSection('discipline')}
+          className="w-full flex items-center justify-between text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2.5 cursor-pointer group"
+        >
+          <div className="flex items-center gap-1.5">
+            <Layers className="size-3.5 text-amber-500" />
+            <span className="group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">
+              Studio Discipline
+            </span>
+            {selectedCategory !== 'All' && (
+              <span className="size-1.5 rounded-full bg-amber-500" />
             )}
-          </button>
+          </div>
+          <ChevronDown
+            className={`size-3.5 text-zinc-400 transition-transform duration-200 ${
+              openSections.discipline ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
 
-          {meta?.categories.map((cat) => (
+        {openSections.discipline && (
+          <div className="space-y-1 max-h-52 overflow-y-auto pr-1 scrollbar-thin">
             <button
-              key={cat.name}
               type="button"
-              onClick={() => handleCategoryChange(cat.name)}
+              onClick={() => handleCategoryChange('All')}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                selectedCategory === cat.name
+                selectedCategory === 'All'
                   ? 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-bold'
                   : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-900 dark:hover:text-zinc-200'
               }`}
@@ -255,66 +258,165 @@ function StudiosContent() {
               <div className="flex items-center gap-2 truncate">
                 <span
                   className={`size-2 rounded-full shrink-0 ${
-                    selectedCategory === cat.name ? 'bg-amber-500' : 'bg-zinc-300 dark:bg-zinc-700'
+                    selectedCategory === 'All' ? 'bg-amber-500' : 'bg-zinc-300 dark:bg-zinc-700'
                   }`}
                 />
-                <span className="truncate">{cat.name}</span>
+                <span className="truncate">All Disciplines</span>
               </div>
-              <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
-                {cat.count}
-              </span>
+              {meta && (
+                <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+                  {meta.totalStudios}
+                </span>
+              )}
             </button>
-          ))}
-        </div>
-      </div>
 
-      {/* Creative Hub (Location Selector) */}
-      <div>
-        <label className="block text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
-          Creative Hub
-        </label>
-        <div className="relative flex items-center bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800/80 rounded-xl px-3 py-2.5">
-          <MapPin className="size-4 text-amber-500 shrink-0 mr-2" />
-          <select
-            value={selectedHub}
-            onChange={(e) => handleHubChange(e.target.value)}
-            className="w-full text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100 bg-transparent border-0 focus:outline-none cursor-pointer appearance-none pr-6"
-          >
-            <option value="All" className="dark:bg-zinc-900">
-              All Creative Hubs
-            </option>
-            {meta?.hubs.map((hub) => (
-              <option key={hub.city} value={hub.city} className="dark:bg-zinc-900">
-                {hub.label} ({hub.count})
-              </option>
+            {meta?.categories.map((cat) => (
+              <button
+                key={cat.name}
+                type="button"
+                onClick={() => handleCategoryChange(cat.name)}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  selectedCategory === cat.name
+                    ? 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-bold'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-900 dark:hover:text-zinc-200'
+                }`}
+              >
+                <div className="flex items-center gap-2 truncate">
+                  <span
+                    className={`size-2 rounded-full shrink-0 ${
+                      selectedCategory === cat.name ? 'bg-amber-500' : 'bg-zinc-300 dark:bg-zinc-700'
+                    }`}
+                  />
+                  <span className="truncate">{cat.name}</span>
+                </div>
+                <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+                  {cat.count}
+                </span>
+              </button>
             ))}
-          </select>
-          <ChevronDown className="size-3.5 text-zinc-400 absolute right-3 pointer-events-none" />
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Hourly Rate Tier Stack */}
-      <div>
-        <label className="block text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
-          Hourly Rate
-        </label>
-        <div className="space-y-1">
-          {RATE_OPTIONS.map((opt) => (
+      {/* Locations (Collapsible & Scrollable Radio List, NO DROPDOWN) */}
+      <div className="border-t border-zinc-100 dark:border-zinc-800/80 pt-4">
+        <button
+          type="button"
+          onClick={() => toggleSection('location')}
+          className="w-full flex items-center justify-between text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2.5 cursor-pointer group"
+        >
+          <div className="flex items-center gap-1.5">
+            <MapPin className="size-3.5 text-amber-500" />
+            <span className="group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">
+              Locations
+            </span>
+            {selectedHub !== 'All' && (
+              <span className="size-1.5 rounded-full bg-amber-500" />
+            )}
+          </div>
+          <ChevronDown
+            className={`size-3.5 text-zinc-400 transition-transform duration-200 ${
+              openSections.location ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
+
+        {openSections.location && (
+          <div className="space-y-1 max-h-48 overflow-y-auto pr-1 scrollbar-thin">
             <button
-              key={opt.value}
               type="button"
-              onClick={() => handleRateChange(opt.value)}
-              className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-between ${
-                selectedRate === opt.value
-                  ? 'bg-amber-500/15 text-amber-700 dark:text-amber-400 font-bold border border-amber-500/30'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-900 dark:hover:text-zinc-200 font-medium'
+              onClick={() => handleHubChange('All')}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                selectedHub === 'All'
+                  ? 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-bold'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-900 dark:hover:text-zinc-200'
               }`}
             >
-              <span>{opt.label}</span>
-              <span className="text-[10px] text-zinc-400">{opt.sub}</span>
+              <div className="flex items-center gap-2 truncate">
+                <span
+                  className={`size-2 rounded-full shrink-0 ${
+                    selectedHub === 'All' ? 'bg-amber-500' : 'bg-zinc-300 dark:bg-zinc-700'
+                  }`}
+                />
+                <span className="truncate">All Locations</span>
+              </div>
+              {meta && (
+                <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+                  {meta.totalStudios}
+                </span>
+              )}
             </button>
-          ))}
-        </div>
+
+            {meta?.hubs.map((hub) => (
+              <button
+                key={hub.city}
+                type="button"
+                onClick={() => handleHubChange(hub.city)}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  selectedHub === hub.city
+                    ? 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-bold'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-900 dark:hover:text-zinc-200'
+                }`}
+              >
+                <div className="flex items-center gap-2 truncate">
+                  <span
+                    className={`size-2 rounded-full shrink-0 ${
+                      selectedHub === hub.city ? 'bg-amber-500' : 'bg-zinc-300 dark:bg-zinc-700'
+                    }`}
+                  />
+                  <span className="truncate">{hub.label}</span>
+                </div>
+                <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+                  {hub.count}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Hourly Rate (Collapsible) */}
+      <div className="border-t border-zinc-100 dark:border-zinc-800/80 pt-4">
+        <button
+          type="button"
+          onClick={() => toggleSection('rate')}
+          className="w-full flex items-center justify-between text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2.5 cursor-pointer group"
+        >
+          <div className="flex items-center gap-1.5">
+            <Clock className="size-3.5 text-amber-500" />
+            <span className="group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">
+              Hourly Rate
+            </span>
+            {selectedRate !== 'All' && (
+              <span className="size-1.5 rounded-full bg-amber-500" />
+            )}
+          </div>
+          <ChevronDown
+            className={`size-3.5 text-zinc-400 transition-transform duration-200 ${
+              openSections.rate ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
+
+        {openSections.rate && (
+          <div className="space-y-1">
+            {RATE_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => handleRateChange(opt.value)}
+                className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-between ${
+                  selectedRate === opt.value
+                    ? 'bg-amber-500/15 text-amber-700 dark:text-amber-400 font-bold border border-amber-500/30'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-900 dark:hover:text-zinc-200 font-medium'
+                }`}
+              >
+                <span>{opt.label}</span>
+                <span className="text-[10px] text-zinc-400">{opt.sub}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -327,7 +429,7 @@ function StudiosContent() {
           Explore Production Workspaces
         </h1>
         <p className="text-zinc-600 dark:text-zinc-400 mt-2 text-sm sm:text-base max-w-3xl leading-relaxed">
-          Browse verified daylight stages, soundproof suites, and 4K podcast lounges across global creative hubs.
+          Browse verified daylight stages, soundproof suites, and 4K podcast lounges across global locations.
         </p>
       </div>
 
@@ -504,7 +606,7 @@ function StudiosContent() {
                   onClick={() => handleHubChange('All')}
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-500/10 text-amber-700 dark:text-amber-400 hover:bg-amber-500/20 transition-colors cursor-pointer"
                 >
-                  <span>Hub: {selectedHub}</span>
+                  <span>Location: {selectedHub}</span>
                   <X className="size-3" />
                 </button>
               )}
