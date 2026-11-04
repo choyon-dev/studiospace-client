@@ -86,8 +86,10 @@ export default function FeaturedStudios() {
                   <div className="h-3 w-1/3 rounded bg-zinc-200 dark:bg-zinc-800" />
                   <div className="h-3 w-16 rounded bg-zinc-200 dark:bg-zinc-800" />
                 </div>
-                <div className="h-5 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
-                <div className="h-3 w-1/2 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="space-y-1.5">
+                  <div className="h-4 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+                  <div className="h-4 w-1/2 rounded bg-zinc-200 dark:bg-zinc-800" />
+                </div>
                 <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
                   <div className="h-5 w-20 rounded bg-zinc-200 dark:bg-zinc-800" />
                   <div className="h-4 w-14 rounded bg-zinc-200 dark:bg-zinc-800" />

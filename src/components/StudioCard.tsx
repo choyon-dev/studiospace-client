@@ -66,9 +66,6 @@ export default function StudioCard({
   };
 
   const studioUrl = getStudioUrl(studio);
-  const areaFormatted = studio.specs?.squareFeet
-    ? `${studio.specs.squareFeet.toLocaleString()} sq ft`
-    : `${studio.maxCapacity * 350} sq ft`;
 
   const locationDisplay = studio.city
     ? studio.state
@@ -133,24 +130,15 @@ export default function StudioCard({
           </div>
         </div>
 
-        {/* Row 2: Studio Title */}
+        {/* Row 2: Studio Title with Full 2-Line Visibility */}
         <Link
           href={studioUrl}
           className="block"
         >
-          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
+          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">
             {studio.title}
           </h3>
         </Link>
-
-        {/* Row 3: Specs Dot Line */}
-        <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 truncate">
-          <span className="font-medium text-zinc-700 dark:text-zinc-300">{studio.category}</span>
-          <span>·</span>
-          <span>{areaFormatted}</span>
-          <span>·</span>
-          <span>{studio.bookingMode === 'Request' ? 'Request to Book' : 'Instant Book'}</span>
-        </div>
 
         {/* Row 4: Pricing & Action */}
         <div className="flex items-baseline justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800/80 mt-auto">
