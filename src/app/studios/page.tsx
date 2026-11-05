@@ -209,10 +209,8 @@ function StudiosContent() {
     (selectedRate !== 'All' ? 1 : 0) +
     (searchQuery.trim().length > 0 ? 1 : 0);
 
-  // Common filter panel controls (rendered in desktop sidebar & mobile drawer)
   const renderFilterControls = () => (
     <div className="space-y-5">
-      {/* Search Input */}
       <div>
         <label className="block text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
           Search Spaces
@@ -238,7 +236,6 @@ function StudiosContent() {
         </div>
       </div>
 
-      {/* Category (Collapsible & Scrollable Radio List) */}
       <div className="border-t border-zinc-100 dark:border-zinc-800/80 pt-4">
         <button
           type="button"
@@ -312,7 +309,6 @@ function StudiosContent() {
         )}
       </div>
 
-      {/* Locations (Collapsible & Scrollable Radio List, NO DROPDOWN) */}
       <div className="border-t border-zinc-100 dark:border-zinc-800/80 pt-4">
         <button
           type="button"
@@ -389,7 +385,6 @@ function StudiosContent() {
         )}
       </div>
 
-      {/* Hourly Rate (Collapsible) */}
       <div className="border-t border-zinc-100 dark:border-zinc-800/80 pt-4">
         <button
           type="button"
@@ -437,7 +432,6 @@ function StudiosContent() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Page Heading */}
       <div className="mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
           Explore Production Workspaces
@@ -447,7 +441,6 @@ function StudiosContent() {
         </p>
       </div>
 
-      {/* Mobile Sticky Filter Trigger Bar */}
       <div className="lg:hidden flex items-center gap-2 mb-6">
         <button
           type="button"
@@ -480,9 +473,7 @@ function StudiosContent() {
         </div>
       </div>
 
-      {/* Two-Column Layout */}
       <div className="flex flex-col lg:flex-row gap-8 items-start">
-        {/* Left Sidebar Filter Panel (Desktop Sticky) */}
         <aside className="hidden lg:block w-72 shrink-0 sticky top-24">
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800/80">
@@ -505,7 +496,6 @@ function StudiosContent() {
           </div>
         </aside>
 
-        {/* Mobile Slide-Over Filter Drawer */}
         {isMobileFiltersOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">
             <div
@@ -553,9 +543,7 @@ function StudiosContent() {
           </div>
         )}
 
-        {/* Right Main Content Area */}
         <div className="flex-1 w-full min-w-0">
-          {/* Top Utility Row */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-4 border-b border-zinc-200/80 dark:border-zinc-800/80">
             <div>
               <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
@@ -600,7 +588,6 @@ function StudiosContent() {
             </div>
           </div>
 
-          {/* Active Filter Chips (Dismissible) */}
           {hasActiveFilters && (
             <div className="flex flex-wrap items-center gap-2 mb-6">
               <span className="text-xs text-zinc-400 font-medium">Active:</span>
@@ -658,7 +645,6 @@ function StudiosContent() {
             </div>
           )}
 
-          {/* Studio Grid / Skeletons / Empty State */}
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((idx) => (

@@ -22,7 +22,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'StudioSpace — Creative Workspace & Production Studio Sharing',
+  title: 'StudioSpace - Creative Workspace & Production Studio Sharing',
   description:
     'Discover and reserve photography stages, soundstages, podcast lounges, music suites, and creative artisan workshops with real-time availability and transparent hourly pricing.',
   keywords: [

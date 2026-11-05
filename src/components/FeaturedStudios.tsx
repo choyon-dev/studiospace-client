@@ -63,7 +63,6 @@ export default function FeaturedStudios() {
 
   return (
     <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Centered Section Header */}
       <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-14">
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
           Featured Spaces
@@ -111,7 +110,6 @@ export default function FeaturedStudios() {
         </div>
       )}
 
-      {/* Prominent Full Archive CTA Button */}
       <div className="mt-12 sm:mt-16 flex items-center justify-center">
         <Link
           href="/studios"

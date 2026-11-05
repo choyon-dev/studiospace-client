@@ -39,7 +39,6 @@ export default function HostGuarantee() {
   return (
     <section id="about-us" className="w-full bg-white dark:bg-zinc-950 py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Centered Section Header - Synchronized with CategoryBrowse & FeaturedStudios */}
         <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-14">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
             Built for Professional Production Demands
@@ -49,7 +48,6 @@ export default function HostGuarantee() {
           </p>
         </div>
 
-        {/* 4 Guarantees Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {guarantees.map((item) => {
             const Icon = item.icon;

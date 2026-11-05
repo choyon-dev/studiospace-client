@@ -46,7 +46,6 @@ export default function CategoryBrowse() {
   return (
     <section className="w-full bg-slate-50/50 dark:bg-zinc-950 py-16 sm:py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Centered Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
             Browse by Studio Category
@@ -56,10 +55,8 @@ export default function CategoryBrowse() {
           </p>
         </div>
 
-        {/* Carousel Container */}
         <div className="relative w-full">
           {loading || !isMounted ? (
-            /* Skeleton Loading State */
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
               {[...Array(5)].map((_, i) => (
                 <div
@@ -103,10 +100,8 @@ export default function CategoryBrowse() {
                         <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900" />
                       )}
 
-                      {/* Scrim Vignette for High Text Legibility */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent transition-opacity duration-300 group-hover/card:from-black/95" />
 
-                      {/* Clean Title Only */}
                       <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-end z-10">
                         <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug group-hover/card:text-amber-400 transition-colors">
                           {cat.name}
@@ -117,7 +112,6 @@ export default function CategoryBrowse() {
                 ))}
               </Swiper>
 
-              {/* Navigation Chevrons */}
               {categories.length > 1 && (
                 <>
                   <button

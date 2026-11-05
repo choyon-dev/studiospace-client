@@ -62,9 +62,7 @@ export default function MyBookingsPage() {
           if (isReviewed) {
             reviewedSet.add(b._id);
           }
-        } catch {
-          // Silent fallback
-        }
+        } catch {}
       })
     );
 
@@ -84,7 +82,7 @@ export default function MyBookingsPage() {
         {
           _id: 'bk-6729a1b2',
           studioId: '672001a1b2c3d4e5f6a7b8c1',
-          studioTitle: 'The Daylight Loft — Cyclorama Stage',
+          studioTitle: 'The Daylight Loft - Cyclorama Stage',
           studioImage:
             'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1200&q=80',
           bookerEmail: user?.email || 'examiner@studiospace.io',

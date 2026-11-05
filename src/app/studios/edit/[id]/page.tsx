@@ -829,7 +829,7 @@ export default function EditStudioPage() {
               {images.length > 0 && (
                 <div className="space-y-2 pt-2">
                   <span className="text-xs text-zinc-400 block">
-                    Gallery Showcase ({images.length} photos) — First photo is primary cover:
+                    Gallery Showcase ({images.length} photos) - First photo is primary cover:
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {images.map((imgUrl, idx) => (

@@ -45,7 +45,6 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="w-full bg-slate-50/50 dark:bg-zinc-950 py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Centered Section Header - Synchronized with CategoryBrowse & FeaturedStudios */}
         <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-14">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
             Production Pipeline
@@ -55,9 +54,7 @@ export default function HowItWorks() {
           </p>
         </div>
 
-        {/* 4 Steps Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-          {/* Subtle Connected Flow Line for Desktop */}
           <div className="hidden lg:block absolute top-12 left-12 right-12 h-px bg-zinc-200 dark:bg-zinc-800 -z-0" />
 
           {steps.map((step) => {
@@ -95,7 +92,6 @@ export default function HowItWorks() {
           })}
         </div>
 
-        {/* Action Link */}
         <div className="mt-12 flex items-center justify-center">
           <Link
             href="/studios"

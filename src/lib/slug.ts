@@ -27,7 +27,7 @@ export function extractIdFromSlug(param: string): string | null {
 export function getStudioUrl(studio: { _id?: string; title?: string; slug?: string }): string {
   if (studio?.slug) return `/studios/${studio.slug}`;
   if (studio?.title) {
-    const mainTitle = studio.title.split('—')[0].trim();
+    const mainTitle = studio.title.split('-')[0].trim();
     const titleSlug = slugify(mainTitle) || slugify(studio.title);
     if (titleSlug) return `/studios/${titleSlug}`;
   }

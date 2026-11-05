@@ -5,7 +5,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 export const FALLBACK_STUDIOS: Studio[] = [
   {
     _id: '672001a1b2c3d4e5f6a7b8c1',
-    title: 'The Daylight Loft — 20ft Cyclorama & Soundstage',
+    title: 'The Daylight Loft - 20ft Cyclorama & Soundstage',
     slug: 'the-daylight-loft',
     category: 'Photo Studio',
     hourlyRate: 85,
@@ -49,7 +49,7 @@ export const FALLBACK_STUDIOS: Studio[] = [
   },
   {
     _id: '672001a1b2c3d4e5f6a7b8c2',
-    title: 'Acoustic Vault — Dolby Atmos 7.1.4 Immersive Music Suite',
+    title: 'Acoustic Vault - Dolby Atmos 7.1.4 Immersive Music Suite',
     slug: 'acoustic-vault',
     category: 'Music Suite',
     hourlyRate: 120,
@@ -93,7 +93,7 @@ export const FALLBACK_STUDIOS: Studio[] = [
   },
   {
     _id: '672001a1b2c3d4e5f6a7b8c3',
-    title: 'The Broadcast Lab — 4K Multicam Live Podcast Lounge',
+    title: 'The Broadcast Lab - 4K Multicam Live Podcast Lounge',
     slug: 'the-broadcast-lab',
     category: 'Podcast Lounge',
     hourlyRate: 75,
@@ -137,7 +137,7 @@ export const FALLBACK_STUDIOS: Studio[] = [
   },
   {
     _id: '672001a1b2c3d4e5f6a7b8c4',
-    title: 'Grid 4 Soundstage — Heavy Commercial Film Production',
+    title: 'Grid 4 Soundstage - Heavy Commercial Film Production',
     slug: 'grid-4-soundstage',
     category: 'Film Stage',
     hourlyRate: 160,
@@ -181,7 +181,7 @@ export const FALLBACK_STUDIOS: Studio[] = [
   },
   {
     _id: '672001a1b2c3d4e5f6a7b8c5',
-    title: 'Ceramica & Maker Space — Artisan Clay & Wood Workshop',
+    title: 'Ceramica & Maker Space - Artisan Clay & Wood Workshop',
     slug: 'ceramica-maker-space',
     category: 'Workshop',
     hourlyRate: 55,
@@ -225,7 +225,7 @@ export const FALLBACK_STUDIOS: Studio[] = [
   },
   {
     _id: '672001a1b2c3d4e5f6a7b8c6',
-    title: 'Neon Horizon — Retro Wave Video & Synth Production',
+    title: 'Neon Horizon - Retro Wave Video & Synth Production',
     slug: 'neon-horizon',
     category: 'Music Suite',
     hourlyRate: 95,
@@ -685,11 +685,8 @@ export async function uploadToImgBB(file: File): Promise<string> {
         return json.data.url;
       }
     }
-  } catch {
-    // Seamless fallback to client-side data URL on network or service error
-  }
+  } catch {}
 
-  // Resilient fallback: Compress and encode to data URL so uploads never fail
   const fallbackUrl = await fileToDataUrl(file);
   if (fallbackUrl) {
     return fallbackUrl;

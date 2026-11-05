@@ -139,7 +139,6 @@ export default function HeroSlider() {
             Book verified daylight lofts, motorized lighting grids, and seamless infinity cyc stages tailored for commercial shoots and high-fashion campaigns.
           </p>
 
-          {/* Primary CTA Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
             <Link
               href="/studios"
@@ -158,7 +157,6 @@ export default function HeroSlider() {
         </div>
 
         <div className="w-full max-w-5xl mx-auto">
-          {/* Search Form */}
           <form
             onSubmit={handleSearch}
             className="bg-white dark:bg-zinc-900 rounded-2xl p-2 shadow-xl shadow-slate-200/50 dark:shadow-black/40 grid grid-cols-1 md:grid-cols-4 gap-2 items-center"
@@ -225,7 +223,6 @@ export default function HeroSlider() {
             </div>
           </form>
 
-          {/* Quick preset chips */}
           <div className="flex flex-wrap items-center justify-center gap-2.5 mt-4">
             {PRESET_TAGS.map((tag) => (
               <button
@@ -239,7 +236,6 @@ export default function HeroSlider() {
             ))}
           </div>
 
-          {/* Sleek Minimalist Swiper Showcase (Clickable Slides, Clean Title & Description Only) */}
           <div className="relative w-full max-w-5xl mx-auto mt-6 rounded-2xl md:rounded-3xl overflow-hidden border border-slate-200/80 dark:border-zinc-800/80 shadow-2xl shadow-slate-200/50 dark:shadow-black/50 group select-none">
             {isMounted ? (
               <Swiper
@@ -273,11 +269,9 @@ export default function HeroSlider() {
                         sizes="(max-width: 1280px) 100vw, 1280px"
                       />
 
-                      {/* Studio scrim gradients for high text contrast */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10 transition-opacity duration-300 group-hover/slide:from-black/90" />
                       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/35 to-transparent" />
 
-                      {/* Clean Title and Short Description Only */}
                       <div className="absolute inset-0 p-6 sm:p-8 md:p-10 flex flex-col justify-end z-10">
                         <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight mb-1 sm:mb-2 group-hover/slide:text-amber-400 transition-colors">
                           {slide.title}
@@ -292,7 +286,6 @@ export default function HeroSlider() {
                 ))}
               </Swiper>
             ) : (
-              /* SSR Static Placeholder to prevent CLS */
               <Link
                 href={`/studios?category=${encodeURIComponent(HERO_SLIDES[0].category)}`}
                 className="group/slide block relative w-full h-[240px] sm:h-[300px] md:h-[340px] cursor-pointer"
@@ -319,7 +312,6 @@ export default function HeroSlider() {
               </Link>
             )}
 
-            {/* Floating Navigation Chevrons */}
             {isMounted && (
               <>
                 <button
@@ -348,7 +340,6 @@ export default function HeroSlider() {
                   <ChevronRight className="size-4 sm:size-5" />
                 </button>
 
-                {/* Sleek Pagination Indicators */}
                 <div
                   onClick={(e) => {
                     e.preventDefault();

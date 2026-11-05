@@ -1,4 +1,4 @@
-# StudioSpace — Peer-to-Peer Creative Workspace & Production Studio Sharing Platform
+# StudioSpace - Peer-to-Peer Creative Workspace & Production Studio Sharing Platform
 
 > **Live Client Application:** [https://studiospacelive.netlify.app](https://studiospacelive.netlify.app)  
 > **Live API Backend:** [https://studiospace-server-c4j2.onrender.com/api](https://studiospace-server-c4j2.onrender.com/api)  

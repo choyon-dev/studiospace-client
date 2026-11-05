@@ -131,7 +131,7 @@ export default function StudioDetailPage() {
         const data = await fetchStudioById(rawId);
         if (data) {
           setStudio(data);
-          const cleanSlug = data.slug || slugify(data.title.split('—')[0].trim());
+          const cleanSlug = data.slug || slugify(data.title.split('-')[0].trim());
           if (cleanSlug && typeof window !== 'undefined' && rawId !== cleanSlug) {
             window.history.replaceState(null, '', `/studios/${cleanSlug}`);
           }
