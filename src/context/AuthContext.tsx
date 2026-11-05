@@ -22,6 +22,29 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
+function loadGoogleScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined') return resolve();
+    if ((window as any).google?.accounts?.oauth2) return resolve();
+
+    const existing = document.getElementById('google-gsi-client');
+    if (existing) {
+      existing.addEventListener('load', () => resolve());
+      existing.addEventListener('error', () => reject(new Error('Failed to load Google SDK')));
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.id = 'google-gsi-client';
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load Google SDK'));
+    document.head.appendChild(script);
+  });
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -69,12 +92,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const issueJwtToken = async (email: string, name: string) => {
     try {
-      await fetch(`${API_BASE}/auth/jwt`, {
+      const res = await fetch(`${API_BASE}/auth/jwt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ email, name }),
       });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.token) {
+          localStorage.setItem('token', data.token);
+        }
+      }
     } catch (e) {
       console.warn(e);
     }
@@ -183,22 +212,70 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loginWithGoogle = async (): Promise<boolean> => {
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+    if (!clientId) {
+      toast.error('Google Client ID is not configured. Please add NEXT_PUBLIC_GOOGLE_CLIENT_ID.');
+      return false;
+    }
+
     try {
-      const googleUser: User = {
-        name: 'Alex Vance',
-        email: 'alex.vance@studiospace.io',
-        photoURL:
-          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
-      };
+      await loadGoogleScript();
 
-      setUser(googleUser);
-      localStorage.setItem('studiospace_user', JSON.stringify(googleUser));
-      await issueJwtToken(googleUser.email, googleUser.name);
+      if (!(window as any).google?.accounts?.oauth2) {
+        throw new Error('Google Identity Services unavailable');
+      }
 
-      toast.success(`Demo mode: Signed in as ${googleUser.name}`);
-      return true;
-    } catch {
-      toast.error('Google sign-in could not be completed');
+      return new Promise<boolean>((resolve) => {
+        const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
+          client_id: clientId,
+          scope: 'openid email profile',
+          callback: async (tokenResponse: any) => {
+            if (tokenResponse.error) {
+              toast.error(tokenResponse.error_description || 'Google sign-in was cancelled');
+              resolve(false);
+              return;
+            }
+
+            try {
+              const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: {
+                  Authorization: `Bearer ${tokenResponse.access_token}`,
+                },
+              });
+
+              if (!res.ok) {
+                throw new Error('Could not retrieve Google profile');
+              }
+
+              const profile = await res.json();
+              const googleUser: User = {
+                name: profile.name || profile.email?.split('@')[0] || 'Google User',
+                email: profile.email.toLowerCase().trim(),
+                photoURL: profile.picture || undefined,
+              };
+
+              setUser(googleUser);
+              localStorage.setItem('studiospace_user', JSON.stringify(googleUser));
+              await issueJwtToken(googleUser.email, googleUser.name);
+
+              toast.success(`Welcome back, ${googleUser.name}!`);
+              resolve(true);
+            } catch (err: any) {
+              toast.error(err.message || 'Google profile synchronization failed');
+              resolve(false);
+            }
+          },
+          error_callback: (err: any) => {
+            toast.error(err.message || 'Google authorization error');
+            resolve(false);
+          },
+        });
+
+        tokenClient.requestAccessToken({ prompt: 'select_account' });
+      });
+    } catch (err: any) {
+      toast.error(err.message || 'Google sign-in could not be initialized');
       return false;
     }
   };
