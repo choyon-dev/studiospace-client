@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Studio } from '@/types';
 import StudioCard from './StudioCard';
+import StudioCardSkeleton from './StudioCardSkeleton';
 import { fetchFeaturedStudios, fetchMyWishlist } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { ArrowRight } from 'lucide-react';
@@ -75,26 +76,7 @@ export default function FeaturedStudios() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {[1, 2, 3, 4, 5, 6].map((idx) => (
-            <div
-              key={idx}
-              className="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/80 overflow-hidden animate-pulse shadow-xs"
-            >
-              <div className="aspect-[16/10] w-full bg-zinc-200 dark:bg-zinc-800" />
-              <div className="p-4 sm:p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="h-3 w-1/3 rounded bg-zinc-200 dark:bg-zinc-800" />
-                  <div className="h-3 w-16 rounded bg-zinc-200 dark:bg-zinc-800" />
-                </div>
-                <div className="space-y-1.5">
-                  <div className="h-4 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
-                  <div className="h-4 w-1/2 rounded bg-zinc-200 dark:bg-zinc-800" />
-                </div>
-                <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
-                  <div className="h-5 w-20 rounded bg-zinc-200 dark:bg-zinc-800" />
-                  <div className="h-4 w-14 rounded bg-zinc-200 dark:bg-zinc-800" />
-                </div>
-              </div>
-            </div>
+            <StudioCardSkeleton key={idx} />
           ))}
         </div>
       ) : (

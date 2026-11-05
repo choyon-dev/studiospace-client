@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import StudioCard from '@/components/StudioCard';
+import StudioCardSkeleton from '@/components/StudioCardSkeleton';
 import { Studio } from '@/types';
 import { fetchMyWishlist } from '@/lib/api';
 import { Heart, Building2, Sparkles, ArrowRight } from 'lucide-react';
@@ -85,24 +86,7 @@ export default function SavedStudiosPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((idx) => (
-              <div
-                key={idx}
-                className="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/80 overflow-hidden animate-pulse shadow-xs"
-              >
-                <div className="aspect-[16/10] w-full bg-zinc-200 dark:bg-zinc-800" />
-                <div className="p-4 sm:p-5 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="h-3 w-1/3 rounded bg-zinc-200 dark:bg-zinc-800" />
-                    <div className="h-3 w-16 rounded bg-zinc-200 dark:bg-zinc-800" />
-                  </div>
-                  <div className="h-5 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
-                  <div className="h-3 w-1/2 rounded bg-zinc-200 dark:bg-zinc-800" />
-                  <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
-                    <div className="h-5 w-20 rounded bg-zinc-200 dark:bg-zinc-800" />
-                    <div className="h-4 w-14 rounded bg-zinc-200 dark:bg-zinc-800" />
-                  </div>
-                </div>
-              </div>
+              <StudioCardSkeleton key={idx} />
             ))}
           </div>
         ) : studios.length === 0 ? (

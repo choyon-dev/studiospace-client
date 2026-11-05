@@ -1,3 +1,5 @@
+import StudioCardSkeleton from '@/components/StudioCardSkeleton';
+
 export default function StudiosLoading() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -30,23 +32,7 @@ export default function StudiosLoading() {
         <div className="lg:col-span-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className="rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 overflow-hidden space-y-3"
-              >
-                <div className="aspect-[16/10] w-full bg-slate-200 dark:bg-zinc-800 animate-pulse" />
-                <div className="p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="h-3 w-20 bg-slate-200 dark:bg-zinc-800 rounded animate-pulse" />
-                    <div className="h-3 w-12 bg-slate-200 dark:bg-zinc-800 rounded animate-pulse" />
-                  </div>
-                  <div className="h-5 w-4/5 bg-slate-200 dark:bg-zinc-800 rounded animate-pulse" />
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-zinc-800">
-                    <div className="h-4 w-16 bg-slate-200 dark:bg-zinc-800 rounded animate-pulse" />
-                    <div className="h-7 w-24 bg-amber-500/20 rounded-lg animate-pulse" />
-                  </div>
-                </div>
-              </div>
+              <StudioCardSkeleton key={i} />
             ))}
           </div>
         </div>
