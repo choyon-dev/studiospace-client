@@ -559,6 +559,7 @@ function StudiosContent() {
               {user && wishlistIds.size > 0 && (
                 <Link
                   href="/saved-studios"
+                  prefetch={true}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
                 >
                   <Heart className="size-3.5 text-red-500 fill-red-500" />

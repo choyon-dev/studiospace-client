@@ -248,6 +248,7 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
+                    prefetch={link.href.startsWith('/') && !link.href.includes('#')}
                     className={`relative px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
                       active
                         ? 'bg-white dark:bg-zinc-800 text-amber-600 dark:text-amber-400 shadow-xs'
@@ -297,6 +298,7 @@ export default function Navbar() {
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <Link
                     href="/add-studio"
+                    prefetch={true}
                     className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-zinc-950 transition-all shadow-xs active:scale-95"
                   >
                     <PlusCircle className="size-3.5" />
@@ -393,12 +395,14 @@ export default function Navbar() {
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <Link
                     href="/login"
+                    prefetch={true}
                     className="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-amber-500 transition-colors"
                   >
                     Login
                   </Link>
                   <Link
                     href="/register"
+                    prefetch={true}
                     className="inline-flex px-3.5 py-1.5 text-xs font-bold rounded-xl bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-xs shadow-amber-500/20"
                   >
                     Register

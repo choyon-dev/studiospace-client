@@ -29,8 +29,19 @@ function loadGoogleScript(): Promise<void> {
 
     const existing = document.getElementById('google-gsi-client');
     if (existing) {
+      if ((window as any).google?.accounts?.oauth2) return resolve();
       existing.addEventListener('load', () => resolve());
       existing.addEventListener('error', () => reject(new Error('Failed to load Google SDK')));
+      let attempts = 0;
+      const interval = setInterval(() => {
+        if ((window as any).google?.accounts?.oauth2) {
+          clearInterval(interval);
+          resolve();
+        } else if (++attempts > 50) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100);
       return;
     }
 

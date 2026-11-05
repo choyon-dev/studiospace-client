@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Syne, Plus_Jakarta_Sans } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/AuthContext';
@@ -22,7 +23,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'StudioSpace - Creative Workspace & Production Studio Sharing',
+  metadataBase: new URL('https://studiospacelive.netlify.app'),
+  title: {
+    default: 'StudioSpace - Creative Workspace & Production Studio Sharing',
+    template: '%s | StudioSpace',
+  },
   description:
     'Discover and reserve photography stages, soundstages, podcast lounges, music suites, and creative artisan workshops with real-time availability and transparent hourly pricing.',
   keywords: [
@@ -32,13 +37,57 @@ export const metadata: Metadata = {
     'podcast studio',
     'music recording',
     'production space',
+    'creative studio sharing',
   ],
+  authors: [{ name: 'StudioSpace Team' }],
+  creator: 'StudioSpace',
+  publisher: 'StudioSpace',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   icons: {
     icon: [
       { url: '/icon.svg', type: 'image/svg+xml' },
       { url: '/favicon.ico', sizes: 'any' },
     ],
     apple: '/apple-touch-icon.png',
+  },
+  openGraph: {
+    title: 'StudioSpace - Creative Workspace & Production Studio Sharing',
+    description:
+      'Discover and reserve photography stages, soundstages, podcast lounges, music suites, and creative artisan workshops with real-time availability and transparent hourly pricing.',
+    url: 'https://studiospacelive.netlify.app',
+    siteName: 'StudioSpace',
+    images: [
+      {
+        url: '/Isometric%20Photography%20Studio%20Diorama.png',
+        width: 1200,
+        height: 800,
+        alt: 'StudioSpace Creative Workspaces',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'StudioSpace - Creative Workspace & Production Studio Sharing',
+    description:
+      'Discover and reserve photography stages, soundstages, podcast lounges, music suites, and creative artisan workshops with real-time availability and transparent hourly pricing.',
+    images: ['/Isometric%20Photography%20Studio%20Diorama.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 
@@ -66,6 +115,11 @@ export default function RootLayout({
             <Footer />
           </AuthProvider>
         </ThemeProvider>
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="lazyOnload"
+          id="google-gsi-client"
+        />
       </body>
     </html>
   );

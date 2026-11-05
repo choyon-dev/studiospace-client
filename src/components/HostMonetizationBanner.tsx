@@ -25,6 +25,7 @@ export default function HostMonetizationBanner() {
               <div className="flex flex-wrap items-center gap-4 pt-3">
                 <Link
                   href="/add-studio"
+                  prefetch={true}
                   className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-xs sm:text-sm bg-white text-zinc-950 hover:bg-amber-100 active:scale-95 transition-all shadow-lg shadow-black/20"
                 >
                   <PlusCircle className="size-4 text-amber-600" />
@@ -32,6 +33,7 @@ export default function HostMonetizationBanner() {
                 </Link>
                 <Link
                   href="/studios"
+                  prefetch={true}
                   className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-black/20 hover:bg-black/30 border border-white/20 text-white backdrop-blur-md active:scale-95 transition-all"
                 >
                   <span>Browse Inventory</span>

@@ -85,6 +85,7 @@ export default function CategoryBrowse() {
                   <SwiperSlide key={cat.slug || cat.name} className="!h-auto">
                     <Link
                       href={`/studios?category=${encodeURIComponent(cat.name)}`}
+                      prefetch={true}
                       className="group/card block relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-900 cursor-pointer shadow-md hover:shadow-2xl transition-all duration-500"
                     >
                       {cat.imageUrl ? (
@@ -92,7 +93,6 @@ export default function CategoryBrowse() {
                           src={cat.imageUrl}
                           alt={cat.name}
                           fill
-                          unoptimized
                           className="object-cover transition-transform duration-700 ease-out group-hover/card:scale-105"
                           sizes="(max-width: 640px) 75vw, (max-width: 1024px) 35vw, 20vw"
                         />

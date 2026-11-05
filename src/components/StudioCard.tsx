@@ -77,14 +77,14 @@ export default function StudioCard({
     <div className="group relative flex flex-col rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-amber-500/40 dark:hover:border-amber-500/40 overflow-hidden shadow-xs hover:shadow-md transition-colors duration-200">
       <Link
         href={studioUrl}
+        prefetch={true}
         className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800 block"
       >
         <Image
           src={studio.imageUrl}
           alt={studio.title}
           fill
-          unoptimized
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/20 via-transparent to-transparent pointer-events-none" />
@@ -134,6 +134,7 @@ export default function StudioCard({
 
         <Link
           href={studioUrl}
+          prefetch={true}
           className="block"
         >
           <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">
@@ -156,6 +157,7 @@ export default function StudioCard({
 
           <Link
             href={studioUrl}
+            prefetch={true}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-zinc-950 transition-all active:scale-95 shadow-2xs shadow-amber-500/20"
           >
             <span>View Details</span>

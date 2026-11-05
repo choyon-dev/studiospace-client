@@ -113,6 +113,7 @@ export default function FeaturedStudios() {
       <div className="mt-12 sm:mt-16 flex items-center justify-center">
         <Link
           href="/studios"
+          prefetch={true}
           className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-98 text-zinc-950 font-bold text-sm shadow-md shadow-amber-500/20 hover:shadow-lg hover:shadow-amber-500/30 transition-all cursor-pointer"
         >
           <span>View Full Studio Archive</span>

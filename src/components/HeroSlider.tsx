@@ -142,6 +142,7 @@ export default function HeroSlider() {
           <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
             <Link
               href="/studios"
+              prefetch={true}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-xs bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-md shadow-amber-500/25 cursor-pointer"
             >
               <span>Explore Studios</span>
@@ -149,6 +150,7 @@ export default function HeroSlider() {
             </Link>
             <Link
               href="/add-studio"
+              prefetch={true}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-xs bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 hover:text-amber-500 border border-slate-200 dark:border-zinc-800 hover:border-amber-500/50 active:scale-95 transition-all shadow-xs cursor-pointer"
             >
               <span>Host Your Space</span>
@@ -257,14 +259,15 @@ export default function HeroSlider() {
                   <SwiperSlide key={slide.id} className="!h-full">
                     <Link
                       href={`/studios?category=${encodeURIComponent(slide.category)}`}
+                      prefetch={true}
                       className="group/slide block relative w-full h-[240px] sm:h-[300px] md:h-[340px] cursor-pointer"
                     >
                       <Image
                         src={slide.image}
                         alt={slide.title}
                         fill
-                        unoptimized
                         priority={index === 0}
+                        loading={index === 0 ? 'eager' : 'lazy'}
                         className="object-cover transition-transform duration-700 ease-out group-hover/slide:scale-105"
                         sizes="(max-width: 1280px) 100vw, 1280px"
                       />
@@ -288,14 +291,15 @@ export default function HeroSlider() {
             ) : (
               <Link
                 href={`/studios?category=${encodeURIComponent(HERO_SLIDES[0].category)}`}
+                prefetch={true}
                 className="group/slide block relative w-full h-[240px] sm:h-[300px] md:h-[340px] cursor-pointer"
               >
                 <Image
                   src={HERO_SLIDES[0].image}
                   alt={HERO_SLIDES[0].title}
                   fill
-                  unoptimized
                   priority
+                  loading="eager"
                   className="object-cover"
                   sizes="(max-width: 1280px) 100vw, 1280px"
                 />
