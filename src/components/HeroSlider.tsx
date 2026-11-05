@@ -149,7 +149,7 @@ export default function HeroSlider() {
               <ArrowRight className="size-4" />
             </Link>
             <Link
-              href="/studios"
+              href="/add-studio"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-xs bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 hover:text-amber-500 border border-slate-200 dark:border-zinc-800 hover:border-amber-500/50 active:scale-95 transition-all shadow-xs cursor-pointer"
             >
               <span>Host Your Space</span>
