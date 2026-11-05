@@ -233,8 +233,8 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2 sm:gap-2.5 group transition-transform duration-150 active:scale-95 shrink-0"
             >
-              <div className="size-8 sm:size-9 lg:size-10 rounded-xl bg-amber-500 flex items-center justify-center text-zinc-950 shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform duration-200">
-                <Aperture className="size-4.5 sm:size-5 lg:size-6 stroke-[2.2]" />
+              <div className="size-8 sm:size-9 lg:size-10 rounded-full bg-amber-500 flex items-center justify-center text-zinc-950 shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform duration-200">
+                <Aperture className="size-4.5 sm:size-5 lg:size-6 stroke-[2.2] animate-spin-slow group-hover:[animation-duration:3s]" />
               </div>
               <span className="text-base sm:text-lg lg:text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 group-hover:text-amber-500 transition-colors">
                 Studio<span className="text-amber-500">Space</span>
