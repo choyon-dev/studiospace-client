@@ -614,7 +614,7 @@ export default function StudioDetailPage() {
               className="px-8 py-3.5 rounded-xl font-bold text-xs bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-98 transition-all shadow-md shadow-amber-500/20 cursor-pointer flex items-center gap-2"
             >
               <Calendar className="size-3.5" />
-              <span>Reserve Workspace Now</span>
+              <span>Book Workspace Now</span>
             </button>
           </div>
         </div>
@@ -972,7 +972,7 @@ export default function StudioDetailPage() {
             onClick={handleOpenBooking}
             className="px-6 py-2.5 rounded-xl font-bold text-xs bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-98 transition-all shadow-md shadow-amber-500/20 shrink-0 cursor-pointer"
           >
-            Reserve Workspace
+            Book Workspace Now
           </button>
         </div>
       </div>

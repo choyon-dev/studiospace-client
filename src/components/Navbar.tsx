@@ -393,16 +393,15 @@ export default function Navbar() {
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <Link
                     href="/login"
-                    className="px-2.5 sm:px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-amber-500 transition-colors"
+                    className="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-amber-500 transition-colors"
                   >
-                    Log In
+                    Login
                   </Link>
                   <Link
-                    href="/add-studio"
-                    className="hidden sm:inline-flex px-3.5 py-1.5 text-xs font-bold rounded-xl bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-xs shadow-amber-500/20 items-center gap-1"
+                    href="/register"
+                    className="inline-flex px-3.5 py-1.5 text-xs font-bold rounded-xl bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-xs shadow-amber-500/20"
                   >
-                    <PlusCircle className="size-3.5" />
-                    <span>List Space</span>
+                    Register
                   </Link>
                 </div>
               )}
@@ -487,13 +486,13 @@ export default function Navbar() {
                         href="/add-studio"
                         className="px-3 py-2 text-xs font-semibold rounded-xl bg-amber-500 text-zinc-950 text-center"
                       >
-                        + Add Studio
+                        Add New Studio
                       </Link>
                       <Link
                         href="/my-listings"
                         className="px-3 py-2 text-xs font-semibold rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 text-center"
                       >
-                        My Listings
+                        My Studio Listings
                       </Link>
                       <Link
                         href="/my-bookings"
@@ -523,13 +522,13 @@ export default function Navbar() {
                       href="/login"
                       className="py-2.5 text-center text-xs font-semibold rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200"
                     >
-                      Log In
+                      Login
                     </Link>
                     <Link
-                      href="/add-studio"
+                      href="/register"
                       className="py-2.5 text-center text-xs font-bold rounded-xl bg-amber-500 text-zinc-950 shadow-xs"
                     >
-                      + List Space
+                      Register
                     </Link>
                   </div>
                 )}

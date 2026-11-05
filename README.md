@@ -1,7 +1,7 @@
 # StudioSpace — Peer-to-Peer Creative Workspace & Production Studio Sharing Platform
 
-> **Live Client Application:** [https://studiospace.vercel.app](https://studiospace.vercel.app)  
-> **Live API Backend:** [https://studiospace-api.onrender.com](https://studiospace-api.onrender.com)  
+> **Live Client Application:** [https://studiospacelive.netlify.app](https://studiospacelive.netlify.app)  
+> **Live API Backend:** [https://studiospace-server-c4j2.onrender.com/api](https://studiospace-server-c4j2.onrender.com/api)  
 > **Examiner Test Credentials:** `examiner@studiospace.io` / `Test1234`
 
 ---

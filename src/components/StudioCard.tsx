@@ -90,6 +90,13 @@ export default function StudioCard({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/20 via-transparent to-transparent pointer-events-none" />
 
+        {/* Category Badge */}
+        <div className="absolute top-3 left-3 z-10">
+          <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold tracking-tight bg-zinc-950/85 backdrop-blur-md text-amber-400 shadow-sm border border-white/10">
+            {studio.category}
+          </span>
+        </div>
+
         {/* Minimal Floating Heart Button */}
         <button
           type="button"
@@ -156,10 +163,10 @@ export default function StudioCard({
 
           <Link
             href={studioUrl}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-zinc-950 transition-all active:scale-95 shadow-2xs shadow-amber-500/20"
           >
-            <span>Explore</span>
-            <ArrowUpRight className="size-3.5" />
+            <span>View Details</span>
+            <ArrowUpRight className="size-3.5 stroke-[2.5]" />
           </Link>
         </div>
       </div>

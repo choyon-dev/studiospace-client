@@ -20,6 +20,7 @@ import {
   Layers,
   ChevronLeft,
   ChevronRight,
+  ArrowRight,
 } from 'lucide-react';
 
 interface HeroSlide {
@@ -137,6 +138,23 @@ export default function HeroSlider() {
           <p className="text-sm sm:text-base lg:text-lg text-slate-600 dark:text-zinc-400 max-w-2xl mx-auto mt-4 leading-relaxed">
             Book verified daylight lofts, motorized lighting grids, and seamless infinity cyc stages tailored for commercial shoots and high-fashion campaigns.
           </p>
+
+          {/* Primary CTA Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+            <Link
+              href="/studios"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-xs bg-amber-500 text-zinc-950 hover:bg-amber-400 active:scale-95 transition-all shadow-md shadow-amber-500/25 cursor-pointer"
+            >
+              <span>Explore Studios</span>
+              <ArrowRight className="size-4" />
+            </Link>
+            <Link
+              href="/studios"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-xs bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 hover:text-amber-500 border border-slate-200 dark:border-zinc-800 hover:border-amber-500/50 active:scale-95 transition-all shadow-xs cursor-pointer"
+            >
+              <span>Host Your Space</span>
+            </Link>
+          </div>
         </div>
 
         <div className="w-full max-w-5xl mx-auto">

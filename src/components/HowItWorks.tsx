@@ -18,7 +18,7 @@ const steps = [
   },
   {
     number: '03',
-    title: 'Instant Booking Approval',
+    title: 'Book Instantly',
     desc: 'Secure checkout protected by HTTPOnly JWT session and automatic $1,000,000 comprehensive liability coverage.',
     icon: ShieldCheck,
   },
