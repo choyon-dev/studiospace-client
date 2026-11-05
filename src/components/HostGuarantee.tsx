@@ -12,25 +12,21 @@ const guarantees = [
   {
     title: '$1,000,000 Host Liability',
     desc: 'Automatic comprehensive property and equipment damage coverage on every verified reservation booking.',
-    tag: 'Full Coverage',
     icon: ShieldCheck,
   },
   {
     title: '100% Identity Verification',
     desc: 'In-person site inspections and biometric creator identity verification protocols before production clearance.',
-    tag: 'Biometric Verified',
     icon: BadgeCheck,
   },
   {
     title: 'Acoustic & Camlock Compliance',
     desc: 'Certified STC soundproofing dampening ratings and commercial 3-phase 200A/400A camlock power inspections.',
-    tag: 'STC 65 & 3-Phase',
     icon: CheckCircle2,
   },
   {
     title: '24/7 Producer Support Hotline',
     desc: 'Dedicated production coordinators on standby for load-in assistance, overtime adjustments, and contingencies.',
-    tag: 'On-Demand Dispatch',
     icon: Headphones,
   },
 ];
@@ -56,13 +52,8 @@ export default function HostGuarantee() {
                 key={item.title}
                 className="group relative flex flex-col justify-between rounded-2xl bg-slate-50/70 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-amber-500/40 dark:hover:border-amber-500/40 p-6 shadow-xs hover:shadow-md transition-all duration-200 space-y-4"
               >
-                <div className="flex items-center justify-between">
-                  <div className="size-11 rounded-xl bg-amber-500/10 dark:bg-zinc-800 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
-                    <Icon className="size-5.5" />
-                  </div>
-                  <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
-                    {item.tag}
-                  </span>
+                <div className="size-11 rounded-xl bg-amber-500/10 dark:bg-zinc-800 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
+                  <Icon className="size-5.5" />
                 </div>
 
                 <div className="space-y-2 flex-1">
@@ -72,11 +63,6 @@ export default function HostGuarantee() {
                   <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed">
                     {item.desc}
                   </p>
-                </div>
-
-                <div className="pt-3 border-t border-zinc-200/60 dark:border-zinc-800/80 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                  <span className="size-1.5 rounded-full bg-emerald-500" />
-                  <span>Guaranteed Standard</span>
                 </div>
               </div>
             );
