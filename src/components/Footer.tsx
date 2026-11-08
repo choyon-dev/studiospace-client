@@ -72,7 +72,7 @@ export default function Footer() {
     { name: 'Host Guarantee', href: '/#about-us' },
     { name: 'Add Your Space', href: '/add-studio' },
     { name: 'System Status', href: '/health' },
-    { name: 'Creator Guidelines', href: '/#about-us' },
+    { name: 'Safety & Guidelines', href: '/safety' },
   ];
 
   return (
@@ -210,9 +210,9 @@ export default function Footer() {
               <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>System Status</span>
             </Link>
-            <Link href="/#about-us" className="hover:text-amber-500 transition-colors">Privacy Policy</Link>
-            <Link href="/#about-us" className="hover:text-amber-500 transition-colors">Terms of Service</Link>
-            <Link href="/#about-us" className="hover:text-amber-500 transition-colors">Safety Standards</Link>
+            <Link href="/privacy" className="hover:text-amber-500 transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-amber-500 transition-colors">Terms of Service</Link>
+            <Link href="/safety" className="hover:text-amber-500 transition-colors">Safety Standards</Link>
           </div>
         </div>
       </div>
