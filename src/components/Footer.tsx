@@ -71,6 +71,7 @@ export default function Footer() {
     { name: 'How Booking Works', href: '/#how-it-works' },
     { name: 'Host Guarantee', href: '/#about-us' },
     { name: 'Add Your Space', href: '/add-studio' },
+    { name: 'System Status', href: '/health' },
     { name: 'Creator Guidelines', href: '/#about-us' },
   ];
 
@@ -205,6 +206,10 @@ export default function Footer() {
         <div className="mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <p>© 2026 StudioSpace Inc. All rights reserved. Built for creators worldwide.</p>
           <div className="flex items-center gap-6">
+            <Link href="/health" className="inline-flex items-center gap-1.5 hover:text-amber-500 transition-colors">
+              <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>System Status</span>
+            </Link>
             <Link href="/#about-us" className="hover:text-amber-500 transition-colors">Privacy Policy</Link>
             <Link href="/#about-us" className="hover:text-amber-500 transition-colors">Terms of Service</Link>
             <Link href="/#about-us" className="hover:text-amber-500 transition-colors">Safety Standards</Link>
