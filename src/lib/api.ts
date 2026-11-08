@@ -2,6 +2,24 @@ import { Studio, Booking, StudioMeta, StudioCategoryMeta, OsmLocationSuggestion,
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
+export async function fetchWithTimeout(
+  url: string,
+  options: RequestInit = {},
+  timeoutMs = 6000
+): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      ...options,
+      signal: options.signal || controller.signal,
+    });
+    return res;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
 export const FALLBACK_STUDIOS: Studio[] = [
   {
     _id: '672001a1b2c3d4e5f6a7b8c1',
@@ -271,7 +289,7 @@ export const FALLBACK_STUDIOS: Studio[] = [
 
 export async function fetchStudioMeta(): Promise<StudioMeta> {
   try {
-    const res = await fetch(`${API_BASE}/studios/meta`, {
+    const res = await fetchWithTimeout(`${API_BASE}/studios/meta`, {
       cache: 'no-store',
     });
     if (!res.ok) throw new Error('Failed to fetch studio metadata');
@@ -329,7 +347,7 @@ export async function fetchStudioMeta(): Promise<StudioMeta> {
 
 export async function fetchCategories(): Promise<StudioCategoryMeta[]> {
   try {
-    const res = await fetch(`${API_BASE}/studios/categories`, {
+    const res = await fetchWithTimeout(`${API_BASE}/studios/categories`, {
       cache: 'no-store',
     });
     if (!res.ok) throw new Error('Failed to fetch categories');
@@ -344,7 +362,7 @@ export async function fetchCategories(): Promise<StudioCategoryMeta[]> {
 
 export async function searchOsmLocations(query: string): Promise<OsmLocationSuggestion[]> {
   try {
-    const res = await fetch(`${API_BASE}/locations/autocomplete?q=${encodeURIComponent(query.trim())}`);
+    const res = await fetchWithTimeout(`${API_BASE}/locations/autocomplete?q=${encodeURIComponent(query.trim())}`);
     if (!res.ok) throw new Error('Failed to query locations');
     const json = await res.json();
     return json.data || [];
@@ -356,7 +374,7 @@ export async function searchOsmLocations(query: string): Promise<OsmLocationSugg
 
 export async function fetchFeaturedStudios(): Promise<Studio[]> {
   try {
-    const res = await fetch(`${API_BASE}/studios/featured`, {
+    const res = await fetchWithTimeout(`${API_BASE}/studios/featured`, {
       cache: 'no-store',
     });
     if (!res.ok) throw new Error('Failed to fetch featured studios');
@@ -402,7 +420,7 @@ export async function fetchAllStudios(
     if (maxPrice !== undefined) params.append('maxPrice', String(maxPrice));
     if (sortBy) params.append('sortBy', sortBy);
 
-    const res = await fetch(`${API_BASE}/studios?${params.toString()}`, {
+    const res = await fetchWithTimeout(`${API_BASE}/studios?${params.toString()}`, {
       cache: 'no-store',
     });
     if (!res.ok) throw new Error('Failed to fetch studios');
@@ -454,7 +472,7 @@ export async function fetchAllStudios(
 
 export async function fetchStudioById(idOrSlug: string): Promise<Studio | null> {
   try {
-    const res = await fetch(`${API_BASE}/studios/${encodeURIComponent(idOrSlug)}`, {
+    const res = await fetchWithTimeout(`${API_BASE}/studios/${encodeURIComponent(idOrSlug)}`, {
       cache: 'no-store',
     });
     if (!res.ok) throw new Error('Studio not found');
@@ -486,7 +504,7 @@ export async function createStudio(data: Partial<Studio>, token?: string): Promi
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}/studios`, {
+  const res = await fetchWithTimeout(`${API_BASE}/studios`, {
     method: 'POST',
     headers,
     credentials: 'include',
@@ -508,7 +526,7 @@ export async function updateStudio(id: string, data: Partial<Studio>, token?: st
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}/studios/${id}`, {
+  const res = await fetchWithTimeout(`${API_BASE}/studios/${id}`, {
     method: 'PATCH',
     headers,
     credentials: 'include',
@@ -528,7 +546,7 @@ export async function deleteStudio(id: string, token?: string): Promise<boolean>
   const headers: Record<string, string> = {};
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}/studios/${id}`, {
+  const res = await fetchWithTimeout(`${API_BASE}/studios/${id}`, {
     method: 'DELETE',
     headers,
     credentials: 'include',
@@ -547,7 +565,7 @@ export async function fetchMyStudios(token?: string): Promise<Studio[]> {
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const res = await fetch(`${API_BASE}/studios/my`, {
+    const res = await fetchWithTimeout(`${API_BASE}/studios/my`, {
       headers,
       credentials: 'include',
       cache: 'no-store',
@@ -566,7 +584,7 @@ export async function createBooking(data: Partial<Booking>, token?: string): Pro
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}/bookings`, {
+  const res = await fetchWithTimeout(`${API_BASE}/bookings`, {
     method: 'POST',
     headers,
     credentials: 'include',
@@ -587,7 +605,7 @@ export async function fetchMyBookings(token?: string): Promise<Booking[]> {
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const res = await fetch(`${API_BASE}/bookings/my`, {
+    const res = await fetchWithTimeout(`${API_BASE}/bookings/my`, {
       headers,
       credentials: 'include',
       cache: 'no-store',
@@ -604,7 +622,7 @@ export async function cancelBooking(id: string, token?: string): Promise<Booking
   const headers: Record<string, string> = {};
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}/bookings/${id}/cancel`, {
+  const res = await fetchWithTimeout(`${API_BASE}/bookings/${id}/cancel`, {
     method: 'PATCH',
     headers,
     credentials: 'include',
@@ -674,10 +692,10 @@ export async function uploadToImgBB(file: File): Promise<string> {
     const formData = new FormData();
     formData.append('image', file);
 
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+    const res = await fetchWithTimeout(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
       method: 'POST',
       body: formData,
-    });
+    }, 15000);
 
     if (res.ok) {
       const json = await res.json();
@@ -697,7 +715,7 @@ export async function uploadToImgBB(file: File): Promise<string> {
 
 export async function fetchStudioBookedSlots(studioId: string, date: string): Promise<BookedSlot[]> {
   try {
-    const res = await fetch(`${API_BASE}/bookings/studio/${studioId}?date=${encodeURIComponent(date)}`, {
+    const res = await fetchWithTimeout(`${API_BASE}/bookings/studio/${studioId}?date=${encodeURIComponent(date)}`, {
       cache: 'no-store',
     });
     if (!res.ok) return [];
@@ -713,7 +731,7 @@ export async function fetchIncomingBookings(token?: string): Promise<Booking[]> 
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const res = await fetch(`${API_BASE}/bookings/incoming`, {
+    const res = await fetchWithTimeout(`${API_BASE}/bookings/incoming`, {
       headers,
       credentials: 'include',
       cache: 'no-store',
@@ -730,7 +748,7 @@ export async function approveBooking(id: string, token?: string): Promise<Bookin
   const headers: Record<string, string> = {};
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}/bookings/${id}/approve`, {
+  const res = await fetchWithTimeout(`${API_BASE}/bookings/${id}/approve`, {
     method: 'PATCH',
     headers,
     credentials: 'include',
@@ -749,7 +767,7 @@ export async function declineBooking(id: string, token?: string): Promise<Bookin
   const headers: Record<string, string> = {};
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}/bookings/${id}/decline`, {
+  const res = await fetchWithTimeout(`${API_BASE}/bookings/${id}/decline`, {
     method: 'PATCH',
     headers,
     credentials: 'include',
@@ -766,7 +784,7 @@ export async function declineBooking(id: string, token?: string): Promise<Bookin
 
 export async function fetchStudioReviews(studioId: string): Promise<Review[]> {
   try {
-    const res = await fetch(`${API_BASE}/reviews/studio/${studioId}`, {
+    const res = await fetchWithTimeout(`${API_BASE}/reviews/studio/${studioId}`, {
       cache: 'no-store',
     });
     if (!res.ok) return [];
@@ -782,7 +800,7 @@ export async function checkBookingReviewed(bookingId: string, token?: string): P
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const res = await fetch(`${API_BASE}/reviews/check/${bookingId}`, {
+    const res = await fetchWithTimeout(`${API_BASE}/reviews/check/${bookingId}`, {
       headers,
       credentials: 'include',
       cache: 'no-store',
@@ -801,7 +819,7 @@ export async function submitStudioReview(data: Partial<Review>, token?: string):
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}/reviews`, {
+  const res = await fetchWithTimeout(`${API_BASE}/reviews`, {
     method: 'POST',
     headers,
     credentials: 'include',
@@ -822,7 +840,7 @@ export async function fetchMyWishlist(token?: string): Promise<{ count: number; 
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const res = await fetch(`${API_BASE}/wishlist/my`, {
+    const res = await fetchWithTimeout(`${API_BASE}/wishlist/my`, {
       headers,
       credentials: 'include',
       cache: 'no-store',
@@ -852,7 +870,7 @@ export async function toggleWishlist(
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}/wishlist/toggle`, {
+  const res = await fetchWithTimeout(`${API_BASE}/wishlist/toggle`, {
     method: 'POST',
     headers,
     credentials: 'include',
@@ -872,7 +890,7 @@ export async function checkStudioWishlist(studioId: string, token?: string): Pro
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const res = await fetch(`${API_BASE}/wishlist/check/${studioId}`, {
+    const res = await fetchWithTimeout(`${API_BASE}/wishlist/check/${studioId}`, {
       headers,
       credentials: 'include',
       cache: 'no-store',

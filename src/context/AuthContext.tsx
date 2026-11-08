@@ -68,9 +68,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const parsed = JSON.parse(storedUser);
           setUser(parsed);
           try {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), 4000);
             const res = await fetch(`${API_BASE}/auth/me`, {
               credentials: 'include',
-            });
+              signal: controller.signal,
+            }).finally(() => clearTimeout(id));
+
             if (res.ok) {
               const data = await res.json();
               if (data?.user) {
@@ -80,12 +84,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 });
               }
             } else {
+              const jwtController = new AbortController();
+              const jwtId = setTimeout(() => jwtController.abort(), 4000);
               await fetch(`${API_BASE}/auth/jwt`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify({ email: parsed.email, name: parsed.name }),
-              });
+                signal: jwtController.signal,
+              }).finally(() => clearTimeout(jwtId));
             }
           } catch (e) {
             console.warn(e);
@@ -103,12 +110,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const issueJwtToken = async (email: string, name: string) => {
     try {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), 4000);
       const res = await fetch(`${API_BASE}/auth/jwt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ email, name }),
-      });
+        signal: controller.signal,
+      }).finally(() => clearTimeout(id));
       if (res.ok) {
         const data = await res.json();
         if (data?.token) {
@@ -161,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser(authenticatedUser);
       localStorage.setItem('studiospace_user', JSON.stringify(authenticatedUser));
-      await issueJwtToken(authenticatedUser.email, authenticatedUser.name);
+      issueJwtToken(authenticatedUser.email, authenticatedUser.name).catch(() => {});
 
       toast.success(`Welcome back, ${authenticatedUser.name}`);
       return true;
@@ -268,7 +278,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
               setUser(googleUser);
               localStorage.setItem('studiospace_user', JSON.stringify(googleUser));
-              await issueJwtToken(googleUser.email, googleUser.name);
+              issueJwtToken(googleUser.email, googleUser.name).catch(() => {});
 
               toast.success(`Welcome back, ${googleUser.name}!`);
               resolve(true);
@@ -292,16 +302,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
+    localStorage.removeItem('studiospace_user');
+    localStorage.removeItem('token');
+    setUser(null);
+    toast.success('You have been logged out.');
+
     try {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), 3000);
       await fetch(`${API_BASE}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
-      });
+        signal: controller.signal,
+      }).finally(() => clearTimeout(id));
     } catch {
     }
-    localStorage.removeItem('studiospace_user');
-    setUser(null);
-    toast.success('You have been logged out.');
   };
 
   return (
