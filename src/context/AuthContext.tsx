@@ -67,11 +67,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (storedUser) {
           const parsed = JSON.parse(storedUser);
           setUser(parsed);
+
+          let currentToken = localStorage.getItem('token');
+          if (!currentToken && parsed.email) {
+            currentToken = await issueJwtToken(parsed.email, parsed.name || 'Creator');
+          }
+
           try {
             const controller = new AbortController();
             const id = setTimeout(() => controller.abort(), 4000);
+            const headers: Record<string, string> = {};
+            if (currentToken) {
+              headers.Authorization = `Bearer ${currentToken}`;
+            }
+
             const res = await fetch(`${API_BASE}/auth/me`, {
               credentials: 'include',
+              headers,
               signal: controller.signal,
             }).finally(() => clearTimeout(id));
 
@@ -84,15 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 });
               }
             } else {
-              const jwtController = new AbortController();
-              const jwtId = setTimeout(() => jwtController.abort(), 4000);
-              await fetch(`${API_BASE}/auth/jwt`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ email: parsed.email, name: parsed.name }),
-                signal: jwtController.signal,
-              }).finally(() => clearTimeout(jwtId));
+              await issueJwtToken(parsed.email, parsed.name || 'Creator');
             }
           } catch (e) {
             console.warn(e);
@@ -108,7 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     restoreSession();
   }, []);
 
-  const issueJwtToken = async (email: string, name: string) => {
+  const issueJwtToken = async (email: string, name: string): Promise<string | null> => {
     try {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), 4000);
@@ -123,11 +127,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const data = await res.json();
         if (data?.token) {
           localStorage.setItem('token', data.token);
+          return data.token;
         }
       }
     } catch (e) {
       console.warn(e);
     }
+    return null;
   };
 
   const loginWithEmail = async (email: string, pass: string): Promise<boolean> => {
@@ -171,7 +177,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser(authenticatedUser);
       localStorage.setItem('studiospace_user', JSON.stringify(authenticatedUser));
-      issueJwtToken(authenticatedUser.email, authenticatedUser.name).catch(() => {});
+      await Promise.race([
+        issueJwtToken(authenticatedUser.email, authenticatedUser.name),
+        new Promise((resolve) => setTimeout(resolve, 3000)),
+      ]);
 
       toast.success(`Welcome back, ${authenticatedUser.name}`);
       return true;
@@ -278,7 +287,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
               setUser(googleUser);
               localStorage.setItem('studiospace_user', JSON.stringify(googleUser));
-              issueJwtToken(googleUser.email, googleUser.name).catch(() => {});
+              await Promise.race([
+                issueJwtToken(googleUser.email, googleUser.name),
+                new Promise((resolve) => setTimeout(resolve, 3000)),
+              ]);
 
               toast.success(`Welcome back, ${googleUser.name}!`);
               resolve(true);

@@ -20,6 +20,48 @@ export async function fetchWithTimeout(
   }
 }
 
+export async function getValidAuthToken(): Promise<string | null> {
+  if (typeof window === 'undefined') return null;
+  const existingToken = localStorage.getItem('token');
+  if (existingToken) return existingToken;
+
+  const storedUser = localStorage.getItem('studiospace_user');
+  if (!storedUser) return null;
+
+  try {
+    const parsed = JSON.parse(storedUser);
+    if (!parsed?.email) return null;
+
+    const res = await fetchWithTimeout(
+      `${API_BASE}/auth/jwt`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: parsed.email, name: parsed.name || 'Creator' }),
+      },
+      4000
+    );
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.token) {
+        localStorage.setItem('token', json.token);
+        return json.token;
+      }
+    }
+  } catch {
+  }
+  return null;
+}
+
+export async function getAuthHeaders(explicitToken?: string): Promise<Record<string, string>> {
+  const token = explicitToken || (await getValidAuthToken());
+  if (token) {
+    return { Authorization: `Bearer ${token}` };
+  }
+  return {};
+}
+
 export const FALLBACK_STUDIOS: Studio[] = [
   {
     _id: '672001a1b2c3d4e5f6a7b8c1',
@@ -499,10 +541,11 @@ export async function fetchStudioById(idOrSlug: string): Promise<Studio | null> 
 }
 
 export async function createStudio(data: Partial<Studio>, token?: string): Promise<Studio> {
+  const authHeaders = await getAuthHeaders(token);
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    ...authHeaders,
   };
-  if (token) headers.Authorization = `Bearer ${token}`;
 
   const res = await fetchWithTimeout(`${API_BASE}/studios`, {
     method: 'POST',
@@ -521,10 +564,11 @@ export async function createStudio(data: Partial<Studio>, token?: string): Promi
 }
 
 export async function updateStudio(id: string, data: Partial<Studio>, token?: string): Promise<Studio> {
+  const authHeaders = await getAuthHeaders(token);
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    ...authHeaders,
   };
-  if (token) headers.Authorization = `Bearer ${token}`;
 
   const res = await fetchWithTimeout(`${API_BASE}/studios/${id}`, {
     method: 'PATCH',
@@ -543,8 +587,7 @@ export async function updateStudio(id: string, data: Partial<Studio>, token?: st
 }
 
 export async function deleteStudio(id: string, token?: string): Promise<boolean> {
-  const headers: Record<string, string> = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = await getAuthHeaders(token);
 
   const res = await fetchWithTimeout(`${API_BASE}/studios/${id}`, {
     method: 'DELETE',
@@ -562,8 +605,7 @@ export async function deleteStudio(id: string, token?: string): Promise<boolean>
 
 export async function fetchMyStudios(token?: string): Promise<Studio[]> {
   try {
-    const headers: Record<string, string> = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
+    const headers = await getAuthHeaders(token);
 
     const res = await fetchWithTimeout(`${API_BASE}/studios/my`, {
       headers,
@@ -579,10 +621,11 @@ export async function fetchMyStudios(token?: string): Promise<Studio[]> {
 }
 
 export async function createBooking(data: Partial<Booking>, token?: string): Promise<Booking> {
+  const authHeaders = await getAuthHeaders(token);
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    ...authHeaders,
   };
-  if (token) headers.Authorization = `Bearer ${token}`;
 
   const res = await fetchWithTimeout(`${API_BASE}/bookings`, {
     method: 'POST',
@@ -602,8 +645,7 @@ export async function createBooking(data: Partial<Booking>, token?: string): Pro
 
 export async function fetchMyBookings(token?: string): Promise<Booking[]> {
   try {
-    const headers: Record<string, string> = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
+    const headers = await getAuthHeaders(token);
 
     const res = await fetchWithTimeout(`${API_BASE}/bookings/my`, {
       headers,
@@ -619,8 +661,7 @@ export async function fetchMyBookings(token?: string): Promise<Booking[]> {
 }
 
 export async function cancelBooking(id: string, token?: string): Promise<Booking> {
-  const headers: Record<string, string> = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = await getAuthHeaders(token);
 
   const res = await fetchWithTimeout(`${API_BASE}/bookings/${id}/cancel`, {
     method: 'PATCH',
@@ -728,8 +769,7 @@ export async function fetchStudioBookedSlots(studioId: string, date: string): Pr
 
 export async function fetchIncomingBookings(token?: string): Promise<Booking[]> {
   try {
-    const headers: Record<string, string> = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
+    const headers = await getAuthHeaders(token);
 
     const res = await fetchWithTimeout(`${API_BASE}/bookings/incoming`, {
       headers,
@@ -745,8 +785,7 @@ export async function fetchIncomingBookings(token?: string): Promise<Booking[]> 
 }
 
 export async function approveBooking(id: string, token?: string): Promise<Booking> {
-  const headers: Record<string, string> = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = await getAuthHeaders(token);
 
   const res = await fetchWithTimeout(`${API_BASE}/bookings/${id}/approve`, {
     method: 'PATCH',
@@ -764,8 +803,7 @@ export async function approveBooking(id: string, token?: string): Promise<Bookin
 }
 
 export async function declineBooking(id: string, token?: string): Promise<Booking> {
-  const headers: Record<string, string> = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = await getAuthHeaders(token);
 
   const res = await fetchWithTimeout(`${API_BASE}/bookings/${id}/decline`, {
     method: 'PATCH',
@@ -797,8 +835,7 @@ export async function fetchStudioReviews(studioId: string): Promise<Review[]> {
 
 export async function checkBookingReviewed(bookingId: string, token?: string): Promise<boolean> {
   try {
-    const headers: Record<string, string> = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
+    const headers = await getAuthHeaders(token);
 
     const res = await fetchWithTimeout(`${API_BASE}/reviews/check/${bookingId}`, {
       headers,
@@ -814,10 +851,11 @@ export async function checkBookingReviewed(bookingId: string, token?: string): P
 }
 
 export async function submitStudioReview(data: Partial<Review>, token?: string): Promise<Review> {
+  const authHeaders = await getAuthHeaders(token);
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    ...authHeaders,
   };
-  if (token) headers.Authorization = `Bearer ${token}`;
 
   const res = await fetchWithTimeout(`${API_BASE}/reviews`, {
     method: 'POST',
@@ -837,8 +875,7 @@ export async function submitStudioReview(data: Partial<Review>, token?: string):
 
 export async function fetchMyWishlist(token?: string): Promise<{ count: number; ids: string[]; data: Studio[] }> {
   try {
-    const headers: Record<string, string> = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
+    const headers = await getAuthHeaders(token);
 
     const res = await fetchWithTimeout(`${API_BASE}/wishlist/my`, {
       headers,
@@ -865,10 +902,11 @@ export async function toggleWishlist(
   studioId: string,
   token?: string
 ): Promise<{ success: boolean; isFavorited: boolean; studioId: string; message: string }> {
+  const authHeaders = await getAuthHeaders(token);
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    ...authHeaders,
   };
-  if (token) headers.Authorization = `Bearer ${token}`;
 
   const res = await fetchWithTimeout(`${API_BASE}/wishlist/toggle`, {
     method: 'POST',
@@ -887,8 +925,7 @@ export async function toggleWishlist(
 
 export async function checkStudioWishlist(studioId: string, token?: string): Promise<boolean> {
   try {
-    const headers: Record<string, string> = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
+    const headers = await getAuthHeaders(token);
 
     const res = await fetchWithTimeout(`${API_BASE}/wishlist/check/${studioId}`, {
       headers,
